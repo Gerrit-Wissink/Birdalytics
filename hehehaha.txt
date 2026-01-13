@@ -1,0 +1,26 @@
+How do you comfort a JavaScript bug?
+
+-You console it.
+
+
+A web designer walks into a bar, but immediately leaves in disgust upon noticing the tables layout.
+
+
+Why do front end developers wear glasses?
+
+-Because they don’t C#
+
+
+Why did the child component have such high self-esteem?
+
+-Because its parent kept giving it props!
+
+
+Why was the React class component relieved?
+
+-Because it was off the hook.
+
+
+How do designers like their coffee?
+
+-#000000
