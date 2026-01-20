@@ -1,0 +1,60 @@
+#logo{
+    max-width: 10vw;
+}
+
+nav{
+    background-color: var(--blue);
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    padding: 0px 2.5em;
+    height: 8vh;
+    position: sticky
+}
+
+.primary-nav{
+    display: flex;
+    gap: 2em;
+}
+
+.primary-nav a{
+    height: 6vh;
+    align-content: center;
+}
+
+.nav-links{
+    display: flex;
+    align-items: center;
+    gap: 4em;
+}
+
+nav a{
+    color: var(--background);
+    text-shadow: none;
+    text-decoration: none;
+    font-weight: 400;
+    transition: text-shadow 0.2s ease-in-out;
+}
+
+nav a:hover:not(.active) {
+    text-shadow: 0 0 .9px var(--background), 0 0 .9px var(--background), 0 0 .9px var(--background);
+}
+
+nav span{
+    padding: 3px 8px;
+    max-width: 150px;
+}
+
+
+.active span{
+    border-bottom: 2px solid #007CCE;
+    font-weight: 600;
+}
+
+#logOut{
+    padding: 6px 12px;
+    border-radius: 6px;
+    background-color: #003776;
+}
+
+
