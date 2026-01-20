@@ -1,0 +1,33 @@
+:root {
+  font-family: Lato, sans-serif;
+  font-weight: 300;
+
+  --background: #FFFFFF;
+  --blue: #004C98;
+  --gray: #ECECEC;
+  --title: #000000;
+  --text: #2A2A2A;
+  --green: #688B18;
+  --purple: #9764B9;
+  --orange: #C76E01;
+
+  color-scheme: light;
+  color: rgba(255, 255, 255, 0.8v7);
+  background-color: var(--background);
+
+  font-synthesis: none;
+  text-rendering: optimizeLegibility;
+  -webkit-font-smoothing: antialiased;
+  -moz-osx-font-smoothing: grayscale;
+}
+
+body {
+  margin: 0;
+  padding: 0;
+}
+
+h1, h2, h3, h4, h5, h6 {
+  font-family: 'Noto Serif', serif;
+  font-weight: 600;
+  color: var(--title);
+}
