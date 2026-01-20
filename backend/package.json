@@ -1,0 +1,23 @@
+{
+  "name": "birdalytics-server",
+  "version": "1.0.0",
+  "description": "web server for birdalytics bird-recognition project",
+  "homepage": "https://github.com/Gerrit-Wissink/Birdalytics#readme",
+  "bugs": {
+    "url": "https://github.com/Gerrit-Wissink/Birdalytics/issues"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/Gerrit-Wissink/Birdalytics.git"
+  },
+  "license": "ISC",
+  "author": "Gerrit Wissink",
+  "type": "commonjs",
+  "main": "index.js",
+  "scripts": {
+    "test": "\"echo \\\"Error: no test specified\\\" && exit 1\""
+  },
+  "dependencies": {
+    "express": "^5.2.1"
+  }
+}
