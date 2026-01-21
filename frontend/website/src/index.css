@@ -31,11 +31,8 @@ h1, h2, h3, h4, h5, h6 {
   font-weight: 600;
   color: var(--title);
 }
-<<<<<<< HEAD
 
 .leaflet-container {
   height: 50vh;
   width: 50vw;
 }
-=======
->>>>>>> d06a1966f0f6570f21124a46a4482ad1a6832df1
