@@ -31,3 +31,8 @@ h1, h2, h3, h4, h5, h6 {
   font-weight: 600;
   color: var(--title);
 }
+
+.leaflet-container {
+  height: 50vh;
+  width: 50vw;
+}
