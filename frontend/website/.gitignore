@@ -12,6 +12,10 @@ dist
 dist-ssr
 *.local
 
+# Package-specific ignores
+leaflet/
+@maptiler/
+
 # Editor directories and files
 .vscode/*
 !.vscode/extensions.json
