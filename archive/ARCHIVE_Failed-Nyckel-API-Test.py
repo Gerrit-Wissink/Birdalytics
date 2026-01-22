@@ -1,12 +1,16 @@
 import requests
 
 # List of bird image URLs to test
+# image_urls = [
+#     "https://cdn.harriscenter.org/wp-content/uploads/2023/06/03123626/American-Kestrel_profile_in_flight_SusanKline-880x515.jpg", # American Kestrel, clear side view in flight
+#     "https://blog.nature.org/wp-content/uploads/2021/05/MeganKHines_mother-kestrel-in-box-with-eggs-1260x708.jpg", # American Kestrel, clear from the top view in a birdbox
+#     "https://kanecountyconnects.com/img/medium/KCC/PublishingImages/July%202022/Kestrel%20in%20Box.jpg", # American Kestrel, low res in bird box from top view
+#     "https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcShb5EInptO8IESEyKf5wpfeYOaMjFbU4dC4g&s", # American Kestrel, perched on a branch, extremely low res
+#     "https://avianreport.com/wp-content/uploads/2023/11/american-kestrel-nest-.jpg" # Partial American Kestrel, in bird box from side view with eggs
+# ]
+
 image_urls = [
-    "https://cdn.harriscenter.org/wp-content/uploads/2023/06/03123626/American-Kestrel_profile_in_flight_SusanKline-880x515.jpg", # American Kestrel, clear side view in flight
-    "https://blog.nature.org/wp-content/uploads/2021/05/MeganKHines_mother-kestrel-in-box-with-eggs-1260x708.jpg", # American Kestrel, clear from the top view in a birdbox
-    "https://kanecountyconnects.com/img/medium/KCC/PublishingImages/July%202022/Kestrel%20in%20Box.jpg", # American Kestrel, low res in bird box from top view
-    "https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcShb5EInptO8IESEyKf5wpfeYOaMjFbU4dC4g&s", # American Kestrel, perched on a branch, extremely low res
-    "https://avianreport.com/wp-content/uploads/2023/11/american-kestrel-nest-.jpg" # Partial American Kestrel, in bird box from side view with eggs
+    "https://www.hawkmountain.org/data/uploads/media/image/AmericanKestrelHawkMountainSanctuary-2.jpg?w=1024" 
 ]
 
 # Get access token
