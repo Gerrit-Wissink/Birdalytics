@@ -1,28 +1,26 @@
 const { DataTypes } = require('sequelize');
 const sequelize = require('../config/database');
 
-const Example = sequelize.define('Example', {
-    id: {
+const SpeciesDictionary = sequelize.define('SpeciesDictionary', {
+    species_id: {
         type: DataTypes.INTEGER,
         primaryKey: true,
         autoIncrement: true
     },
-    name: {
+    species_name: {
         type: DataTypes.STRING(255),
         allowNull: false,
+        unique: true,
         validate: {
-            notEmpty: true
+            notEmpty: true, //means it cannot be an empty string
+            len: [1, 255]
         }
     },
-    description: {
-        type: DataTypes.TEXT,
-        allowNull: true
-    }
 }, {
-    tableName: 'examples',
+    tableName: 'species_dictionary',
     timestamps: true,
     createdAt: 'created_at',
     updatedAt: 'updated_at'
 });
 
-module.exports = Example;
+module.exports = SpeciesDictionary;
