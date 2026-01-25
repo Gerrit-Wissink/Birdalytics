@@ -11,8 +11,8 @@ const authMiddleware = (req, res, next) => {
         }
         
         // Add your JWT verification logic here
-        // const decoded = jwt.verify(token, process.env.JWT_SECRET);
-        // req.user = decoded;
+        const decoded = jwt.verify(token, process.env.JWT_SECRET);
+        req.user = decoded;
         
         next();
     } catch (error) {
