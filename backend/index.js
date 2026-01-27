@@ -37,6 +37,9 @@ if (process.env.SYNC_DB === 'true') {
     console.log('Database sync disabled (set SYNC_DB=true in .env to enable)');
 }
 
+//Serve static files
+app.use(express.static(path.join(__dirname, 'static')));
+
 // Routes
 app.get('/', (req, res) => {
     res.json({ 
