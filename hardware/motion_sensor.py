@@ -1,0 +1,26 @@
+# This is currently a test script for the motion sensor. 
+# This comment block will be removed when things are working as intended.
+from gpiozero import DigitalInputDevice as GPIO
+from picamzero import Camera
+from time import sleep
+import datetime
+import os
+
+motion_pin_id = 17
+home_dir = os.environ['HOME']
+bird_cam = Camera()
+
+motion_sensor = GPIO(17)
+
+while True:
+    if motion_sensor.is_active:
+        capture_time = datetime.datetime.now()
+        timestamp = capture_time.strftime("%Y-%m-%d_%H-%M-%S")
+        filename = "birdbox_" + timestamp        
+        print("Motion detected. Capturing photo...")
+        bird_cam.take_photo(f"{home_dir}/Photos/" + filename + ".jpg")
+        print("Photo saved to {home_dir}/Photos/" + filename + ".jpg")
+        sleep(15)
+    else:
+        print("Waiting for motion...")
+        sleep(1)
