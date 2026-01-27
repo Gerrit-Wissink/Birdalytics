@@ -63,8 +63,8 @@ const Map = () => {
   }, [])
 
   return (
-    <div className="w-full h-screen">
-      <div ref={mapRef} className="w-full h-full" />
+    <div style={{width: '100%', maxHeight: 'auto'}}>
+      <div ref={mapRef} style={{width: '100%', maxHeight: 'auto'}}/>
     </div>
   )
 }
