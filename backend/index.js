@@ -3,13 +3,8 @@ const cors = require('cors');
 const dotenv = require('dotenv');
 const sequelize = require('./config/database');
 
-// Import models
-const User = require('./models/User');
-// const Example = require('./models/Example');
-
 // Import routes
 const userRoutes = require('./routes/userRoutes');
-// const exampleRoutes = require('./routes/exampleRoutes');
 
 // Load environment variables
 dotenv.config();
@@ -28,22 +23,19 @@ app.use((req, res, next) => {
     next();
 });
 
-// Sync database (creates tables if they don't exist)
-// Use { force: true } to drop tables on every restart (development only)
-// Use { alter: true } to update tables to match models
-
-if (process.env.SYNC_DB ==='true'){
-    sequelize.sync({ alter: process.env.NODE_ENV === 'development' })
-    .then(() => {
-        console.log('Database synced successfully');
-    })
-    .catch(err => {
-        console.error('Error syncing database:', err);
-    });
+// Optional database sync - controlled by environment variable
+// Set SYNC_DB=true in .env to enable syncing
+if (process.env.SYNC_DB === 'true') {
+    sequelize.sync({ alter: true })
+        .then(() => {
+            console.log('Database synced successfully');
+        })
+        .catch(err => {
+            console.error('Error syncing database:', err);
+        });
 } else {
     console.log('Database sync disabled (set SYNC_DB=true in .env to enable)');
 }
-
 
 // Routes
 app.get('/', (req, res) => {
@@ -56,7 +48,6 @@ app.get('/', (req, res) => {
 
 // API Routes
 app.use('/api/users', userRoutes);
-// app.use('/api/examples', exampleRoutes);
 
 // 404 Handler
 app.use((req, res) => {
