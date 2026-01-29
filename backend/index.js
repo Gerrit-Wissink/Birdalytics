@@ -2,6 +2,7 @@ const express = require('express');
 const cors = require('cors');
 const dotenv = require('dotenv');
 const sequelize = require('./config/database');
+const path = require('path');
 
 // Import routes
 const userRoutes = require('./routes/userRoutes');
@@ -36,6 +37,9 @@ if (process.env.SYNC_DB === 'true') {
 } else {
     console.log('Database sync disabled (set SYNC_DB=true in .env to enable)');
 }
+
+//Serve static files
+app.use(express.static(path.join(__dirname, 'static')));
 
 // Routes
 app.get('/', (req, res) => {
