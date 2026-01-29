@@ -9,7 +9,9 @@ nav{
     justify-content: space-between;
     padding: 0px 2.5em;
     height: 8vh;
-    position: sticky
+    position: sticky;
+    top: 0;
+    z-index: 10000;
 }
 
 .primary-nav{
