@@ -1,6 +1,8 @@
 import Map from "../components/map.jsx";
 import BirdPieChart from "../components/donut-chart.jsx";
-import OverviewTable from "../components/overview-table.jsx";
+import LineGraph from "../components/line-graph.jsx";
+import ActiveBoxes from "../components/other-stats.jsx";
+import {MostActiveBox} from "../components/other-stats.jsx";
 import './overview.css'
 
 export default function Overview(){
@@ -18,11 +20,18 @@ export default function Overview(){
                     <div>
                         <BirdPieChart />
                     </div>
-                    <div className="section">Section 2</div>
+
                     <div>
-                        <OverviewTable/>
+                        <ActiveBoxes/>
                     </div>
-                    <div className="section">Section 4</div>
+                    
+                    <div>
+                        <LineGraph/>
+                    </div>
+                    
+                    <div>
+                        <MostActiveBox/>
+                    </div>
                 </div>
             </div>
             

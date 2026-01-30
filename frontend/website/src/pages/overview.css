@@ -16,14 +16,3 @@
   grid-template-rows: auto auto auto auto;
   gap: 1rem;
 }
-
-
-/**** DELETE LATER ****/
-.table-placeholder {
-  background-color: #d0d0d0;
-}
-
-.section {
-  background-color: #c0c0c0;
-  padding: 1rem;
-}
