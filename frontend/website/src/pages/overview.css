@@ -1,3 +1,7 @@
+#overview-container {
+  padding: 2rem;
+}
+
 #overview-grid {
   display: grid;
   grid-template-columns: 80% 20%;
@@ -23,7 +27,7 @@
   background-color: #d0d0d0;
 }
 
-.section {
+.overview-section {
   background-color: #c0c0c0;
   padding: 1rem;
 }
