@@ -111,7 +111,10 @@ export default function Upload(){
                 <img src="./images/GLTLogo.jpg" alt="Genesee Land Trust Logo" />
             </div>
             <div id="upload-box">
-                <h2>Birdalytics</h2>
+                <div id="upload-header">
+                    <h2>Birdalytics</h2>
+                    <img src="./images/GLT_birding.png" alt="Bird Icon" style={{width: "50px", height: "50px"}} />
+                </div>
                 <form onSubmit={handleSubmit}>
                     <div className="input-box">
                         <label htmlFor="box-name">Box Name</label>
@@ -160,8 +163,8 @@ export default function Upload(){
                     </div>
 
                     <div className="button-group">
-                        <button type="button" className="cancel-btn" onClick={handleReset}>Reset</button>
-                        <button type="submit" className="import-btn">Import</button>
+                        <button type="button" className="cancel-btn" onClick={handleReset} style={{fontFamily: "Lato, sans-serif"}}>Reset</button>
+                        <button type="submit" className="import-btn" style={{fontFamily: "Lato, sans-serif"}}>Import</button>
                     </div>
                 </form>
             </div>

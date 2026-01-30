@@ -10,7 +10,7 @@
   --green: #688B18;
   --purple: #9764B9;
   --orange: #C76E01;
-  --gradient-green: #688b1891;
+  --gradient-green: #688b1889;
 
   color-scheme: light;
   color: rgba(255, 255, 255, 0.8v7);
@@ -22,7 +22,7 @@
   -moz-osx-font-smoothing: grayscale;
 }
 
-body {
+body, html, main {
   margin: 0;
   padding: 0;
 }

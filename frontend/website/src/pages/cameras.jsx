@@ -53,7 +53,7 @@ export default function Cameras(){
 
     return(
         <>
-        <section id="cameras-container">
+        <section id="container">
             <h1>Cameras</h1>
             <div className="cameras-grid">
                 {cameras.map((camera) => (
