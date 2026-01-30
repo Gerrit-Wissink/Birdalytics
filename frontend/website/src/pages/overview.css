@@ -1,3 +1,7 @@
+#overview-container {
+  padding: 2rem;
+}
+
 #overview-grid {
   display: grid;
   grid-template-columns: 80% 20%;
