@@ -4,7 +4,7 @@ import CamInfo from "./pages/cameraInfo"
 import Cameras from "./pages/cameras"
 import LogIn from "./pages/login"
 import Upload from "./pages/upload"
-import ValGrid from "./pages/valgrid"
+import ValGrid from "./pages/valGrid"
 import Overview from "./pages/overview"
 import Reports from "./pages/reports"
 import NavLayout from "./components/navLayout"
@@ -19,8 +19,8 @@ function App() {
     <ThemeProvider theme={theme}>
       <Router>
         <Routes>
-          <Route element={<NavLayout/>}>
           <Route path="/login" element={<LogIn/>}/>
+          <Route element={<NavLayout/>}>
           <Route path="/" element={<Overview/>}/>
           <Route path="/reports" element={<Reports/>}/>
           <Route path="/upload" element={<Upload/>}/>

@@ -8,7 +8,7 @@ import './overview.css'
 export default function Overview(){
     return(
         <>
-        <section id= "container">
+        <section id="overview-container">
             <h1>Overview Page</h1>
             <div id="overview-grid">
                 <div className="column-left">
@@ -20,6 +20,7 @@ export default function Overview(){
                     <div>
                         <BirdPieChart />
                     </div>
+                    <div className="overview-section">Section 2</div>
 
                     <div>
                         <ActiveBoxes/>
@@ -32,6 +33,7 @@ export default function Overview(){
                     <div>
                         <MostActiveBox/>
                     </div>
+                    <div className="overview-section">Section 4</div>
                 </div>
             </div>
             
