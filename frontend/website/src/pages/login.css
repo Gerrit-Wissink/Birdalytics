@@ -8,7 +8,7 @@ body,html,main {
   flex-direction: column;
   justify-content: flex-start;
   align-items: center;
-  height: 84vh;
+  height: 92vh;
   background: var(--blue);
   padding-top: 8vh;
   padding-left: 2rem;

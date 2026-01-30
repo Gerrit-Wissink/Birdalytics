@@ -19,8 +19,8 @@ function App() {
     <ThemeProvider theme={theme}>
       <Router>
         <Routes>
-          <Route element={<NavLayout/>}>
           <Route path="/login" element={<LogIn/>}/>
+          <Route element={<NavLayout/>}>
           <Route path="/" element={<Overview/>}/>
           <Route path="/reports" element={<Reports/>}/>
           <Route path="/upload" element={<Upload/>}/>
