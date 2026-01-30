@@ -64,7 +64,7 @@ const Map = () => {
 
   return (
     <div style={{width: '100%', maxHeight: 'auto'}}>
-      <div ref={mapRef} style={{width: '100%', maxHeight: 'auto'}}/>
+      <div ref={mapRef} style={{width: '100%', maxHeight: 'auto', borderRadius: '10px'}}/>
     </div>
   )
 }
