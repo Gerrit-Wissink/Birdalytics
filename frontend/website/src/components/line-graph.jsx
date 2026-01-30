@@ -42,7 +42,7 @@ const dailyData = [
 const dates = dailyData.map(item => item.date)
 const values = dailyData.map(item => item.value)
 
-const areaColor = 'var(--green)'
+const areaColor = 'var(--gradient-green)'
 
 export default function LineGraph() {
   return (
