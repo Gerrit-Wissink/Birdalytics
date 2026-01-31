@@ -11,10 +11,7 @@ node_modules
 dist
 dist-ssr
 *.local
-
-# Package-specific ignores
-leaflet/
-@maptiler/
+static
 
 # Editor directories and files
 .vscode/*

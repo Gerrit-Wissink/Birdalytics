@@ -1,0 +1,22 @@
+#overview-container {
+  padding: 2rem;
+}
+
+#overview-grid {
+  display: grid;
+  grid-template-columns: 80% 20%;
+  gap: 1rem;
+  margin-bottom: 1rem;
+}
+
+.column-left {
+  display: grid;
+  grid-template-rows: 1fr 1fr;
+  gap: 1rem;
+}
+
+.column-right {
+  display: grid;
+  grid-template-rows: auto auto auto auto;
+  gap: 1rem;
+}
