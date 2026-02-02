@@ -1,5 +1,6 @@
 const { DataTypes } = require('sequelize');
 const sequelize = require('../config/database');
+const bcrypt = require('bcrypt');
 
 const User = sequelize.define('User', {
     user_id: {
@@ -14,6 +15,15 @@ const User = sequelize.define('User', {
         validate: {
             notEmpty: true,
             len: [3, 100]
+        }
+    },
+    email: {
+        type: DataTypes.STRING(150),
+        allowNull: false,
+        unique: true,
+        validate: {
+            notEmpty: true,
+            isEmail: true
         }
     },
     password: {
@@ -35,6 +45,20 @@ const User = sequelize.define('User', {
     scopes: {
         withPassword: {
             attributes: { include: ['password'] }
+        }
+    },
+    hooks: {
+        beforeCreate: async (user) => {
+            if (user.password) {
+                const salt = await bcrypt.genSalt(10);
+                user.password = await bcrypt.hash(user.password, salt);
+            }
+        },
+        beforeUpdate: async (user) => {
+            if (user.changed('password')) {
+                const salt = await bcrypt.genSalt(10);
+                user.password = await bcrypt.hash(user.password, salt);
+            }
         }
     }
 });
