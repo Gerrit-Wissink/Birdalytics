@@ -53,10 +53,13 @@ nav span{
     font-weight: 600;
 }
 
-#logOut{
-    padding: 6px 12px;
-    border-radius: 6px;
-    background-color: #003776;
+#logOut {
+    background: none;
+    border: none;
+    cursor: pointer;
+    font-family: inherit;
+    font-size: inherit;
+    padding: 0;
 }
 
 

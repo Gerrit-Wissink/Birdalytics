@@ -1,4 +1,5 @@
-// Example authentication middleware
+
+const jwt = require('jsonwebtoken');
 const authMiddleware = (req, res, next) => {
     try {
         const token = req.header('Authorization')?.replace('Bearer ', '');
@@ -10,7 +11,6 @@ const authMiddleware = (req, res, next) => {
             });
         }
         
-        // Add your JWT verification logic here
         const decoded = jwt.verify(token, process.env.JWT_SECRET);
         req.user = decoded;
         
