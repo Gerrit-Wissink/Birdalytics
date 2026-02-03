@@ -1,7 +1,18 @@
-import { Link, NavLink, useLocation } from "react-router-dom";
+import { Link, NavLink, useNavigate } from "react-router-dom";
 import './navbar.css';
 
 export default function Navbar() {
+    const navigate = useNavigate();
+
+    const handleLogout = () => {
+        // Clear all stored authentication data
+        localStorage.removeItem('token');
+        localStorage.removeItem('tokenExpiry');
+        localStorage.removeItem('user');
+        
+        // Redirect to login page
+        navigate('/login');
+    };
    
     return (
         <>
@@ -21,9 +32,9 @@ export default function Navbar() {
                             <span>Upload Data</span>
                         </NavLink>
                     </div>
-                    <a href="#" id='logOut'>
+                    <button onClick={handleLogout} id='logOut'>
                         Log Out
-                    </a>
+                    </button>
                 
                 </div>
             </nav>           
