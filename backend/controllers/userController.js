@@ -1,4 +1,6 @@
 const User = require('../models/User');
+const bcrypt = require('bcrypt');
+const jwt = require('jsonwebtoken');
 
 class UserController {
     // Get all users
@@ -152,6 +154,75 @@ class UserController {
             res.status(500).json({
                 success: false,
                 error: 'Failed to delete user'
+            });
+        }
+    }
+    // Login user
+    static async loginUser(req, res) {
+        try {
+            const { username, password } = req.body;
+            
+            // Validation
+            if (!username || !password) {
+                return res.status(400).json({
+                    success: false,
+                    error: 'Please provide username and password'
+                });
+            }
+            
+            // Find user with password (using withPassword scope)
+            const user = await User.scope('withPassword').findOne({ 
+                where: { username } 
+            });
+            
+            if (!user) {
+                return res.status(401).json({
+                    success: false,
+                    error: 'Invalid credentials'
+                });
+            }
+            
+            // Compare password with hashed password in database
+            const isPasswordValid = await bcrypt.compare(password, user.password);
+            
+            if (!isPasswordValid) {
+                return res.status(401).json({
+                    success: false,
+                    error: 'Invalid credentials'
+                });
+            }
+            
+            // Create JWT token
+            const token = jwt.sign(
+                { 
+                    user_id: user.user_id, 
+                    username: user.username
+                },
+                process.env.JWT_SECRET || 'your secret key change this',
+                { expiresIn: '24h' }
+            );
+            
+            // Calculate expiration date
+            const expiresAt = new Date();
+            expiresAt.setHours(expiresAt.getHours() + 24);
+            
+            // Return token and expiration date (exclude password from response)
+            res.json({
+                success: true,
+                token: token,
+                expiresAt: expiresAt.toISOString(),
+                user: {
+                    user_id: user.user_id,
+                    username: user.username,
+                    created_at: user.created_at,
+                    updated_at: user.updated_at
+                }
+            });
+        } catch (error) {
+            console.error('Error in loginUser:', error);
+            res.status(500).json({
+                success: false,
+                error: 'Login failed'
             });
         }
     }
