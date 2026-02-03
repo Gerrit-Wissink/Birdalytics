@@ -51,21 +51,13 @@ def predict_top5(image_path):
     top5 = [(model.config.id2label[idx.item()], prob.item()) for idx, prob in zip(top5_idx, top5_prob)]
     return top5, was_cropped
 
-# Example usage
+# Example usage - get all image files from research-images folder
+research_dir = "ai-model-test\\research-images"
+image_extensions = {'.jpg', '.jpeg', '.png', '.bmp', '.gif'}
 image_paths = [
-    "ai-model-test\\images\\Test1.jpg",
-    "ai-model-test\\images\\Test1-1.jpg",
-    "ai-model-test\\images\\Test2.jpg",
-    "ai-model-test\\images\\Test2-1.jpg",
-    "ai-model-test\\images\\Test3.jpg",
-    "ai-model-test\\images\\Test3-1.jpg",
-    "ai-model-test\\images\\Test4.jpg",
-    "ai-model-test\\images\\Test4-1.jpg",
-    "ai-model-test\\images\\Test5.jpg",
-    "ai-model-test\\images\\Test6.jpg",
-    "ai-model-test\\images\\Test7.jpg",
-    "ai-model-test\\images\\Test8.jpg",
-    "ai-model-test\\images\\Test9.jpg",
+    os.path.join(research_dir, filename)
+    for filename in os.listdir(research_dir)
+    if os.path.splitext(filename)[1].lower() in image_extensions
 ]
 
 for path in image_paths:
