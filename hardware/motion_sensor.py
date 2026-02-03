@@ -3,12 +3,16 @@
 from gpiozero import DigitalInputDevice as GPIO
 from picamera2 import Picamera2 as Camera
 from time import sleep
+from threading import Timer
 import datetime
 import os
 
-motion_pin_id = 17
+motion_pin_id = 17 # The GPIO pin ID on the Raspberry Pi that the motion sensor is connected to. This should not need to be changed.
+# TODO: Change interval_time to the appropriate length once script testing is complete.
+interval_time = 15 # Time, in seconds, to determine how much time should be taken between captures.
 home_dir = os.environ['HOME']
 
+# Code to initialize the camera
 bird_cam = Camera()
 bird_cam.create_still_configuration()
 bird_cam.start()
@@ -29,13 +33,10 @@ def capture_photo(condition):
         print("Capturing photo...")
         bird_cam.capture_file(path)
         print("Photo saved to " + path)
-        sleep(15)
+        sleep(interval_time)
 
 while True:
     if motion_sensor.is_active:
         capture_photo(1)
-    elif timepassed:
-        capture_photo(2)
-    else:
-        print("Waiting for motion...")
-        sleep(1)
+    else:   
+        Timer(interval_time, capture_photo, 2)
