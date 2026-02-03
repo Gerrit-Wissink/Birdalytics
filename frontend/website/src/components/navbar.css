@@ -1,5 +1,6 @@
 #logo{
     max-width: 175px;
+    max-height: 8vh;
 }
 
 nav{
@@ -48,9 +49,16 @@ nav span{
 }
 
 
-.active span{
+.active span :not(#upload){
     border-bottom: 2px solid #007CCE;
     font-weight: 600;
+}
+
+#upload{
+    background: #5a7814;
+    color: #FFF;
+    border-radius: 6px;
+    padding: 6px 12px;
 }
 
 #logOut {

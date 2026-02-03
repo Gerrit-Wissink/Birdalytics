@@ -108,7 +108,7 @@ export default function Upload(){
         )}
         <section id="upload-container">
             <div id="upload-logo">
-                <img src="./images/GLTLogo.jpg" alt="Genesee Land Trust Logo" />
+                {/* <img src="./images/GLTLogo.jpg" alt="Genesee Land Trust Logo" /> */}
             </div>
             <div id="upload-box">
                 <div id="upload-header">
