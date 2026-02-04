@@ -127,6 +127,13 @@ form {
   color: var(--blue);
 }
 
+.error-message {
+  color: red;
+  font-size: 0.9rem;
+  margin-top: 0.5rem;
+  text-align: center;
+}
+
 @media (max-width: 480px) {
   #login-logo {
     margin-bottom: 2rem;
