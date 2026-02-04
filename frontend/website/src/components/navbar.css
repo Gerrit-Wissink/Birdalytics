@@ -62,12 +62,19 @@ nav span{
 }
 
 #logOut {
+    color: #8AC1FF;
     background: none;
     border: none;
     cursor: pointer;
     font-family: inherit;
     font-size: inherit;
     padding: 0;
+    transition: all 0.2s ease-in-out;
+}
+
+#logOut:hover {
+    color: #BBDBFF;
+    text-shadow: 0 0 .9px #BBDBFF, 0 0 .9px #BBDBFF, 0 0 .9px #BBDBFF;
 }
 
 
