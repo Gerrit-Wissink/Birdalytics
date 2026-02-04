@@ -49,7 +49,7 @@ nav span{
 }
 
 
-.active span :not(#upload){
+.active span:not(#upload){
     border-bottom: 2px solid #007CCE;
     font-weight: 600;
 }
