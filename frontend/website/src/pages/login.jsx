@@ -33,7 +33,20 @@ export default function Login() {
             }
         } catch (err) {
             console.error('Login error:', err);
-            setError('Unable to connect to server. Please try again.');
+            
+            // Access status code
+            const status = err.response?.status;
+            const errorMessage = err.response?.data?.error;
+            
+            if (status === 401) {
+                setError('Invalid username or password');
+            } else if (status === 500) {
+                setError('Server error. Please try again later.');
+            } else if (status === 404) {
+                setError('Server not found. Please contact support.');
+            } else {
+                setError(errorMessage || 'Login Failed. Please try again.');
+            }
         } finally {
             setIsLoading(false);
         }
