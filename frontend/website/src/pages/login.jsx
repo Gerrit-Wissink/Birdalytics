@@ -1,8 +1,9 @@
 import { useState } from 'react';
 import { useNavigate } from 'react-router-dom';
+import apiClient from '../utils/apiClient';
 import './login.css';
 
-export default function LogIn() {
+export default function Login() {
     const [username, setUsername] = useState('');
     const [password, setPassword] = useState('');
     const [error, setError] = useState('');
@@ -15,15 +16,9 @@ export default function LogIn() {
         setIsLoading(true);
 
         try {
-            const response = await fetch('http://localhost:8000/api/users/login', {
-                method: 'POST',
-                headers: {
-                    'Content-Type': 'application/json',
-                },
-                body: JSON.stringify({ username, password })
-            });
+            const response = await apiClient.post('/users/login', { username, password });
 
-            const data = await response.json();
+            const data = response.data;
 
             if (data.success) {
                 // Store token and user data
@@ -53,7 +48,6 @@ export default function LogIn() {
                 <div id="login-box">
                     <h2>Birdalytics</h2>
                     <form onSubmit={handleSubmit}>
-                        {error && <p className="error-message">{error}</p>}
                         <div className="input-box">
                             <label htmlFor="username">Username</label>
                             <input
@@ -80,6 +74,7 @@ export default function LogIn() {
                                 disabled={isLoading}
                             />
                         </div>
+                        {error && <p className="error-message">{error}</p>}
                         <div className="button-box">
                             <button type="submit" disabled={isLoading}>
                                 {isLoading ? 'Signing In...' : 'Sign In'}
