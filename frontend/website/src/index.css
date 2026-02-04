@@ -8,6 +8,7 @@
   --title: #000000;
   --text: #2A2A2A;
   --green: #688B18;
+  --green-text: #57710E;
   --purple: #9764B9;
   --orange: #C76E01;
   --gradient-green: #688b1889;
@@ -25,6 +26,18 @@
 body, html, main {
   margin: 0;
   padding: 0;
+  overflow: hidden;
+}
+
+main {
+    overflow: hidden;
+    margin: 0;
+    margin-bottom: 5%;
+    height: 100vh;
+    width: 100vw;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
 }
 
 h1, h2, h3, h4, h5, h6 {

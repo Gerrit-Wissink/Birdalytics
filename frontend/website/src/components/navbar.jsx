@@ -28,8 +28,8 @@ export default function Navbar() {
                         <NavLink to="/reports" className={({ isActive }) => (isActive ? 'active' : '')}>
                             <span>Reports</span>
                         </NavLink>
-                        <NavLink to="/upload" className={({ isActive }) => (isActive ? 'active' : '')}>
-                            <span>Upload Data</span>
+                        <NavLink to="/upload">
+                            <span id='upload'>Upload Data</span>
                         </NavLink>
                     </div>
                     <button onClick={handleLogout} id='logOut'>
