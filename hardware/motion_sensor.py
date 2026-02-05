@@ -1,16 +1,12 @@
 # This is currently a test script for the motion sensor. 
 # This comment block will be removed when things are working as intended.
+import config
 from gpiozero import DigitalInputDevice as GPIO
 from picamera2 import Picamera2 as Camera
 from time import sleep
 from threading import Timer
 import datetime
 import os
-
-motion_pin_id = 17 # The GPIO pin ID on the Raspberry Pi that the motion sensor is connected to. This should not need to be changed.
-# TODO: Change interval_time to the appropriate length once script testing is complete.
-interval_time = 900 # Time, in seconds, to determine how much time should be taken between captures.
-home_dir = os.environ['HOME']
 
 # Code to initialize the camera
 print("Starting camera...")
@@ -19,7 +15,7 @@ bird_cam.create_still_configuration()
 bird_cam.start()
 print("Camera started successfully.")
 
-motion_sensor = GPIO(17)
+motion_sensor = GPIO(config.motion_pin_id)
 time_inactive = 0
 
 # capture_photo() will take a photo using the attached camera and save it into the Pictures directory 
@@ -31,7 +27,7 @@ def capture_photo(condition):
         capture_time = datetime.datetime.now()
         timestamp = capture_time.strftime("%Y-%m-%d_%H-%M-%S")
         filename = "BoxX_" + timestamp # Replace X with location name/ID
-        path = home_dir + "/Pictures/" + filename + ".jpg"
+        path = config.home_dir + "/Pictures/" + filename + ".jpg"
         if condition == 1:
             print("Motion detected.")
         elif condition == 2:
@@ -41,7 +37,7 @@ def capture_photo(condition):
         print("Capturing photo...")
         bird_cam.capture_file(path)
         print("Photo saved to " + path)
-        sleep(10)
+        sleep(config.motion_snooze_time)
 
 # This loop will do the following:
 # First, it will check every second if motion has been detected. 
@@ -50,12 +46,12 @@ def capture_photo(condition):
 # Otherwise, increment the timer. The timer is reset whenever a photo is taken.
 # These steps will be repeated until one of the capturing conditons are met.
 while True:
-    print ("Looking for motion... (Photo will be taken automatically if " + str(interval_time) + " second(s) have passed)")
+    print ("Looking for motion... (Photo will be taken automatically if " + str(config.interval_time) + " second(s) have passed)")
     sleep(1)
     if motion_sensor.is_active:
         capture_photo(1)
         time_inactive = 0
-    elif time_inactive >= interval_time:   
+    elif time_inactive >= config.interval_time:   
         capture_photo(2)
         time_inactive = 0
     else:
