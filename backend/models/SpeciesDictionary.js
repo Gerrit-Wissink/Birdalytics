@@ -16,6 +16,13 @@ const SpeciesDictionary = sequelize.define('SpeciesDictionary', {
             len: [1, 255]
         }
     },
+    tag: {
+        type: DataTypes.STRING(255),
+        allowNull: true,
+        validate: {
+            len: [0, 255]
+        }
+    }
 }, {
     tableName: 'species_dictionary',
     timestamps: true,
