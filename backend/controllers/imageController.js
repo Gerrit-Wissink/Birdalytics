@@ -1,4 +1,3 @@
-const sequelize = require('../config/database');
 const Image = require('../models/Image');
 
 class ImageController {
