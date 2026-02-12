@@ -6,6 +6,11 @@ const path = require('path');
 
 // Import routes
 const userRoutes = require('./routes/userRoutes');
+const birdRoutes = require('./routes/birdRoutes');
+const recordRoutes = require('./routes/recordRoutes');
+const boxRoutes = require('./routes/boxRoutes');
+const imageRoutes = require('./routes/imageRoutes');
+const speciesRoutes = require('./routes/speciesRoutes');
 
 // Load environment variables
 dotenv.config();
@@ -52,6 +57,11 @@ app.get('/', (req, res) => {
 
 // API Routes
 app.use('/api/users', userRoutes);
+app.use('/api/guess', birdRoutes);
+app.use('/api/record', recordRoutes);
+app.use('/api/boxes', boxRoutes);
+app.use('/api/images', imageRoutes);
+app.use('/api/species', speciesRoutes);
 
 // 404 Handler
 app.use((req, res) => {
