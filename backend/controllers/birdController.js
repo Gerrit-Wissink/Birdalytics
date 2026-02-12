@@ -63,7 +63,7 @@ class BirdController {
 
             // Check if guess already exists
             const existingGuess = await Birdguess.findOne({
-                attributes: ['record_id'],
+                attributes: ['birdguess_id'],
                 where: { record_id: record_id }
             });
             if (existingGuess) {
