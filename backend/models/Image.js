@@ -3,7 +3,7 @@ const sequelize = require('../config/database');
 
 const Image = sequelize.define('Image', {
     image_id: {
-        type: DataTypes.INTEGER,
+        type: DataTypes.UUID,
         primaryKey: true,
         autoIncrement: true
     },
@@ -15,10 +15,6 @@ const Image = sequelize.define('Image', {
         type: DataTypes.DATE,
         allowNull: false,
         defaultValue: DataTypes.NOW
-    },
-    file_size: {
-        type: DataTypes.INTEGER,
-        allowNull: false
     }
     }, {
     tableName: 'images',
