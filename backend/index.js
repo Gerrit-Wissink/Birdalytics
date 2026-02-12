@@ -8,6 +8,8 @@ const path = require('path');
 const userRoutes = require('./routes/userRoutes');
 const birdRoutes = require('./routes/birdRoutes');
 const recordRoutes = require('./routes/recordRoutes');
+const boxRoutes = require('./routes/boxRoutes');
+const imageRoutes = require('./routes/imageRoutes');
 
 // Load environment variables
 dotenv.config();
@@ -56,6 +58,8 @@ app.get('/', (req, res) => {
 app.use('/api/users', userRoutes);
 app.use('/api/guess', birdRoutes);
 app.use('/api/record', recordRoutes);
+app.use('/api/boxes', boxRoutes);
+app.use('/api/images', imageRoutes);
 
 // 404 Handler
 app.use((req, res) => {
