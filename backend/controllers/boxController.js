@@ -1,5 +1,5 @@
 const sequelize = require('../config/database');
-const BirdBoxes = require('../models/BirdBoxes');
+const BirdBoxes = require('../models/Birdboxes');
 
 class BoxController {
     // Get all boxes
