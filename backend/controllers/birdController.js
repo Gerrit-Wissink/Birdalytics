@@ -51,10 +51,10 @@ class BirdController {
     // Create new Birdguess
     static async createGuess(req, res) {
         try {
-            const { record_id, species_id, model, model_confidence } = req.body;
+            const { record_id } = req.body;
 
             // Validation
-            if (!record_id || !species_id || !model || !model_confidence) {
+            if (!record_id) {
                 return res.status(400).json({
                     success: false,
                     error: 'Please provide valid data'
@@ -73,7 +73,10 @@ class BirdController {
                 });
             }
 
-            // Python stuff here?
+            // Python stuff here? Should return species_id, model, model_confidence
+            const species_id = 1
+            const model = 'none'
+            const model_confidence = 0.0
 
             const newGuess = await Birdguess.create({ record_id, species_id, model, model_confidence });
 

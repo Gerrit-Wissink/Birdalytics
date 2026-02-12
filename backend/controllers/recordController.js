@@ -1,0 +1,136 @@
+const Birdrecords = require('../models/Birdrecords');
+
+class RecordController {
+    // Get all Birdrecords
+    static async getAllRecords(req, res) {
+        try {
+            const records = await Birdrecords.findAll({
+                order: [['timestamp', 'record_id']]
+            });
+            res.json({
+                success: true,
+                count: records.length,
+                data: records
+            });
+        } catch (error) {
+            console.error('Error in getAllRecords:', error);
+            res.status(500).json({
+                success: false,
+                error: 'Failed to fetch records'
+            });
+        }
+    }
+
+    // Get single Birdrecord
+    static async getRecord(req, res) {
+        try {
+            const { id } = req.params;
+            const record = await Birdrecords.findByPk(id);
+
+            if (!record) {
+                return res.status(404).json({
+                    success: false,
+                    error: 'Record not found'
+                });
+            }
+
+            res.json({
+                success: true,
+                data: record
+            });
+        } catch (error) {
+            console.error('Error in getRecord:', error);
+            res.status(500).json({
+                success: false,
+                error: 'Failed to fetch record'
+            });
+        }
+    }
+
+    // Create new Birdrecord
+    static async createRecord(req, res) {
+        try {
+            const { birdbox_id, timestamp, image_id } = req.body;
+
+            // Validation
+            if (!birdbox_id || !timestamp || !image_id) {
+                return res.status(400).json({
+                    success: false,
+                    error: 'Please provide valid data'
+                });
+            }
+
+            // Check if record already exists
+            const existingRecord = await Birdrecords.findOne({
+                attributes: ['record_id'],
+                where: {
+                    birdbox_id: birdbox_id,
+                    timestamp: timestamp
+                }
+            });
+            if (existingRecord) {
+                return res.status(400).json({
+                    success: false,
+                    error: 'Record already exists'
+                });
+            }
+
+            const newRecord = await Birdrecords.create({ birdbox_id, timestamp, image_id });
+
+            res.status(201).json({
+                success: true,
+                data: newRecord
+            });
+        } catch (error) {
+            console.error('Error in createRecord:', error);
+            // Handle Sequelize validation errors
+            if (error.name === 'SequelizeValidationError') {
+                return res.status(400).json({
+                    success: false,
+                    error: error.errors.map(e => e.message).join(', ')
+                });
+            }
+            res.status(500).json({
+                success: false,
+                error: 'Failed to create Bird record'
+            });
+        }
+    }
+
+    // Update record
+    static async updateRecord(req, res) {
+        try {
+            const { id } = req.params;
+            const { manual_bird } = req.body;
+
+            const record = await Birdrecords.findByPk(id);
+            if (!record) {
+                return res.status(404).json({
+                    success: false,
+                    error: 'Record not found'
+                });
+            }
+
+            await Birdrecords.update({ manual_bird: manual_bird });
+
+            res.json({
+                success: true,
+                data: record
+            });
+        } catch (error) {
+            console.error('Error in updateRecord:', error);
+            if (error.name === 'SequelizeValidationError') {
+                return res.status(400).json({
+                    success: false,
+                    error: error.errors.map(e => e.message).join(', ')
+                });
+            }
+            res.status(500).json({
+                success: false,
+                error: 'Failed to update record'
+            });
+        }
+    }
+}
+
+module.exports = RecordController;
