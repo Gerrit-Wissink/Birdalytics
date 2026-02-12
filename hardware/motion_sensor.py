@@ -1,12 +1,10 @@
 # This is currently a test script for the motion sensor. 
 # This comment block will be removed when things are working as intended.
-import config
+import config # config.py contains variables that may be used in both motion_sensor.py and LAN.py.
 from gpiozero import DigitalInputDevice as GPIO
 from picamera2 import Picamera2 as Camera
 from time import sleep
-from threading import Timer
 import datetime
-import os
 
 # Code to initialize the camera
 print("Starting camera...")
@@ -18,11 +16,10 @@ print("Camera started successfully.")
 motion_sensor = GPIO(config.motion_pin_id)
 time_inactive = 0
 
-# capture_photo() will take a photo using the attached camera and save it into the Pictures directory 
-# located in the Pi's home directory.
-# Files are saved under the format BoxX_yyyy-mm-dd_HH-MM-SS, with the date/time being the time of capture.
-# It will output one of two things depending on whether motion was detected (condition = 1) 
-# or if the amount of time defined by interval_time has passed (condition = 2).
+# capture_photo() will take a photo using the attached camera and save it to the Raspberry Pi's storage.
+# Files are saved in the Home's Pictures directory, under the format BoxX_yyyy-mm-dd_HH-MM-SS, with the date/time being the time of capture.
+# The console will output a statement based on what triggered the capture:
+# if motion was detected (condition = 1), or if the amount of time defined by interval_time has passed (condition = 2).
 def capture_photo(condition):
         capture_time = datetime.datetime.now()
         timestamp = capture_time.strftime("%Y-%m-%d_%H-%M-%S")

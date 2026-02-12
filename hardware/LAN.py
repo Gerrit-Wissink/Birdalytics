@@ -1,9 +1,10 @@
+import config
 from gpiozero import DigitalInputDevice as GPIO
 from time import sleep
 import os
 
 # TODO: find a pin to wire the LAN enable switch to
-push_button = GPIO(0)
+push_button = GPIO(config.button_pin_id)
 
 # ensure Wi-Fi isn't running
 os.system("rfkill block wifi")
