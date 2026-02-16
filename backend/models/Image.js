@@ -15,6 +15,10 @@ const Image = sequelize.define('Image', {
         type: DataTypes.DATE,
         allowNull: false,
         defaultValue: DataTypes.NOW
+    },
+    file_size: {
+        type: DataTypes.INTEGER,
+        allowNull: false
     }
     }, {
     tableName: 'images',
