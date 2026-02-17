@@ -1,11 +1,15 @@
 #overview-grid {
   display: grid;
-  grid-template-columns: 80% 20%;
-  gap: 1rem;
+  grid-template-columns: 78% 20%;
   margin-bottom: 2.5%;
+  max-width: 100%;
+  width: 100%;
+  box-sizing: border-box;
+  justify-content: space-between;
 }
 
 .column-left {
+  
   display: grid;
   grid-template-rows: 1fr 1fr;
   gap: 1rem;
@@ -15,4 +19,72 @@
   display: grid;
   grid-template-rows: auto auto auto auto;
   gap: 1rem;
+}
+
+.leaflet-top, .leaflet-bottom{
+  z-index: 900 !important;
+}
+
+@media screen and (max-width: 1250px) {
+  #overview-grid {
+    grid-template-columns: 1fr;
+    grid-template-rows: auto auto;
+    align-items: center;
+  }
+
+  /* Make the stats column 2x3 to arrange items */
+  .column-right{
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    grid-template-rows: auto auto auto;
+    gap: 1rem;
+    grid-template-areas:
+      "pie active"
+      "pie mostActive"
+      "line line";
+  }
+
+  .column-right > div:nth-child(1) { /* Pie chart in top left */
+    grid-area: pie;
+    min-width: 0;
+    height: 100%;
+  }
+
+  .column-right > div:nth-child(1) > div { /* Make pie chart box fill entire space */
+    height: 100%;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    padding: 0px;
+  }
+
+  .column-right > div:nth-child(2) { /* Box stat 1 takes 1/2 of top right */
+    grid-area: active;
+    min-width: 0;
+  }
+
+  .column-right > div:nth-child(4) { /* Box stat 2 takes 2/2 of top right */
+    grid-area: mostActive;
+    min-width: 0;
+  }
+
+  .column-right > div:nth-child(3) { /* Line graph spans whole bottom row */
+    grid-area: line;
+    min-width: 0;
+    width: 100%;
+  }
+}
+
+@media screen and (max-width: 600px) { /* Just make it all one column here */
+  .column-right{
+    grid-template-columns: 1fr;
+    grid-template-rows: auto auto auto auto;
+    gap: 1rem;
+    grid-template-areas:
+      "pie"
+      "active"
+      "mostActive"
+      "line";
+    margin-bottom: 5vh;
+  }
 }
