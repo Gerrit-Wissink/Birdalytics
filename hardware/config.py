@@ -1,6 +1,9 @@
 # config.py contains variables that may be used across multiple scripts for the Raspberry Pi.
 import os
 
+# the ID of the box being used on the database. This should not be changed until the respective box has been added to the database.
+box_id = 0
+
 # The GPIO pin ID on the Raspberry Pi that the motion sensor is connected to. This should not need to be changed.
 motion_pin_id = 17
 

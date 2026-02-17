@@ -23,7 +23,7 @@ time_inactive = 0
 def capture_photo(condition):
         capture_time = datetime.datetime.now()
         timestamp = capture_time.strftime("%Y-%m-%d_%H-%M-%S")
-        filename = "BoxX_" + timestamp # Replace X with location name/ID
+        filename = "Box" + config.box_id + "_" + timestamp # Replace X with location name/ID
         path = config.home_dir + "/Pictures/" + filename + ".jpg"
         if condition == 1:
             print("Motion detected.")
