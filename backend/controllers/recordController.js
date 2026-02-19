@@ -1,12 +1,27 @@
 const Birdrecords = require('../models/Birdrecords');
+const Image = require('../models/Image');
+const Birdboxes = require('../models/Birdboxes');
+const Birdguess = require('../models/Birdguess');
+const SpeciesDictionary = require('../models/SpeciesDictionary');
+const sequelize = require('../config/database');
 
 class RecordController {
     // Get all Birdrecords
     static async getAllRecords(req, res) {
         try {
             const records = await Birdrecords.findAll({
-                order: [['timestamp', 'record_id']]
+                include: [
+                    { model: Image, as: 'image' },
+                    { model: Birdboxes, as: 'birdbox' },
+                    { 
+                        model: Birdguess, 
+                        as: 'guesses',
+                        include: [{ model: SpeciesDictionary, as: 'species' }]
+                    }
+                ],
+                order: [['timestamp', 'DESC']]
             });
+
             res.json({
                 success: true,
                 count: records.length,

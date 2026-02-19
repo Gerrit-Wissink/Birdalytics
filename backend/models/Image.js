@@ -3,7 +3,7 @@ const sequelize = require('../config/database');
 
 const Image = sequelize.define('Image', {
     image_id: {
-        type: DataTypes.INTEGER,
+        type: DataTypes.UUID,
         primaryKey: true,
         autoIncrement: true
     },

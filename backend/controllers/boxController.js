@@ -1,13 +1,30 @@
 const sequelize = require('../config/database');
-const BirdBoxes = require('../models/BirdBoxes');
+const BirdBoxes = require('../models/Birdboxes');
+const Birdrecords = require('../models/Birdrecords');
+const Image = require('../models/Image');
 
 class BoxController {
     // Get all boxes
     static async getAllBoxes(req, res) {
         try {
             const boxes = await BirdBoxes.findAll({
-                order: [['name', 'birdbox_id']]
+                include: [
+                    {
+                        model: Birdrecords,
+                        as: 'records',
+                        include: [
+                            {
+                                model: Image,
+                                as: 'image',
+                                attributes: ['image_id', 'image']
+                            }
+                        ],
+                        attributes: ['record_id', 'timestamp']
+                    }
+                ],
+                order: [['name', 'ASC'], ['created_at', 'DESC']]
             });
+
             res.json({
                 success: true,
                 count: boxes.length,
