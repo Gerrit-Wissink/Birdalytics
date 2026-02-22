@@ -1,5 +1,5 @@
 const sequelize = require('../config/database');
-const { Birdguess } = require('../models');
+const Birdguess = require('../models/Birdguess');
 const BirdBoxes = require('../models/Birdboxes');
 const Birdrecords = require('../models/Birdrecords');
 const Image = require('../models/Image');
