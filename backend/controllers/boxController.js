@@ -26,7 +26,7 @@ class BoxController {
                                         attributes: ['species_id', 'species_name']
                                     }
                                 ],
-                                attributes: ['birdguess_id', 'model', 'model_confidence'],
+                                attributes: ['birdguess_id', 'model', 'model_confidence', 'species_id'],
                                 limit: 1,
                                 order: [['model_confidence', 'DESC']]
                             }
