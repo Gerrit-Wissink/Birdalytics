@@ -82,7 +82,7 @@ class BoxController {
                 ]     
             */
 
-            const stats = boxes.map(box => this.calculateBoxStats(box));
+            const stats = boxes.map(box => calculateBoxStats(box));
 
             res.json({
                 success: true,
