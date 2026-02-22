@@ -87,7 +87,7 @@ class BoxController {
             res.json({
                 success: true,
                 count: boxes.length,
-                data: boxes,
+                boxes: boxes,
                 stats: stats
             });
         } catch (error) {
@@ -265,9 +265,10 @@ class BoxController {
         const totalRecords = box.records.length;
         const photosWithCreatures = box.records.filter(
             record => record.guesses && record.guesses.length > 0).length;
-        const kestrelIdentified = box.records.filter(
+        const numKestrelIdentified = box.records.filter(
             record => record.guesses && record.guesses.some(guess => guess.species && guess.species.species_id === 1)).length;
-        const nonKestrelIdentified = photosWithCreatures - kestrelIdentified;
+        const nonKestrelIdentified = photosWithCreatures - numKestrelIdentified;
+        const mostRecentKestrel = box.records.find(record => record.guesses && record.guesses.some(guess => guess.species && guess.species.species_id === 1))[0];
 
 
         const ACTIVE_DAY_THRESHOLD = 10; // Example threshold for active day
@@ -290,7 +291,7 @@ class BoxController {
         
         const numActiveDays = Object.keys(recordDays).filter(date => recordDays[date] >= ACTIVE_DAY_THRESHOLD).length;
         const usageRate = numActiveDays / Math.min(ACTIVE_DAY_PERIOD, Object.keys(recordDays).length);
-        
+
         const modifiedRecords = box.records.reduce((count, record) => {
             if (record.manual_bird !== null) {
                 return count + 1;
@@ -301,11 +302,12 @@ class BoxController {
         return {
             totalRecords,
             photosWithCreatures,
-            kestrelIdentified,
+            numKestrelIdentified,
             nonKestrelIdentified,
-            activeDays: numActiveDays,
+            numActiveDays,
             usageRate,
-            modifiedRecords
+            modifiedRecords,
+            mostRecentKestrel
         };
     }
 }
