@@ -1,7 +1,9 @@
 const sequelize = require('../config/database');
+const { Birdguess } = require('../models');
 const BirdBoxes = require('../models/Birdboxes');
 const Birdrecords = require('../models/Birdrecords');
 const Image = require('../models/Image');
+const SpeciesDictionary = require('../models/SpeciesDictionary');
 
 class BoxController {
     // Get all boxes
@@ -17,18 +19,76 @@ class BoxController {
                                 model: Image,
                                 as: 'image',
                                 attributes: ['image_id', 'image']
+                            },
+                            {
+                                model: Birdguess,
+                                as: 'guesses',
+                                include: [
+                                    {
+                                        model: SpeciesDictionary,
+                                        as: 'species',
+                                        attributes: ['species_id', 'species_name']
+                                    }
+                                ],
+                                attributes: ['birdguess_id', 'model', 'model_confidence'],
+                                limit: 1,
+                                order: [['model_confidence', 'DESC']]
                             }
                         ],
-                        attributes: ['record_id', 'timestamp']
+                        attributes: ['record_id', 'timestamp', 'manual_bird'],
+                        order: [['timestamp', 'DESC']]
                     }
                 ],
                 order: [['name', 'ASC'], ['created_at', 'DESC']]
             });
 
+            /* 
+                Boxes: 
+                [
+                    {
+                        "birdbox_id": 1,
+                        "name": "Box 1",
+                        "latitide": 40.7128,
+                        "longitude": -74.0060,
+                        "field_notes": "Near the park",
+                        "created_at": "2024-01-01T00:00:00.000Z",
+                        "updated_at": "2024-01-01T00:00:00.000Z",
+                        "records": [
+                            {
+                                "record_id": 1,
+                                "timestamp": "2024-01-01T12:00:00.000Z",
+                                "manual_bird": null,
+                                "image": {
+                                    "image_id": 1,
+                                    "image": "<base64string>"
+                                },
+                                "guesses": [
+                                    {
+                                        "birdguess_id": 1,
+                                        "model": "Model A",
+                                        "model_confidence": 0.95,
+                                        "species": {
+                                            "species_id": 1,
+                                            "species_name": "Kestrel"
+                                        }
+                                    },
+                                    ...
+                                ]
+                            },
+                            ...
+                        ]
+                    },
+                    ...
+                ]     
+            */
+
+            const stats = boxes.map(box => this.calculateBoxStats(box));
+
             res.json({
                 success: true,
                 count: boxes.length,
-                data: boxes
+                data: boxes,
+                stats: stats
             });
         } catch (error) {
             console.error('Error in getAllBoxes:', error);
@@ -188,6 +248,65 @@ class BoxController {
                 error: 'Failed to delete box'
             });
         }
+    }
+
+    static calculateBoxStats(box) {
+        /* 
+            - Total number of captured photos
+            - Total number of photos with creatures
+            - Total number of kestrel-identified photos
+            - Total number of non-kestrel identified photos
+            - Number Active Days (days with more than X photos with an animal captured)
+            - Usage Rate: Number active days / 25 days (or days available in record)
+            - Total number of modified identification results
+                - Of all the flagged identifications (photos with uncertain identifications needing review), how many of them have been modified
+                - Can be a number: #modified flagged imgs/total flagged imgs
+        */
+        const totalRecords = box.records.length;
+        const photosWithCreatures = box.records.filter(
+            record => record.guesses && record.guesses.length > 0).length;
+        const kestrelIdentified = box.records.filter(
+            record => record.guesses && record.guesses.some(guess => guess.species && guess.species.species_id === 1)).length;
+        const nonKestrelIdentified = photosWithCreatures - kestrelIdentified;
+
+
+        const ACTIVE_DAY_THRESHOLD = 10; // Example threshold for active day
+        const ACTIVE_DAY_PERIOD = 90; // Number of days to consider for active day calculation (e.g., last 90 days)
+
+        const recordDays = {};
+        box.records.forEach(record => {
+            let recordDate = new Date(record.timestamp);
+            let dateString = recordDate.toISOString().split('T')[0]; // Get date in YYYY-MM-DD format
+            if (!recordDays[dateString]) {
+                recordDays[dateString] = 0;
+            }
+            if (record.guesses && record.guesses.length > 0) {
+                recordDays[dateString]++;
+            }
+            if (Object.keys(recordDays).length > ACTIVE_DAY_PERIOD) {
+                return;
+            }
+        });
+        
+        const numActiveDays = Object.keys(recordDays).filter(date => recordDays[date] >= ACTIVE_DAY_THRESHOLD).length;
+        const usageRate = numActiveDays / Math.min(ACTIVE_DAY_PERIOD, Object.keys(recordDays).length);
+        
+        const modifiedRecords = box.records.reduce((count, record) => {
+            if (record.manual_bird !== null) {
+                return count + 1;
+            }
+            return count;
+        }, 0);
+
+        return {
+            totalRecords,
+            photosWithCreatures,
+            kestrelIdentified,
+            nonKestrelIdentified,
+            activeDays: numActiveDays,
+            usageRate,
+            modifiedRecords
+        };
     }
 }
 

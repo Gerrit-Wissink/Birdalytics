@@ -3,7 +3,7 @@ const sequelize = require('../config/database');
 
 const SpeciesDictionary = sequelize.define('SpeciesDictionary', {
     species_id: {
-        type: DataTypes.UUID,
+        type: DataTypes.INTEGER,
         primaryKey: true,
         autoIncrement: true
     },
