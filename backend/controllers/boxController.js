@@ -82,6 +82,55 @@ class BoxController {
                 ]     
             */
 
+            const calculateBoxStats = (box) => {
+                const totalRecords = box.records.length;
+                const photosWithCreatures = box.records.filter(
+                    record => record.guesses && record.guesses.length > 0).length;
+                const numKestrelIdentified = box.records.filter(
+                    record => record.guesses && record.guesses.some(guess => guess.species && guess.species.species_id === 1)).length;
+                const nonKestrelIdentified = photosWithCreatures - numKestrelIdentified;
+                const mostRecentKestrel = box.records.find(record => record.guesses && record.guesses.some(guess => guess.species && guess.species.species_id === 1));
+
+                const ACTIVE_DAY_THRESHOLD = 10;
+                const ACTIVE_DAY_PERIOD = 90;
+
+                const recordDays = {};
+                box.records.forEach(record => {
+                    let recordDate = new Date(record.timestamp);
+                    let dateString = recordDate.toISOString().split('T')[0];
+                    if (!recordDays[dateString]) {
+                        recordDays[dateString] = 0;
+                    }
+                    if (record.guesses && record.guesses.length > 0) {
+                        recordDays[dateString]++;
+                    }
+                    if (Object.keys(recordDays).length > ACTIVE_DAY_PERIOD) {
+                        return;
+                    }
+                });
+                
+                const numActiveDays = Object.keys(recordDays).filter(date => recordDays[date] >= ACTIVE_DAY_THRESHOLD).length;
+                const usageRate = numActiveDays / Math.min(ACTIVE_DAY_PERIOD, Object.keys(recordDays).length);
+
+                const modifiedRecords = box.records.reduce((count, record) => {
+                    if (record.manual_bird !== null) {
+                        return count + 1;
+                    }
+                    return count;
+                }, 0);
+
+                return {
+                    totalRecords,
+                    photosWithCreatures,
+                    numKestrelIdentified,
+                    nonKestrelIdentified,
+                    numActiveDays,
+                    usageRate,
+                    modifiedRecords,
+                    mostRecentKestrel
+                };
+            };
+
             const stats = boxes.map(box => calculateBoxStats(box));
 
             res.json({
@@ -248,67 +297,6 @@ class BoxController {
                 error: 'Failed to delete box'
             });
         }
-    }
-
-    static calculateBoxStats(box) {
-        /* 
-            - Total number of captured photos
-            - Total number of photos with creatures
-            - Total number of kestrel-identified photos
-            - Total number of non-kestrel identified photos
-            - Number Active Days (days with more than X photos with an animal captured)
-            - Usage Rate: Number active days / 25 days (or days available in record)
-            - Total number of modified identification results
-                - Of all the flagged identifications (photos with uncertain identifications needing review), how many of them have been modified
-                - Can be a number: #modified flagged imgs/total flagged imgs
-        */
-        const totalRecords = box.records.length;
-        const photosWithCreatures = box.records.filter(
-            record => record.guesses && record.guesses.length > 0).length;
-        const numKestrelIdentified = box.records.filter(
-            record => record.guesses && record.guesses.some(guess => guess.species && guess.species.species_id === 1)).length;
-        const nonKestrelIdentified = photosWithCreatures - numKestrelIdentified;
-        const mostRecentKestrel = box.records.find(record => record.guesses && record.guesses.some(guess => guess.species && guess.species.species_id === 1))[0];
-
-
-        const ACTIVE_DAY_THRESHOLD = 10; // Example threshold for active day
-        const ACTIVE_DAY_PERIOD = 90; // Number of days to consider for active day calculation (e.g., last 90 days)
-
-        const recordDays = {};
-        box.records.forEach(record => {
-            let recordDate = new Date(record.timestamp);
-            let dateString = recordDate.toISOString().split('T')[0]; // Get date in YYYY-MM-DD format
-            if (!recordDays[dateString]) {
-                recordDays[dateString] = 0;
-            }
-            if (record.guesses && record.guesses.length > 0) {
-                recordDays[dateString]++;
-            }
-            if (Object.keys(recordDays).length > ACTIVE_DAY_PERIOD) {
-                return;
-            }
-        });
-        
-        const numActiveDays = Object.keys(recordDays).filter(date => recordDays[date] >= ACTIVE_DAY_THRESHOLD).length;
-        const usageRate = numActiveDays / Math.min(ACTIVE_DAY_PERIOD, Object.keys(recordDays).length);
-
-        const modifiedRecords = box.records.reduce((count, record) => {
-            if (record.manual_bird !== null) {
-                return count + 1;
-            }
-            return count;
-        }, 0);
-
-        return {
-            totalRecords,
-            photosWithCreatures,
-            numKestrelIdentified,
-            nonKestrelIdentified,
-            numActiveDays,
-            usageRate,
-            modifiedRecords,
-            mostRecentKestrel
-        };
     }
 }
 
