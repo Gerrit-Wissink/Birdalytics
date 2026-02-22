@@ -1,15 +1,11 @@
 const sequelize = require('../config/database');
-const Birdguess = require('../models/Birdguess');
-const BirdBoxes = require('../models/Birdboxes');
-const Birdrecords = require('../models/Birdrecords');
-const Image = require('../models/Image');
-const SpeciesDictionary = require('../models/SpeciesDictionary');
+const { Birdguess, Birdboxes, Birdrecords, Image, SpeciesDictionary } = require('../models');
 
 class BoxController {
     // Get all boxes
     static async getAllBoxes(req, res) {
         try {
-            const boxes = await BirdBoxes.findAll({
+            const boxes = await Birdboxes.findAll({
                 include: [
                     {
                         model: Birdrecords,
@@ -152,7 +148,7 @@ class BoxController {
     static async getBox(req, res) {
         try {
             const { id } = req.params;
-            const box = await BirdBoxes.findByPk(id);
+            const box = await Birdboxes.findByPk(id);
 
             if (!box) {
                 return res.status(404).json({
@@ -188,7 +184,7 @@ class BoxController {
             }
 
             // Check if box already exists
-            const existingBox = await BirdBoxes.findOne({
+            const existingBox = await Birdboxes.findOne({
                 attributes: ['birdbox_id'],
                 where: { name: name }
             });
@@ -199,7 +195,7 @@ class BoxController {
                 });
             }
 
-            const newBox = await BirdBoxes.create({ name, latitide, longitude, field_notes });
+            const newBox = await Birdboxes.create({ name, latitide, longitude, field_notes });
 
             res.status(201).json({
                 success: true,
@@ -227,7 +223,7 @@ class BoxController {
             const { id } = req.params;
             const { name, latitide, longitude, field_notes } = req.body;
 
-            const box = await BirdBoxes.findByPk(id);
+            const box = await Birdboxes.findByPk(id);
             if (!box) {
                 return res.status(404).json({
                     success: false,
@@ -236,7 +232,7 @@ class BoxController {
             }
 
             // Check if box with name already exists
-            const existingBox = await BirdBoxes.findOne({
+            const existingBox = await Birdboxes.findOne({
                 attributes: ['birdbox_id'],
                 where: {
                     name: name,
@@ -276,7 +272,7 @@ class BoxController {
         try {
             const { id } = req.params;
 
-            const box = await BirdBoxes.findByPk(id);
+            const box = await Birdboxes.findByPk(id);
             if (!box) {
                 return res.status(404).json({
                     success: false,
