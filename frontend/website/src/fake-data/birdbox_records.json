@@ -1,0 +1,1017 @@
+{
+  "birdbox_records": [
+    {
+      "birdbox_id": 1,
+      "total_captured_photos": 312,
+      "total_photos_with_creatures": 198,
+      "total_kestrel_identified_photos": 143,
+      "total_non_kestrel_identified_photos": 55,
+      "number_active_days": 18,
+      "usage_rate": 0.72,
+      "modified_flagged_images": {
+        "modified_count": 7,
+        "total_flagged_count": 12
+      },
+      "images": [
+        {
+          "image_id": "IMG-1-001",
+          "birdbox_id": 1,
+          "photo_url": "https://placeholder.com/images/1/img_20250101_083012.jpg",
+          "date": "2025-01-01",
+          "time": "08:30:12",
+          "identified_result": "kestrel",
+          "confidence_score": 0.94,
+          "other_possible_results": [
+            { "label": "sparrowhawk", "confidence_score": 0.04 },
+            { "label": "unknown bird", "confidence_score": 0.02 }
+          ],
+          "modified_date": null
+        },
+        {
+          "image_id": "IMG-1-002",
+          "birdbox_id": 1,
+          "photo_url": "https://placeholder.com/images/1/img_20250103_112445.jpg",
+          "date": "2025-01-03",
+          "time": "11:24:45",
+          "identified_result": "kestrel",
+          "confidence_score": 0.88,
+          "other_possible_results": [
+            { "label": "merlin", "confidence_score": 0.07 },
+            { "label": "unknown bird", "confidence_score": 0.05 }
+          ],
+          "modified_date": null
+        },
+        {
+          "image_id": "IMG-1-003",
+          "birdbox_id": 1,
+          "photo_url": "https://placeholder.com/images/1/img_20250105_094530.jpg",
+          "date": "2025-01-05",
+          "time": "09:45:30",
+          "identified_result": "wood mouse",
+          "confidence_score": 0.76,
+          "other_possible_results": [
+            { "label": "vole", "confidence_score": 0.14 },
+            { "label": "unknown mammal", "confidence_score": 0.10 }
+          ],
+          "modified_date": "2025-01-06"
+        },
+        {
+          "image_id": "IMG-1-004",
+          "birdbox_id": 1,
+          "photo_url": "https://placeholder.com/images/1/img_20250108_161020.jpg",
+          "date": "2025-01-08",
+          "time": "16:10:20",
+          "identified_result": "kestrel",
+          "confidence_score": 0.97,
+          "other_possible_results": [
+            { "label": "sparrowhawk", "confidence_score": 0.02 },
+            { "label": "unknown bird", "confidence_score": 0.01 }
+          ],
+          "modified_date": null
+        },
+        {
+          "image_id": "IMG-1-005",
+          "birdbox_id": 1,
+          "photo_url": "https://placeholder.com/images/1/img_20250111_073318.jpg",
+          "date": "2025-01-11",
+          "time": "07:33:18",
+          "identified_result": "unknown",
+          "confidence_score": 0.41,
+          "other_possible_results": [
+            { "label": "kestrel", "confidence_score": 0.35 },
+            { "label": "sparrowhawk", "confidence_score": 0.24 }
+          ],
+          "modified_date": "2025-01-12"
+        },
+        {
+          "image_id": "IMG-1-006",
+          "birdbox_id": 1,
+          "photo_url": "https://placeholder.com/images/1/img_20250114_103455.jpg",
+          "date": "2025-01-14",
+          "time": "10:34:55",
+          "identified_result": "kestrel",
+          "confidence_score": 0.91,
+          "other_possible_results": [
+            { "label": "hobby", "confidence_score": 0.06 },
+            { "label": "unknown bird", "confidence_score": 0.03 }
+          ],
+          "modified_date": null
+        },
+        {
+          "image_id": "IMG-1-007",
+          "birdbox_id": 1,
+          "photo_url": "https://placeholder.com/images/1/img_20250117_150822.jpg",
+          "date": "2025-01-17",
+          "time": "15:08:22",
+          "identified_result": "brown rat",
+          "confidence_score": 0.83,
+          "other_possible_results": [
+            { "label": "wood mouse", "confidence_score": 0.11 },
+            { "label": "unknown mammal", "confidence_score": 0.06 }
+          ],
+          "modified_date": null
+        },
+        {
+          "image_id": "IMG-1-008",
+          "birdbox_id": 1,
+          "photo_url": "https://placeholder.com/images/1/img_20250120_084401.jpg",
+          "date": "2025-01-20",
+          "time": "08:44:01",
+          "identified_result": "kestrel",
+          "confidence_score": 0.89,
+          "other_possible_results": [
+            { "label": "merlin", "confidence_score": 0.07 },
+            { "label": "peregrine", "confidence_score": 0.04 }
+          ],
+          "modified_date": null
+        },
+        {
+          "image_id": "IMG-1-009",
+          "birdbox_id": 1,
+          "photo_url": "https://placeholder.com/images/1/img_20250123_131200.jpg",
+          "date": "2025-01-23",
+          "time": "13:12:00",
+          "identified_result": "kestrel",
+          "confidence_score": 0.95,
+          "other_possible_results": [
+            { "label": "sparrowhawk", "confidence_score": 0.03 },
+            { "label": "unknown bird", "confidence_score": 0.02 }
+          ],
+          "modified_date": null
+        },
+        {
+          "image_id": "IMG-1-010",
+          "birdbox_id": 1,
+          "photo_url": "https://placeholder.com/images/1/img_20250126_092715.jpg",
+          "date": "2025-01-26",
+          "time": "09:27:15",
+          "identified_result": "unknown",
+          "confidence_score": 0.38,
+          "other_possible_results": [
+            { "label": "kestrel", "confidence_score": 0.32 },
+            { "label": "hobby", "confidence_score": 0.30 }
+          ],
+          "modified_date": "2025-01-27"
+        },
+        {
+          "image_id": "IMG-1-011",
+          "birdbox_id": 1,
+          "photo_url": "https://placeholder.com/images/1/img_20250129_174503.jpg",
+          "date": "2025-01-29",
+          "time": "17:45:03",
+          "identified_result": "kestrel",
+          "confidence_score": 0.92,
+          "other_possible_results": [
+            { "label": "merlin", "confidence_score": 0.05 },
+            { "label": "unknown bird", "confidence_score": 0.03 }
+          ],
+          "modified_date": null
+        },
+        {
+          "image_id": "IMG-1-012",
+          "birdbox_id": 1,
+          "photo_url": "https://placeholder.com/images/1/img_20250201_111038.jpg",
+          "date": "2025-02-01",
+          "time": "11:10:38",
+          "identified_result": "wood mouse",
+          "confidence_score": 0.79,
+          "other_possible_results": [
+            { "label": "vole", "confidence_score": 0.13 },
+            { "label": "unknown mammal", "confidence_score": 0.08 }
+          ],
+          "modified_date": null
+        },
+        {
+          "image_id": "IMG-1-013",
+          "birdbox_id": 1,
+          "photo_url": "https://placeholder.com/images/1/img_20250204_143922.jpg",
+          "date": "2025-02-04",
+          "time": "14:39:22",
+          "identified_result": "kestrel",
+          "confidence_score": 0.96,
+          "other_possible_results": [
+            { "label": "sparrowhawk", "confidence_score": 0.03 },
+            { "label": "unknown bird", "confidence_score": 0.01 }
+          ],
+          "modified_date": null
+        },
+        {
+          "image_id": "IMG-1-014",
+          "birdbox_id": 1,
+          "photo_url": "https://placeholder.com/images/1/img_20250219_143200.jpg",
+          "date": "2025-02-19",
+          "time": "14:32:00",
+          "identified_result": "kestrel",
+          "confidence_score": 0.98,
+          "other_possible_results": [
+            { "label": "merlin", "confidence_score": 0.01 },
+            { "label": "unknown bird", "confidence_score": 0.01 }
+          ],
+          "modified_date": null
+        }
+      ]
+    },
+    {
+      "birdbox_id": 2,
+      "total_captured_photos": 274,
+      "total_photos_with_creatures": 160,
+      "total_kestrel_identified_photos": 98,
+      "total_non_kestrel_identified_photos": 62,
+      "number_active_days": 14,
+      "usage_rate": 0.56,
+      "modified_flagged_images": {
+        "modified_count": 4,
+        "total_flagged_count": 9
+      },
+      "images": [
+        {
+          "image_id": "IMG-2-001",
+          "birdbox_id": 2,
+          "photo_url": "https://placeholder.com/images/2/img_20250102_090011.jpg",
+          "date": "2025-01-02",
+          "time": "09:00:11",
+          "identified_result": "kestrel",
+          "confidence_score": 0.91,
+          "other_possible_results": [
+            { "label": "sparrowhawk", "confidence_score": 0.06 },
+            { "label": "unknown bird", "confidence_score": 0.03 }
+          ],
+          "modified_date": null
+        },
+        {
+          "image_id": "IMG-2-002",
+          "birdbox_id": 2,
+          "photo_url": "https://placeholder.com/images/2/img_20250105_141230.jpg",
+          "date": "2025-01-05",
+          "time": "14:12:30",
+          "identified_result": "unknown",
+          "confidence_score": 0.44,
+          "other_possible_results": [
+            { "label": "kestrel", "confidence_score": 0.30 },
+            { "label": "merlin", "confidence_score": 0.26 }
+          ],
+          "modified_date": "2025-01-06"
+        },
+        {
+          "image_id": "IMG-2-003",
+          "birdbox_id": 2,
+          "photo_url": "https://placeholder.com/images/2/img_20250108_163445.jpg",
+          "date": "2025-01-08",
+          "time": "16:34:45",
+          "identified_result": "vole",
+          "confidence_score": 0.81,
+          "other_possible_results": [
+            { "label": "wood mouse", "confidence_score": 0.12 },
+            { "label": "unknown mammal", "confidence_score": 0.07 }
+          ],
+          "modified_date": null
+        },
+        {
+          "image_id": "IMG-2-004",
+          "birdbox_id": 2,
+          "photo_url": "https://placeholder.com/images/2/img_20250111_082200.jpg",
+          "date": "2025-01-11",
+          "time": "08:22:00",
+          "identified_result": "kestrel",
+          "confidence_score": 0.93,
+          "other_possible_results": [
+            { "label": "hobby", "confidence_score": 0.04 },
+            { "label": "unknown bird", "confidence_score": 0.03 }
+          ],
+          "modified_date": null
+        },
+        {
+          "image_id": "IMG-2-005",
+          "birdbox_id": 2,
+          "photo_url": "https://placeholder.com/images/2/img_20250114_110033.jpg",
+          "date": "2025-01-14",
+          "time": "11:00:33",
+          "identified_result": "kestrel",
+          "confidence_score": 0.87,
+          "other_possible_results": [
+            { "label": "sparrowhawk", "confidence_score": 0.08 },
+            { "label": "peregrine", "confidence_score": 0.05 }
+          ],
+          "modified_date": null
+        },
+        {
+          "image_id": "IMG-2-006",
+          "birdbox_id": 2,
+          "photo_url": "https://placeholder.com/images/2/img_20250117_154722.jpg",
+          "date": "2025-01-17",
+          "time": "15:47:22",
+          "identified_result": "unknown",
+          "confidence_score": 0.37,
+          "other_possible_results": [
+            { "label": "kestrel", "confidence_score": 0.34 },
+            { "label": "sparrowhawk", "confidence_score": 0.29 }
+          ],
+          "modified_date": "2025-01-18"
+        },
+        {
+          "image_id": "IMG-2-007",
+          "birdbox_id": 2,
+          "photo_url": "https://placeholder.com/images/2/img_20250120_093811.jpg",
+          "date": "2025-01-20",
+          "time": "09:38:11",
+          "identified_result": "brown rat",
+          "confidence_score": 0.77,
+          "other_possible_results": [
+            { "label": "wood mouse", "confidence_score": 0.14 },
+            { "label": "unknown mammal", "confidence_score": 0.09 }
+          ],
+          "modified_date": null
+        },
+        {
+          "image_id": "IMG-2-008",
+          "birdbox_id": 2,
+          "photo_url": "https://placeholder.com/images/2/img_20250123_172509.jpg",
+          "date": "2025-01-23",
+          "time": "17:25:09",
+          "identified_result": "kestrel",
+          "confidence_score": 0.90,
+          "other_possible_results": [
+            { "label": "merlin", "confidence_score": 0.06 },
+            { "label": "unknown bird", "confidence_score": 0.04 }
+          ],
+          "modified_date": null
+        },
+        {
+          "image_id": "IMG-2-009",
+          "birdbox_id": 2,
+          "photo_url": "https://placeholder.com/images/2/img_20250126_084330.jpg",
+          "date": "2025-01-26",
+          "time": "08:43:30",
+          "identified_result": "kestrel",
+          "confidence_score": 0.94,
+          "other_possible_results": [
+            { "label": "hobby", "confidence_score": 0.04 },
+            { "label": "unknown bird", "confidence_score": 0.02 }
+          ],
+          "modified_date": null
+        },
+        {
+          "image_id": "IMG-2-010",
+          "birdbox_id": 2,
+          "photo_url": "https://placeholder.com/images/2/img_20250129_131044.jpg",
+          "date": "2025-01-29",
+          "time": "13:10:44",
+          "identified_result": "unknown",
+          "confidence_score": 0.42,
+          "other_possible_results": [
+            { "label": "vole", "confidence_score": 0.31 },
+            { "label": "wood mouse", "confidence_score": 0.27 }
+          ],
+          "modified_date": "2025-01-30"
+        },
+        {
+          "image_id": "IMG-2-011",
+          "birdbox_id": 2,
+          "photo_url": "https://placeholder.com/images/2/img_20250201_160900.jpg",
+          "date": "2025-02-01",
+          "time": "16:09:00",
+          "identified_result": "kestrel",
+          "confidence_score": 0.96,
+          "other_possible_results": [
+            { "label": "sparrowhawk", "confidence_score": 0.02 },
+            { "label": "unknown bird", "confidence_score": 0.02 }
+          ],
+          "modified_date": null
+        },
+        {
+          "image_id": "IMG-2-012",
+          "birdbox_id": 2,
+          "photo_url": "https://placeholder.com/images/2/img_20250215_112208.jpg",
+          "date": "2025-02-15",
+          "time": "11:22:08",
+          "identified_result": "kestrel",
+          "confidence_score": 0.98,
+          "other_possible_results": [
+            { "label": "merlin", "confidence_score": 0.01 },
+            { "label": "unknown bird", "confidence_score": 0.01 }
+          ],
+          "modified_date": null
+        },
+        {
+          "image_id": "IMG-2-013",
+          "birdbox_id": 2,
+          "photo_url": "https://placeholder.com/images/2/img_20250218_091540.jpg",
+          "date": "2025-02-18",
+          "time": "09:15:40",
+          "identified_result": "wood mouse",
+          "confidence_score": 0.72,
+          "other_possible_results": [
+            { "label": "vole", "confidence_score": 0.18 },
+            { "label": "unknown mammal", "confidence_score": 0.10 }
+          ],
+          "modified_date": null
+        }
+      ]
+    },
+    {
+      "birdbox_id": 3,
+      "total_captured_photos": 189,
+      "total_photos_with_creatures": 104,
+      "total_kestrel_identified_photos": 67,
+      "total_non_kestrel_identified_photos": 37,
+      "number_active_days": 10,
+      "usage_rate": 0.40,
+      "modified_flagged_images": {
+        "modified_count": 2,
+        "total_flagged_count": 7
+      },
+      "images": [
+        {
+          "image_id": "IMG-3-001",
+          "birdbox_id": 3,
+          "photo_url": "https://placeholder.com/images/3/img_20250104_074512.jpg",
+          "date": "2025-01-04",
+          "time": "07:45:12",
+          "identified_result": "kestrel",
+          "confidence_score": 0.89,
+          "other_possible_results": [
+            { "label": "sparrowhawk", "confidence_score": 0.07 },
+            { "label": "unknown bird", "confidence_score": 0.04 }
+          ],
+          "modified_date": null
+        },
+        {
+          "image_id": "IMG-3-002",
+          "birdbox_id": 3,
+          "photo_url": "https://placeholder.com/images/3/img_20250107_130022.jpg",
+          "date": "2025-01-07",
+          "time": "13:00:22",
+          "identified_result": "unknown",
+          "confidence_score": 0.40,
+          "other_possible_results": [
+            { "label": "kestrel", "confidence_score": 0.33 },
+            { "label": "hobby", "confidence_score": 0.27 }
+          ],
+          "modified_date": "2025-01-08"
+        },
+        {
+          "image_id": "IMG-3-003",
+          "birdbox_id": 3,
+          "photo_url": "https://placeholder.com/images/3/img_20250110_091830.jpg",
+          "date": "2025-01-10",
+          "time": "09:18:30",
+          "identified_result": "vole",
+          "confidence_score": 0.84,
+          "other_possible_results": [
+            { "label": "wood mouse", "confidence_score": 0.10 },
+            { "label": "unknown mammal", "confidence_score": 0.06 }
+          ],
+          "modified_date": null
+        },
+        {
+          "image_id": "IMG-3-004",
+          "birdbox_id": 3,
+          "photo_url": "https://placeholder.com/images/3/img_20250113_152244.jpg",
+          "date": "2025-01-13",
+          "time": "15:22:44",
+          "identified_result": "kestrel",
+          "confidence_score": 0.95,
+          "other_possible_results": [
+            { "label": "merlin", "confidence_score": 0.03 },
+            { "label": "unknown bird", "confidence_score": 0.02 }
+          ],
+          "modified_date": null
+        },
+        {
+          "image_id": "IMG-3-005",
+          "birdbox_id": 3,
+          "photo_url": "https://placeholder.com/images/3/img_20250116_084411.jpg",
+          "date": "2025-01-16",
+          "time": "08:44:11",
+          "identified_result": "kestrel",
+          "confidence_score": 0.90,
+          "other_possible_results": [
+            { "label": "sparrowhawk", "confidence_score": 0.06 },
+            { "label": "peregrine", "confidence_score": 0.04 }
+          ],
+          "modified_date": null
+        },
+        {
+          "image_id": "IMG-3-006",
+          "birdbox_id": 3,
+          "photo_url": "https://placeholder.com/images/3/img_20250119_113355.jpg",
+          "date": "2025-01-19",
+          "time": "11:33:55",
+          "identified_result": "brown rat",
+          "confidence_score": 0.78,
+          "other_possible_results": [
+            { "label": "wood mouse", "confidence_score": 0.13 },
+            { "label": "unknown mammal", "confidence_score": 0.09 }
+          ],
+          "modified_date": null
+        },
+        {
+          "image_id": "IMG-3-007",
+          "birdbox_id": 3,
+          "photo_url": "https://placeholder.com/images/3/img_20250122_170829.jpg",
+          "date": "2025-01-22",
+          "time": "17:08:29",
+          "identified_result": "unknown",
+          "confidence_score": 0.36,
+          "other_possible_results": [
+            { "label": "kestrel", "confidence_score": 0.35 },
+            { "label": "merlin", "confidence_score": 0.29 }
+          ],
+          "modified_date": "2025-01-23"
+        },
+        {
+          "image_id": "IMG-3-008",
+          "birdbox_id": 3,
+          "photo_url": "https://placeholder.com/images/3/img_20250125_094005.jpg",
+          "date": "2025-01-25",
+          "time": "09:40:05",
+          "identified_result": "kestrel",
+          "confidence_score": 0.92,
+          "other_possible_results": [
+            { "label": "hobby", "confidence_score": 0.05 },
+            { "label": "unknown bird", "confidence_score": 0.03 }
+          ],
+          "modified_date": null
+        },
+        {
+          "image_id": "IMG-3-009",
+          "birdbox_id": 3,
+          "photo_url": "https://placeholder.com/images/3/img_20250128_142617.jpg",
+          "date": "2025-01-28",
+          "time": "14:26:17",
+          "identified_result": "kestrel",
+          "confidence_score": 0.88,
+          "other_possible_results": [
+            { "label": "sparrowhawk", "confidence_score": 0.08 },
+            { "label": "unknown bird", "confidence_score": 0.04 }
+          ],
+          "modified_date": null
+        },
+        {
+          "image_id": "IMG-3-010",
+          "birdbox_id": 3,
+          "photo_url": "https://placeholder.com/images/3/img_20250131_081122.jpg",
+          "date": "2025-01-31",
+          "time": "08:11:22",
+          "identified_result": "kestrel",
+          "confidence_score": 0.97,
+          "other_possible_results": [
+            { "label": "merlin", "confidence_score": 0.02 },
+            { "label": "unknown bird", "confidence_score": 0.01 }
+          ],
+          "modified_date": null
+        },
+        {
+          "image_id": "IMG-3-011",
+          "birdbox_id": 3,
+          "photo_url": "https://placeholder.com/images/3/img_20250203_155039.jpg",
+          "date": "2025-02-03",
+          "time": "15:50:39",
+          "identified_result": "wood mouse",
+          "confidence_score": 0.80,
+          "other_possible_results": [
+            { "label": "vole", "confidence_score": 0.12 },
+            { "label": "unknown mammal", "confidence_score": 0.08 }
+          ],
+          "modified_date": null
+        },
+        {
+          "image_id": "IMG-3-012",
+          "birdbox_id": 3,
+          "photo_url": "https://placeholder.com/images/3/img_20250220_101515.jpg",
+          "date": "2025-02-20",
+          "time": "10:15:15",
+          "identified_result": "kestrel",
+          "confidence_score": 0.96,
+          "other_possible_results": [
+            { "label": "sparrowhawk", "confidence_score": 0.03 },
+            { "label": "unknown bird", "confidence_score": 0.01 }
+          ],
+          "modified_date": null
+        }
+      ]
+    },
+    {
+      "birdbox_id": 4,
+      "total_captured_photos": 241,
+      "total_photos_with_creatures": 132,
+      "total_kestrel_identified_photos": 79,
+      "total_non_kestrel_identified_photos": 53,
+      "number_active_days": 12,
+      "usage_rate": 0.48,
+      "modified_flagged_images": {
+        "modified_count": 5,
+        "total_flagged_count": 11
+      },
+      "images": [
+        {
+          "image_id": "IMG-4-001",
+          "birdbox_id": 4,
+          "photo_url": "https://placeholder.com/images/4/img_20250103_085520.jpg",
+          "date": "2025-01-03",
+          "time": "08:55:20",
+          "identified_result": "kestrel",
+          "confidence_score": 0.90,
+          "other_possible_results": [
+            { "label": "merlin", "confidence_score": 0.06 },
+            { "label": "unknown bird", "confidence_score": 0.04 }
+          ],
+          "modified_date": null
+        },
+        {
+          "image_id": "IMG-4-002",
+          "birdbox_id": 4,
+          "photo_url": "https://placeholder.com/images/4/img_20250106_121033.jpg",
+          "date": "2025-01-06",
+          "time": "12:10:33",
+          "identified_result": "unknown",
+          "confidence_score": 0.39,
+          "other_possible_results": [
+            { "label": "kestrel", "confidence_score": 0.33 },
+            { "label": "sparrowhawk", "confidence_score": 0.28 }
+          ],
+          "modified_date": "2025-01-07"
+        },
+        {
+          "image_id": "IMG-4-003",
+          "birdbox_id": 4,
+          "photo_url": "https://placeholder.com/images/4/img_20250109_163728.jpg",
+          "date": "2025-01-09",
+          "time": "16:37:28",
+          "identified_result": "kestrel",
+          "confidence_score": 0.86,
+          "other_possible_results": [
+            { "label": "hobby", "confidence_score": 0.09 },
+            { "label": "unknown bird", "confidence_score": 0.05 }
+          ],
+          "modified_date": null
+        },
+        {
+          "image_id": "IMG-4-004",
+          "birdbox_id": 4,
+          "photo_url": "https://placeholder.com/images/4/img_20250112_075843.jpg",
+          "date": "2025-01-12",
+          "time": "07:58:43",
+          "identified_result": "brown rat",
+          "confidence_score": 0.82,
+          "other_possible_results": [
+            { "label": "wood mouse", "confidence_score": 0.11 },
+            { "label": "unknown mammal", "confidence_score": 0.07 }
+          ],
+          "modified_date": null
+        },
+        {
+          "image_id": "IMG-4-005",
+          "birdbox_id": 4,
+          "photo_url": "https://placeholder.com/images/4/img_20250115_102255.jpg",
+          "date": "2025-01-15",
+          "time": "10:22:55",
+          "identified_result": "kestrel",
+          "confidence_score": 0.93,
+          "other_possible_results": [
+            { "label": "sparrowhawk", "confidence_score": 0.05 },
+            { "label": "unknown bird", "confidence_score": 0.02 }
+          ],
+          "modified_date": null
+        },
+        {
+          "image_id": "IMG-4-006",
+          "birdbox_id": 4,
+          "photo_url": "https://placeholder.com/images/4/img_20250118_145601.jpg",
+          "date": "2025-01-18",
+          "time": "14:56:01",
+          "identified_result": "unknown",
+          "confidence_score": 0.43,
+          "other_possible_results": [
+            { "label": "kestrel", "confidence_score": 0.30 },
+            { "label": "merlin", "confidence_score": 0.27 }
+          ],
+          "modified_date": "2025-01-19"
+        },
+        {
+          "image_id": "IMG-4-007",
+          "birdbox_id": 4,
+          "photo_url": "https://placeholder.com/images/4/img_20250121_091410.jpg",
+          "date": "2025-01-21",
+          "time": "09:14:10",
+          "identified_result": "vole",
+          "confidence_score": 0.75,
+          "other_possible_results": [
+            { "label": "wood mouse", "confidence_score": 0.15 },
+            { "label": "unknown mammal", "confidence_score": 0.10 }
+          ],
+          "modified_date": null
+        },
+        {
+          "image_id": "IMG-4-008",
+          "birdbox_id": 4,
+          "photo_url": "https://placeholder.com/images/4/img_20250124_174933.jpg",
+          "date": "2025-01-24",
+          "time": "17:49:33",
+          "identified_result": "kestrel",
+          "confidence_score": 0.91,
+          "other_possible_results": [
+            { "label": "hobby", "confidence_score": 0.06 },
+            { "label": "unknown bird", "confidence_score": 0.03 }
+          ],
+          "modified_date": null
+        },
+        {
+          "image_id": "IMG-4-009",
+          "birdbox_id": 4,
+          "photo_url": "https://placeholder.com/images/4/img_20250127_083117.jpg",
+          "date": "2025-01-27",
+          "time": "08:31:17",
+          "identified_result": "kestrel",
+          "confidence_score": 0.94,
+          "other_possible_results": [
+            { "label": "sparrowhawk", "confidence_score": 0.04 },
+            { "label": "unknown bird", "confidence_score": 0.02 }
+          ],
+          "modified_date": null
+        },
+        {
+          "image_id": "IMG-4-010",
+          "birdbox_id": 4,
+          "photo_url": "https://placeholder.com/images/4/img_20250130_161802.jpg",
+          "date": "2025-01-30",
+          "time": "16:18:02",
+          "identified_result": "unknown",
+          "confidence_score": 0.38,
+          "other_possible_results": [
+            { "label": "kestrel", "confidence_score": 0.35 },
+            { "label": "peregrine", "confidence_score": 0.27 }
+          ],
+          "modified_date": "2025-01-31"
+        },
+        {
+          "image_id": "IMG-4-011",
+          "birdbox_id": 4,
+          "photo_url": "https://placeholder.com/images/4/img_20250202_110422.jpg",
+          "date": "2025-02-02",
+          "time": "11:04:22",
+          "identified_result": "kestrel",
+          "confidence_score": 0.89,
+          "other_possible_results": [
+            { "label": "merlin", "confidence_score": 0.07 },
+            { "label": "unknown bird", "confidence_score": 0.04 }
+          ],
+          "modified_date": null
+        },
+        {
+          "image_id": "IMG-4-012",
+          "birdbox_id": 4,
+          "photo_url": "https://placeholder.com/images/4/img_20250210_095533.jpg",
+          "date": "2025-02-10",
+          "time": "09:55:33",
+          "identified_result": "kestrel",
+          "confidence_score": 0.97,
+          "other_possible_results": [
+            { "label": "sparrowhawk", "confidence_score": 0.02 },
+            { "label": "unknown bird", "confidence_score": 0.01 }
+          ],
+          "modified_date": null
+        },
+        {
+          "image_id": "IMG-4-013",
+          "birdbox_id": 4,
+          "photo_url": "https://placeholder.com/images/4/img_20250217_134801.jpg",
+          "date": "2025-02-17",
+          "time": "13:48:01",
+          "identified_result": "wood mouse",
+          "confidence_score": 0.74,
+          "other_possible_results": [
+            { "label": "vole", "confidence_score": 0.16 },
+            { "label": "unknown mammal", "confidence_score": 0.10 }
+          ],
+          "modified_date": null
+        }
+      ]
+    },
+    {
+      "birdbox_id": 5,
+      "total_captured_photos": 358,
+      "total_photos_with_creatures": 227,
+      "total_kestrel_identified_photos": 174,
+      "total_non_kestrel_identified_photos": 53,
+      "number_active_days": 21,
+      "usage_rate": 0.84,
+      "modified_flagged_images": {
+        "modified_count": 9,
+        "total_flagged_count": 14
+      },
+      "images": [
+        {
+          "image_id": "IMG-5-001",
+          "birdbox_id": 5,
+          "photo_url": "https://placeholder.com/images/5/img_20250101_071544.jpg",
+          "date": "2025-01-01",
+          "time": "07:15:44",
+          "identified_result": "kestrel",
+          "confidence_score": 0.96,
+          "other_possible_results": [
+            { "label": "sparrowhawk", "confidence_score": 0.03 },
+            { "label": "unknown bird", "confidence_score": 0.01 }
+          ],
+          "modified_date": null
+        },
+        {
+          "image_id": "IMG-5-002",
+          "birdbox_id": 5,
+          "photo_url": "https://placeholder.com/images/5/img_20250104_092011.jpg",
+          "date": "2025-01-04",
+          "time": "09:20:11",
+          "identified_result": "kestrel",
+          "confidence_score": 0.93,
+          "other_possible_results": [
+            { "label": "hobby", "confidence_score": 0.04 },
+            { "label": "unknown bird", "confidence_score": 0.03 }
+          ],
+          "modified_date": null
+        },
+        {
+          "image_id": "IMG-5-003",
+          "birdbox_id": 5,
+          "photo_url": "https://placeholder.com/images/5/img_20250107_134822.jpg",
+          "date": "2025-01-07",
+          "time": "13:48:22",
+          "identified_result": "unknown",
+          "confidence_score": 0.41,
+          "other_possible_results": [
+            { "label": "kestrel", "confidence_score": 0.32 },
+            { "label": "merlin", "confidence_score": 0.27 }
+          ],
+          "modified_date": "2025-01-08"
+        },
+        {
+          "image_id": "IMG-5-004",
+          "birdbox_id": 5,
+          "photo_url": "https://placeholder.com/images/5/img_20250110_081200.jpg",
+          "date": "2025-01-10",
+          "time": "08:12:00",
+          "identified_result": "kestrel",
+          "confidence_score": 0.98,
+          "other_possible_results": [
+            { "label": "sparrowhawk", "confidence_score": 0.01 },
+            { "label": "unknown bird", "confidence_score": 0.01 }
+          ],
+          "modified_date": null
+        },
+        {
+          "image_id": "IMG-5-005",
+          "birdbox_id": 5,
+          "photo_url": "https://placeholder.com/images/5/img_20250113_160511.jpg",
+          "date": "2025-01-13",
+          "time": "16:05:11",
+          "identified_result": "vole",
+          "confidence_score": 0.83,
+          "other_possible_results": [
+            { "label": "wood mouse", "confidence_score": 0.11 },
+            { "label": "unknown mammal", "confidence_score": 0.06 }
+          ],
+          "modified_date": null
+        },
+        {
+          "image_id": "IMG-5-006",
+          "birdbox_id": 5,
+          "photo_url": "https://placeholder.com/images/5/img_20250116_093344.jpg",
+          "date": "2025-01-16",
+          "time": "09:33:44",
+          "identified_result": "kestrel",
+          "confidence_score": 0.91,
+          "other_possible_results": [
+            { "label": "peregrine", "confidence_score": 0.06 },
+            { "label": "unknown bird", "confidence_score": 0.03 }
+          ],
+          "modified_date": null
+        },
+        {
+          "image_id": "IMG-5-007",
+          "birdbox_id": 5,
+          "photo_url": "https://placeholder.com/images/5/img_20250119_175229.jpg",
+          "date": "2025-01-19",
+          "time": "17:52:29",
+          "identified_result": "kestrel",
+          "confidence_score": 0.95,
+          "other_possible_results": [
+            { "label": "merlin", "confidence_score": 0.03 },
+            { "label": "unknown bird", "confidence_score": 0.02 }
+          ],
+          "modified_date": null
+        },
+        {
+          "image_id": "IMG-5-008",
+          "birdbox_id": 5,
+          "photo_url": "https://placeholder.com/images/5/img_20250122_084655.jpg",
+          "date": "2025-01-22",
+          "time": "08:46:55",
+          "identified_result": "unknown",
+          "confidence_score": 0.36,
+          "other_possible_results": [
+            { "label": "kestrel", "confidence_score": 0.34 },
+            { "label": "sparrowhawk", "confidence_score": 0.30 }
+          ],
+          "modified_date": "2025-01-23"
+        },
+        {
+          "image_id": "IMG-5-009",
+          "birdbox_id": 5,
+          "photo_url": "https://placeholder.com/images/5/img_20250125_141033.jpg",
+          "date": "2025-01-25",
+          "time": "14:10:33",
+          "identified_result": "brown rat",
+          "confidence_score": 0.79,
+          "other_possible_results": [
+            { "label": "wood mouse", "confidence_score": 0.13 },
+            { "label": "unknown mammal", "confidence_score": 0.08 }
+          ],
+          "modified_date": null
+        },
+        {
+          "image_id": "IMG-5-010",
+          "birdbox_id": 5,
+          "photo_url": "https://placeholder.com/images/5/img_20250128_102811.jpg",
+          "date": "2025-01-28",
+          "time": "10:28:11",
+          "identified_result": "kestrel",
+          "confidence_score": 0.94,
+          "other_possible_results": [
+            { "label": "hobby", "confidence_score": 0.04 },
+            { "label": "unknown bird", "confidence_score": 0.02 }
+          ],
+          "modified_date": null
+        },
+        {
+          "image_id": "IMG-5-011",
+          "birdbox_id": 5,
+          "photo_url": "https://placeholder.com/images/5/img_20250131_074122.jpg",
+          "date": "2025-01-31",
+          "time": "07:41:22",
+          "identified_result": "kestrel",
+          "confidence_score": 0.97,
+          "other_possible_results": [
+            { "label": "sparrowhawk", "confidence_score": 0.02 },
+            { "label": "unknown bird", "confidence_score": 0.01 }
+          ],
+          "modified_date": null
+        },
+        {
+          "image_id": "IMG-5-012",
+          "birdbox_id": 5,
+          "photo_url": "https://placeholder.com/images/5/img_20250203_163944.jpg",
+          "date": "2025-02-03",
+          "time": "16:39:44",
+          "identified_result": "wood mouse",
+          "confidence_score": 0.77,
+          "other_possible_results": [
+            { "label": "vole", "confidence_score": 0.14 },
+            { "label": "unknown mammal", "confidence_score": 0.09 }
+          ],
+          "modified_date": null
+        },
+        {
+          "image_id": "IMG-5-013",
+          "birdbox_id": 5,
+          "photo_url": "https://placeholder.com/images/5/img_20250207_090833.jpg",
+          "date": "2025-02-07",
+          "time": "09:08:33",
+          "identified_result": "kestrel",
+          "confidence_score": 0.92,
+          "other_possible_results": [
+            { "label": "merlin", "confidence_score": 0.05 },
+            { "label": "unknown bird", "confidence_score": 0.03 }
+          ],
+          "modified_date": null
+        },
+        {
+          "image_id": "IMG-5-014",
+          "birdbox_id": 5,
+          "photo_url": "https://placeholder.com/images/5/img_20250211_152700.jpg",
+          "date": "2025-02-11",
+          "time": "15:27:00",
+          "identified_result": "unknown",
+          "confidence_score": 0.40,
+          "other_possible_results": [
+            { "label": "kestrel", "confidence_score": 0.31 },
+            { "label": "hobby", "confidence_score": 0.29 }
+          ],
+          "modified_date": "2025-02-12"
+        },
+        {
+          "image_id": "IMG-5-015",
+          "birdbox_id": 5,
+          "photo_url": "https://placeholder.com/images/5/img_20250221_162030.jpg",
+          "date": "2025-02-21",
+          "time": "16:20:30",
+          "identified_result": "kestrel",
+          "confidence_score": 0.99,
+          "other_possible_results": [
+            { "label": "sparrowhawk", "confidence_score": 0.01 },
+            { "label": "unknown bird", "confidence_score": 0.00 }
+          ],
+          "modified_date": null
+        }
+      ]
+    }
+  ]
+}
