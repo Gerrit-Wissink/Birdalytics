@@ -1,13 +1,11 @@
 const sequelize = require('../config/database');
-const BirdBoxes = require('../models/Birdboxes');
-const Birdrecords = require('../models/Birdrecords');
-const Image = require('../models/Image');
+const { Birdguess, Birdboxes, Birdrecords, Image, SpeciesDictionary } = require('../models');
 
 class BoxController {
     // Get all boxes
     static async getAllBoxes(req, res) {
         try {
-            const boxes = await BirdBoxes.findAll({
+            const boxes = await Birdboxes.findAll({
                 include: [
                     {
                         model: Birdrecords,
@@ -17,18 +15,125 @@ class BoxController {
                                 model: Image,
                                 as: 'image',
                                 attributes: ['image_id', 'image']
+                            },
+                            {
+                                model: Birdguess,
+                                as: 'guesses',
+                                include: [
+                                    {
+                                        model: SpeciesDictionary,
+                                        as: 'species',
+                                        attributes: ['species_id', 'species_name']
+                                    }
+                                ],
+                                attributes: ['birdguess_id', 'model', 'model_confidence', 'species_id'],
+                                limit: 1,
+                                order: [['model_confidence', 'DESC']]
                             }
                         ],
-                        attributes: ['record_id', 'timestamp']
+                        attributes: ['record_id', 'timestamp', 'manual_bird'],
+                        order: [['timestamp', 'DESC']]
                     }
                 ],
                 order: [['name', 'ASC'], ['created_at', 'DESC']]
             });
 
+            /* 
+                Boxes: 
+                [
+                    {
+                        "birdbox_id": 1,
+                        "name": "Box 1",
+                        "latitide": 40.7128,
+                        "longitude": -74.0060,
+                        "field_notes": "Near the park",
+                        "created_at": "2024-01-01T00:00:00.000Z",
+                        "updated_at": "2024-01-01T00:00:00.000Z",
+                        "records": [
+                            {
+                                "record_id": 1,
+                                "timestamp": "2024-01-01T12:00:00.000Z",
+                                "manual_bird": null,
+                                "image": {
+                                    "image_id": 1,
+                                    "image": "<base64string>"
+                                },
+                                "guesses": [
+                                    {
+                                        "birdguess_id": 1,
+                                        "model": "Model A",
+                                        "model_confidence": 0.95,
+                                        "species": {
+                                            "species_id": 1,
+                                            "species_name": "Kestrel"
+                                        }
+                                    },
+                                    ...
+                                ]
+                            },
+                            ...
+                        ]
+                    },
+                    ...
+                ]     
+            */
+
+            const calculateBoxStats = (box) => {
+                const totalRecords = box.records.length;
+                const photosWithCreatures = box.records.filter(
+                    record => record.guesses && record.guesses.length > 0).length;
+                const numKestrelIdentified = box.records.filter(
+                    record => record.guesses && record.guesses.some(guess => guess.species && guess.species.species_id === 1)).length;
+                const nonKestrelIdentified = photosWithCreatures - numKestrelIdentified;
+                const mostRecentKestrel = box.records.find(record => record.guesses && record.guesses.some(guess => guess.species && guess.species.species_id === 1));
+
+                const ACTIVE_DAY_THRESHOLD = 10;
+                const ACTIVE_DAY_PERIOD = 90;
+
+                const recordDays = {};
+                box.records.forEach(record => {
+                    let recordDate = new Date(record.timestamp);
+                    let dateString = recordDate.toISOString().split('T')[0];
+                    if (!recordDays[dateString]) {
+                        recordDays[dateString] = 0;
+                    }
+                    if (record.guesses && record.guesses.length > 0) {
+                        recordDays[dateString]++;
+                    }
+                    if (Object.keys(recordDays).length > ACTIVE_DAY_PERIOD) {
+                        return;
+                    }
+                });
+                
+                const numActiveDays = Object.keys(recordDays).filter(date => recordDays[date] >= ACTIVE_DAY_THRESHOLD).length;
+                const usageRate = numActiveDays / Math.min(ACTIVE_DAY_PERIOD, Object.keys(recordDays).length);
+
+                const modifiedRecords = box.records.reduce((count, record) => {
+                    if (record.manual_bird !== null) {
+                        return count + 1;
+                    }
+                    return count;
+                }, 0);
+
+                return {
+                    totalRecords,
+                    photosWithCreatures,
+                    numKestrelIdentified,
+                    nonKestrelIdentified,
+                    numActiveDays,
+                    usageRate,
+                    modifiedRecords,
+                    mostRecentKestrel
+                };
+            };
+
+            const stats = boxes.map(box => calculateBoxStats(box));
+
             res.json({
                 success: true,
                 count: boxes.length,
-                data: boxes
+                boxes: boxes,
+                stats: stats
             });
         } catch (error) {
             console.error('Error in getAllBoxes:', error);
@@ -43,7 +148,7 @@ class BoxController {
     static async getBox(req, res) {
         try {
             const { id } = req.params;
-            const box = await BirdBoxes.findByPk(id);
+            const box = await Birdboxes.findByPk(id);
 
             if (!box) {
                 return res.status(404).json({
@@ -79,7 +184,7 @@ class BoxController {
             }
 
             // Check if box already exists
-            const existingBox = await BirdBoxes.findOne({
+            const existingBox = await Birdboxes.findOne({
                 attributes: ['birdbox_id'],
                 where: { name: name }
             });
@@ -90,7 +195,7 @@ class BoxController {
                 });
             }
 
-            const newBox = await BirdBoxes.create({ name, latitide, longitude, field_notes });
+            const newBox = await Birdboxes.create({ name, latitide, longitude, field_notes });
 
             res.status(201).json({
                 success: true,
@@ -118,7 +223,7 @@ class BoxController {
             const { id } = req.params;
             const { name, latitide, longitude, field_notes } = req.body;
 
-            const box = await BirdBoxes.findByPk(id);
+            const box = await Birdboxes.findByPk(id);
             if (!box) {
                 return res.status(404).json({
                     success: false,
@@ -127,7 +232,7 @@ class BoxController {
             }
 
             // Check if box with name already exists
-            const existingBox = await BirdBoxes.findOne({
+            const existingBox = await Birdboxes.findOne({
                 attributes: ['birdbox_id'],
                 where: {
                     name: name,
@@ -167,7 +272,7 @@ class BoxController {
         try {
             const { id } = req.params;
 
-            const box = await BirdBoxes.findByPk(id);
+            const box = await Birdboxes.findByPk(id);
             if (!box) {
                 return res.status(404).json({
                     success: false,
