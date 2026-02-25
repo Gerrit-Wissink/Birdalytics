@@ -2,8 +2,6 @@ const Image = require('../models/Image');
 const Birdrecords = require('../models/Birdrecords');
 const Birdboxes = require('../models/Birdboxes');
 const sequelize = require('../config/database');
-const multer = require('multer');
-const upload = multer({ storage: multer.memoryStorage() });
 
 class ImageController {
     // Get all images

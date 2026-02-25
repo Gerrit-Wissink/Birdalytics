@@ -107,11 +107,9 @@ export default function Upload(){
             }
             
             // TODO: Replace with actual backend endpoint
-            const response = await apiClient.post('/images', {
-                body: formData,
-            });
+            const response = await apiClient.post('/images', formData);
             
-            if (response.ok) {
+            if (response.status === 201) {
                 const fileCount = files.length;
                 setNotificationType('success');
                 setNotification(`Successfully uploaded ${fileCount} file${fileCount !== 1 ? 's' : ''} to ${selectedBox}!`);
@@ -203,7 +201,7 @@ export default function Upload(){
 
                     <div className="button-group">
                         <button type="button" className="cancel-btn" onClick={handleReset} style={{fontFamily: "Lato, sans-serif"}}>Reset</button>
-                        <button type="submit" className="import-btn" style={{fontFamily: "Lato, sans-serif"}}>Import</button>
+                        <button type="submit" className="import-btn" style={{fontFamily: "Lato, sans-serif"}}>Submit</button>
                     </div>
                 </form>
             </div>
