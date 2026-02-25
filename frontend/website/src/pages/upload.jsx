@@ -156,9 +156,9 @@ export default function Upload(){
                     <div className="input-box">
                         <label htmlFor="box-name">Box Name</label>
                         <select id="box-name" value={selectedBox} onChange={(e) => setSelectedBox(e.target.value)}>
-                            <option>Gosnell Big Woods</option>
-                            <option>Box 2</option>
-                            <option>Box 3</option>
+                            {birdboxes.map((box, index) => (
+                                <option key={index} value={box}>{box}</option>
+                            ))}
                         </select>
                     </div>
 
