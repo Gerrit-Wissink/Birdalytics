@@ -10,12 +10,32 @@ export default function Upload(){
     const [notification, setNotification] = useState('');
     const [notificationType, setNotificationType] = useState('');
     const [isLoading, setIsLoading] = useState(false);
+    const [birdboxes, setBirdboxes] = useState([]);
 
     useEffect(() => {
+        document.title = 'Upload - Birdalytics';
         const token = localStorage.getItem('token');
         const tokenExpiry = localStorage.getItem('tokenExpiry');
         if (!token || (tokenExpiry && new Date(tokenExpiry) < new Date())) {
             window.location.href = '/#/login';
+        }
+    }, []);
+
+    useEffect(() => {
+        try {
+            const fetchBirdboxes = async () => {
+                const response = await apiClient.get('/boxes');
+                if (response.ok) {
+                    const data = await response.json();
+                    setBirdboxes(['-- Please Select a Location', ...data.data.map(box => box.name)]); // Assuming the birdboxes are in the 'data' property
+                } else {
+                    console.error('Failed to fetch birdboxes:', response.status);
+                }
+            };
+            
+            fetchBirdboxes();
+        }catch (error) {
+            console.error('Error fetching birdboxes:', error);
         }
     }, []);
 
@@ -51,6 +71,14 @@ export default function Upload(){
 
     const handleSubmit = async (e) => {
         e.preventDefault();
+
+        //Validate that a box is selected
+        if (selectedBox === '-- Please Select a Location') {
+            setNotificationType('error');
+            setNotification('Please select a location to upload to.');
+            setTimeout(() => setNotification(''), 4000);
+            return;
+        }
         
         // Validate that either files are selected or URL is provided
         if (files.length === 0 && !urlValue.trim()) {
