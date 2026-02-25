@@ -1,16 +1,10 @@
 import './cameras.css'
 import { useState } from 'react';
+import boxData from '../fake-data/birdboxes.json'
 
 export default function Cameras(){
     // TODO: Replace with GET request to fetch cameras from backend
-    const cameras = [
-        { id: 1, name: "Amy's Pond - North", placeholder: 'placeholder' },
-        { id: 2, name: "Amy's Pond - South", placeholder: 'placeholder' },
-        { id: 3, name: "Gosnell Big Woods", placeholder: 'image' },
-        { id: 4, name: "Miller Woods", placeholder: 'placeholder' },
-        { id: 5, name: "McNabb", placeholder: 'placeholder' },
-        { id: 6, name: "New Camera", placeholder: 'plus' },
-    ];
+    const cameras = boxData.birdboxes
 
     const [showModal, setShowModal] = useState(false);
     const [formData, setFormData] = useState({
@@ -58,13 +52,13 @@ export default function Cameras(){
             <div className="cameras-grid">
                 {cameras.map((camera) => (
                     <div 
-                        key={camera.id} 
+                        key={camera.birdbox_id} 
                         className="camera-box"
                         onClick={camera.placeholder === 'plus' ? () => setShowModal(true) : undefined}
                         style={camera.placeholder === 'plus' ? { cursor: 'pointer' } : {}}
                     >
                         <div className="camera-header">
-                            <span className="camera-name">{camera.name}</span>
+                            <span className="camera-name">{camera.birdbox_name}</span>
                             {camera.placeholder !== 'plus' && (
                                 <button className="settings-btn" aria-label="Camera settings">
                                     ⚙️
@@ -72,18 +66,25 @@ export default function Cameras(){
                             )}
                         </div>
                         <div className="camera-image-area">
-                            {camera.placeholder === 'placeholder' && (
-                                <div className="placeholder-icon">📷</div>
-                            )}
-                            {camera.placeholder === 'image' && (
-                                <img src="./images/bird-placeholder.jpg" alt={camera.name} className="camera-image" />
-                            )}
-                            {camera.placeholder === 'plus' && (
-                                <div className="placeholder-plus">+</div>
-                            )}
+                                <img src={camera.last_captured_image.photo_url} alt={camera.birdbox_name} className="camera-image" />                           
                         </div>
                     </div>
                 ))}
+                <div 
+                    className="camera-box"
+                    onClick={null} //ADD CAMERA TO DATABASE, ENTER WHATEVER INFO IN A POPUP
+                    style={null}
+                    >
+                        <div className="camera-header">
+                            <span className="camera-name">Add Camera</span>
+                                <button className="settings-btn" aria-label="Camera settings">
+                                    ⚙️
+                                </button>
+                        </div>
+                        <div className="camera-image-area">
+                            <div className="placeholder-plus">+</div>
+                        </div>
+                    </div>
             </div>
         </section>
 

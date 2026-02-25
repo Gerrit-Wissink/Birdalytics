@@ -3,6 +3,7 @@ import BirdPieChart from "../components/donut-chart.jsx";
 import LineGraph from "../components/line-graph.jsx";
 import ActiveBoxes from "../components/other-stats.jsx";
 import {MostActiveBox} from "../components/other-stats.jsx";
+import BirdboxTable from "../components/overview-table.jsx"; 
 import './overview.css'
 import { useEffect } from "react";
 
@@ -25,7 +26,9 @@ export default function Overview(){
             <div id="overview-grid">
                 <div className="column-left">
                     <Map />
-                    <div className="table-placeholder">Table Placeholder</div>
+                    <div className="table-placeholder">
+                        <BirdboxTable />
+                    </div>
                 </div>
                 
                 <div className="column-right">

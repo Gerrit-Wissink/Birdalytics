@@ -1,0 +1,152 @@
+{
+  "birdboxes": [
+    {
+      "birdbox_id": 1,
+      "name": "Salmon Creek Nature Preserve",
+      "latitude": 43.298,
+      "longitude": -77.775,
+      "field_notes": "Notes for Salmon Creek Nature Preserve Bird Box"
+    },
+    {
+      "birdbox_id": 2,
+      "name": "Brookdale Preserve",
+      "latitude": 43.077352,
+      "longitude": -77.709582,
+      "field_notes": "Notes for Brookdale Preserve Bird Box"
+    },
+    {
+      "birdbox_id": 3,
+      "name": "Cornwall Preserve",
+      "latitude": 43.279685,
+      "longitude": -77.192146,
+      "field_notes": "Notes for Cornwall Preserve Bird Box"
+    },
+    {
+      "birdbox_id": 4,
+      "name": "Lehigh Crossing Park",
+      "latitude": 42.99509,
+      "longitude": -77.437005,
+      "field_notes": "Notes for Lehigh Crossing Park Bird Box"
+    },
+    {
+      "birdbox_id": 5,
+      "name": "Ganargua Creek Meadow Preserve",
+      "latitude": 43.038,
+      "longitude": -77.338,
+      "field_notes": "Notes for Ganargua Creek Meadow Preserve Bird Box"
+    }
+  ],
+  "images": [
+    {
+      "image_id": 1,
+      "image": "IMAGE_BINARY",
+      "timestamp": "NOW()",
+      "file_size": 139
+    },
+    {
+      "image_id": 2,
+      "image": "IMAGE_BINARY",
+      "timestamp": "NOW()",
+      "file_size": 139
+    },
+    {
+      "image_id": 3,
+      "image": "IMAGE_BINARY",
+      "timestamp": "NOW()",
+      "file_size": 139
+    },
+    {
+      "image_id": 4,
+      "image": "IMAGE_BINARY",
+      "timestamp": "NOW()",
+      "file_size": 139
+    },
+    {
+      "image_id": 5,
+      "image": "IMAGE_BINARY",
+      "timestamp": "NOW()",
+      "file_size": 139
+    }
+  ],
+  "birdrecords": [
+    {
+      "record_id": 1,
+      "birdbox_id": 1,
+      "timestamp": "NOW()",
+      "image_id": 1,
+      "manual_bird": null
+    },
+    {
+      "record_id": 2,
+      "birdbox_id": 2,
+      "timestamp": "NOW()",
+      "image_id": 2,
+      "manual_bird": null
+    },
+    {
+      "record_id": 3,
+      "birdbox_id": 3,
+      "timestamp": "NOW()",
+      "image_id": 3,
+      "manual_bird": null
+    },
+    {
+      "record_id": 4,
+      "birdbox_id": 4,
+      "timestamp": "NOW()",
+      "image_id": 4,
+      "manual_bird": null
+    },
+    {
+      "record_id": 5,
+      "birdbox_id": 5,
+      "timestamp": "NOW()",
+      "image_id": 5,
+      "manual_bird": null
+    }
+  ],
+  "species_dictionary": [
+    {
+      "species_id": 1,
+      "species_name": "American Kestrel",
+      "tag": "key"
+    }
+  ],
+  "birdguesses": [
+    {
+      "birdguess_id": 1,
+      "record_id": 1,
+      "species_id": 1,
+      "model": "ChatGPT",
+      "model_confidence": 0.98
+    },
+    {
+      "birdguess_id": 2,
+      "record_id": 2,
+      "species_id": 1,
+      "model": "ChatGPT",
+      "model_confidence": 0.98
+    },
+    {
+      "birdguess_id": 3,
+      "record_id": 3,
+      "species_id": 1,
+      "model": "ChatGPT",
+      "model_confidence": 0.98
+    },
+    {
+      "birdguess_id": 4,
+      "record_id": 4,
+      "species_id": 1,
+      "model": "ChatGPT",
+      "model_confidence": 0.98
+    },
+    {
+      "birdguess_id": 5,
+      "record_id": 5,
+      "species_id": 1,
+      "model": "ChatGPT",
+      "model_confidence": 0.98
+    }
+  ]
+}
