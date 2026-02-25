@@ -6,13 +6,21 @@
   width: 100%;
   box-sizing: border-box;
   justify-content: space-between;
+  align-items: start;
 }
 
 .column-left {
-  
   display: grid;
-  grid-template-rows: 1fr 1fr;
+  grid-template-rows: 1fr 45%;
   gap: 1rem;
+  height: 100%;
+  min-height: 0;
+}
+
+.table-placeholder {
+  height: 100%;
+  width: 100%;
+  min-height: 0;
 }
 
 .column-right {
@@ -30,6 +38,11 @@
     grid-template-columns: 1fr;
     grid-template-rows: auto auto;
     align-items: center;
+    gap: 1.5rem;
+  }
+
+  .column-left{
+    height: calc(100vh - 8vh);
   }
 
   /* Make the stats column 2x3 to arrange items */
@@ -44,13 +57,13 @@
       "line line";
   }
 
-  .column-right > div:nth-child(1) { /* Pie chart in top left */
+  .column-right > div:nth-child(1) { 
     grid-area: pie;
     min-width: 0;
     height: 100%;
   }
 
-  .column-right > div:nth-child(1) > div { /* Make pie chart box fill entire space */
+  .column-right > div:nth-child(1) > div { 
     height: 100%;
     display: flex;
     justify-content: center;
@@ -58,24 +71,24 @@
     padding: 0px;
   }
 
-  .column-right > div:nth-child(2) { /* Box stat 1 takes 1/2 of top right */
+  .column-right > div:nth-child(2) { 
     grid-area: active;
     min-width: 0;
   }
 
-  .column-right > div:nth-child(4) { /* Box stat 2 takes 2/2 of top right */
+  .column-right > div:nth-child(4) { 
     grid-area: mostActive;
     min-width: 0;
   }
 
-  .column-right > div:nth-child(3) { /* Line graph spans whole bottom row */
+  .column-right > div:nth-child(3) { 
     grid-area: line;
     min-width: 0;
     width: 100%;
   }
 }
 
-@media screen and (max-width: 600px) { /* Just make it all one column here */
+@media screen and (max-width: 600px) {
   .column-right{
     grid-template-columns: 1fr;
     grid-template-rows: auto auto auto auto;
