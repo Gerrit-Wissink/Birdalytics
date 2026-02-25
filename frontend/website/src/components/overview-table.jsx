@@ -87,13 +87,13 @@ export default function BirdboxTable() {
                 const record = recordsMap[box.birdbox_id];
                 return (
                   <tr key={box.birdbox_id} className={styles.row}>
-                    <td className={styles.td}>{box.birdbox_name}</td>
-                    <td className={styles.td}>
+                    <td className={styles.td} data-title="Box Name">{box.birdbox_name}</td>
+                    <td className={styles.td} data-title="Last Record">
                       {formatDateTime(box.last_captured_image?.date, box.last_captured_image?.time)}
                     </td>
-                    <td className={styles.td}>{record ? toPercent(record.usage_rate) : "—"}</td>
-                    <td className={styles.td}>{kestrelFrequency(record)}</td>
-                    <td className={styles.td}>
+                    <td className={styles.td} data-title="Usage Rate">{record ? toPercent(record.usage_rate) : "—"}</td>
+                    <td className={styles.td} data-title="Kestrel Frequency">{kestrelFrequency(record)}</td>
+                    <td className={styles.td} data-title="Last Kestrel">
                       {formatDateTime(box.last_identified_kestrel?.date, box.last_identified_kestrel?.time)}
                     </td>
                   </tr>

@@ -106,4 +106,67 @@
     .td:first-child, .th:first-child {
         max-width: 20ch !important;
   }
+
+  tr > th{
+    max-width: 10ch !important;
+  }
+}
+@media screen and (max-width: 900px) {
+
+.td:first-child, .th:first-child {
+        max-width: 100% !important;
+  }
+
+  /* Hide the separate thead table entirely */
+  .tableContainer > table:first-child {
+    display: none;
+  }
+
+  /* Force table and cells to act as block elements */
+  .table,
+  .table tbody,
+  .table tr,
+  .table td {
+    display: block;
+    width: 100%;
+    box-sizing: border-box;
+  }
+
+  /* Each row becomes a card */
+  .row {
+    border: 1px solid #CFCFCF;
+    border-radius: 8px;
+    margin-bottom: 12px;
+    border-top: 1px solid #CFCFCF;
+  }
+
+  /* Each cell behaves like a row with label on the left */
+  .td {
+    border: none;
+    border-bottom: 1px solid #ECECEC;
+    position: relative;
+    padding: 10px 10px 10px 50%;
+    white-space: normal;
+    text-align: left;
+  }
+
+  .td:last-child {
+    border-bottom: none;
+  }
+
+  /* Inject the label from data-title */
+  .td::before {
+    content: attr(data-title);
+    position: absolute;
+    left: 12px;
+    top: 50%;
+    transform: translateY(-50%);
+    width: calc(50% - 24px);
+    font-weight: 600;
+    font-size: 13px;
+    color: #000000;
+    white-space: nowrap;
+    overflow: hidden;
+    text-overflow: ellipsis;
+  }
 }

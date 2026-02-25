@@ -1,6 +1,6 @@
 import {HashRouter as Router, Routes, Route} from "react-router-dom"
 import { ThemeProvider, createTheme } from '@mui/material/styles'
-import CamInfo from "./pages/cameraInfo"
+import CamInfo from "./pages/camInfo"
 import Cameras from "./pages/cameras"
 import LogIn from "./pages/login"
 import Upload from "./pages/upload"
