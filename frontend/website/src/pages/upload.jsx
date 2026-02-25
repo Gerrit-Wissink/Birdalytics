@@ -25,8 +25,10 @@ export default function Upload(){
         try {
             const fetchBirdboxes = async () => {
                 const response = await apiClient.get('/boxes');
-                if (response.ok) {
+                console.log('Fetch birdboxes response:', response);
+                if (response.status === 200) {
                     const data = await response.json();
+                    console.log('Birdboxes data:', data);
                     setBirdboxes(['-- Please Select a Location', ...data.data.map(box => box.name)]); // Assuming the birdboxes are in the 'data' property
                 } else {
                     console.error('Failed to fetch birdboxes:', response.status);
