@@ -3,7 +3,7 @@ const { Birdguess, Birdboxes, Birdrecords, Image, SpeciesDictionary } = require(
 
 class BoxController {
     // Get all boxes
-    static async getAllBoxes(req, res) {
+    static async getAllBoxesInfo(req, res) {
         try {
             const boxes = await Birdboxes.findAll({
                 include: [
@@ -11,11 +11,6 @@ class BoxController {
                         model: Birdrecords,
                         as: 'records',
                         include: [
-                            {
-                                model: Image,
-                                as: 'image',
-                                attributes: ['image_id', 'image']
-                            },
                             {
                                 model: Birdguess,
                                 as: 'guesses',
@@ -31,7 +26,7 @@ class BoxController {
                                 order: [['model_confidence', 'DESC']]
                             }
                         ],
-                        attributes: ['record_id', 'timestamp', 'manual_bird'],
+                        attributes: ['record_id', 'timestamp', 'manual_bird', 'image_id'],
                         order: [['timestamp', 'DESC']]
                     }
                 ],
@@ -116,6 +111,7 @@ class BoxController {
                 }, 0);
 
                 return {
+                    birdbox_id: box.birdbox_id,
                     totalRecords,
                     photosWithCreatures,
                     numKestrelIdentified,
@@ -129,11 +125,54 @@ class BoxController {
 
             const stats = boxes.map(box => calculateBoxStats(box));
 
+            const formattedData = {
+                birdboxes: [],
+                birdbox_records: []
+            };
+
+            for(const box of boxes) {
+                formattedData.birdboxes.push(
+                    {
+                        birdbox_id: box.birdbox_id,
+                        birdbox_name: box.name,
+                        birdbox_lat: box.latitude,
+                        birdbox_long: box.longitude,
+                        installation_date: box.created_at,
+                        last_captured_image: {
+                            photo_url: `/images/${box.records[0].image_id}`,
+                            timestamp: box.records[0].timestamp
+                        },
+                        last_identified_kestrel: stats?.mostRecentKestrel ?? null
+                    }
+                );
+
+                formattedData.birdbox_records.push(
+                    {
+                        birdbox_id: box.birdbox_id,
+                        total_captured_photos: stats.totalRecords,
+                        total_photos_with_creatures: stats.photosWithCreatures,
+                        total_kestrel_identified_photos: stats.numKestrelIdentified,
+                        total_non_kestrel_identified_photos: stats.nonKestrelIdentified,
+                        number_active_days: stats.numActiveDays,
+                        usage_rate: stats.usageRate,
+                        modified_records: stats.modifiedRecords,
+                        records: [
+                            ...box.records.map(record => ({
+                                record_id: record.record_id,
+                                timestamp: record.timestamp,
+                                modified_bird: record.manual_bird,
+                                image_url: `/images/${record.image_id}`,
+                                primary_guess: record.guesses && record.guesses.length > 0 ? record.guesses[0].species.species_name : null,
+                                primary_guess_confidence: record.guesses && record.guesses.length > 0 ? record.guesses[0].model_confidence : null
+                            }))
+                        ]
+                    }
+                );
+            }
+
             res.json({
                 success: true,
-                count: boxes.length,
-                boxes: boxes,
-                stats: stats
+                data: formattedData
             });
         } catch (error) {
             console.error('Error in getAllBoxes:', error);
@@ -166,6 +205,25 @@ class BoxController {
             res.status(500).json({
                 success: false,
                 error: 'Failed to fetch box'
+            });
+        }
+    }
+
+    static async getAllBoxes(req, res) {
+        try {
+            const boxes = await Birdboxes.findAll({
+                order: [['name', 'ASC'], ['created_at', 'DESC']]
+            });
+            res.json({
+                success: true,
+                count: boxes.length,
+                data: boxes
+            });
+        }catch (error) {
+            console.error('Error in getAllBoxes:', error);
+            res.status(500).json({
+                success: false,
+                error: 'Failed to fetch boxes'
             });
         }
     }

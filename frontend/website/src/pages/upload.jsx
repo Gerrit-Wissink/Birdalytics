@@ -1,5 +1,5 @@
 import './upload.css'
-import { useState } from 'react';
+import { useState, useEffect } from 'react';
 import apiClient from '../utils/apiClient';
 
 
@@ -10,6 +10,14 @@ export default function Upload(){
     const [notification, setNotification] = useState('');
     const [notificationType, setNotificationType] = useState('');
     const [isLoading, setIsLoading] = useState(false);
+
+    useEffect(() => {
+        const token = localStorage.getItem('token');
+        const tokenExpiry = localStorage.getItem('tokenExpiry');
+        if (!token || (tokenExpiry && new Date(tokenExpiry) < new Date())) {
+            window.location.href = '/#/login';
+        }
+    }, []);
 
     const handleFileChange = (e) => {
         if (e.target.files.length > 0) {

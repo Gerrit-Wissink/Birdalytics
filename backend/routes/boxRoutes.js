@@ -7,6 +7,12 @@ const BoxController = require('../controllers/boxController');
 // @access  Public
 router.get('/', BoxController.getAllBoxes);
 
+
+// @route   GET /api/boxes
+// @desc    Get all boxes and all related info
+// @access  Public
+router.get('/records/', BoxController.getAllBoxesInfo);
+
 // @route   GET /api/boxes/:id
 // @desc    Get box by ID
 // @access  Public

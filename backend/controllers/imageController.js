@@ -2,18 +2,26 @@ const Image = require('../models/Image');
 const Birdrecords = require('../models/Birdrecords');
 const Birdboxes = require('../models/Birdboxes');
 const sequelize = require('../config/database');
+const multer = require('multer');
+const upload = multer({ storage: multer.memoryStorage() });
 
 class ImageController {
     // Get all images
     static async getAllImages(req, res) {
         try {
             const images = await Image.findAll({
-                order: [['timestamp', 'image_id']]
+                order: [['timestamp', 'DESC']]
             });
+            const imageList = images.map(image => ({
+                image_id: image.image_id,
+                timestamp: image.timestamp,
+                file_size: image.file_size,
+                image_url: `/images/${image.image_id}` // URL to fetch image
+            }));
             res.json({
                 success: true,
-                count: images.length,
-                data: images
+                count: imageList.length,
+                data: imageList
             });
         } catch (error) {
             console.error('Error in getAllImages:', error);
@@ -37,15 +45,32 @@ class ImageController {
                 });
             }
 
-            res.json({
-                success: true,
-                data: im
-            });
+            res.set('Content-Type', 'image/jpeg');
+            res.send(im.image);
         } catch (error) {
             console.error('Error in getImage:', error);
             res.status(500).json({
                 success: false,
                 error: 'Failed to fetch image'
+            });
+        }
+    }
+
+    static async getImageInfo(req, res) {
+        try {
+            const { id } = req.params;
+            const image = await Image.findByPk(id);
+            res.json({
+                image_id: image.image_id,
+                timestamp: image.timestamp,
+                file_size: image.file_size,
+                image_url: `/images/${image.image_id}` // URL to fetch image
+            });
+        } catch (error) {
+            console.error('Error in getImageInfo:', error);
+            res.status(500).json({
+                success: false,
+                error: 'Failed to fetch image info'
             });
         }
     }
