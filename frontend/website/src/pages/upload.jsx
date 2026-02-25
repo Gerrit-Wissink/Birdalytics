@@ -1,5 +1,7 @@
 import './upload.css'
 import { useState } from 'react';
+import apiClient from '../utils/apiClient';
+
 
 export default function Upload(){
     const [files, setFiles] = useState([]);
@@ -67,8 +69,7 @@ export default function Upload(){
             }
             
             // TODO: Replace with actual backend endpoint
-            const response = await fetch('/api/upload', {
-                method: 'POST',
+            const response = await apiClient.post('/images', {
                 body: formData,
             });
             
