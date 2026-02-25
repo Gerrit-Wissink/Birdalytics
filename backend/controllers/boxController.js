@@ -139,7 +139,7 @@ class BoxController {
                         birdbox_long: box.longitude,
                         installation_date: box.created_at,
                         last_captured_image: {
-                            photo_url: `/images/${box.records[0].image_id}`,
+                            photo_url: `images/${box.records[0].image_id}`,
                             timestamp: box.records[0].timestamp
                         },
                         last_identified_kestrel: stats?.mostRecentKestrel ?? null
@@ -161,7 +161,7 @@ class BoxController {
                                 record_id: record.record_id,
                                 timestamp: record.timestamp,
                                 modified_bird: record.manual_bird,
-                                image_url: `/images/${record.image_id}`,
+                                image_url: `images/${record.image_id}`,
                                 primary_guess: record.guesses && record.guesses.length > 0 ? record.guesses[0].species.species_name : null,
                                 primary_guess_confidence: record.guesses && record.guesses.length > 0 ? record.guesses[0].model_confidence : null
                             }))

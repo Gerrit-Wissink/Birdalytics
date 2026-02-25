@@ -64,7 +64,7 @@ class ImageController {
                 image_id: image.image_id,
                 timestamp: image.timestamp,
                 file_size: image.file_size,
-                image_url: `/images/${image.image_id}` // URL to fetch image
+                image_url: `images/${image.image_id}` // URL to fetch image
             });
         } catch (error) {
             console.error('Error in getImageInfo:', error);
