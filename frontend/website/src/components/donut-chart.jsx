@@ -42,7 +42,7 @@ function PieCenterLabel({ percentage, title, textColor }) {
   );
 }
 
-export default function BirdPieChart() {
+export default function BirdPieChart({ boxesData }) {
   const [hoveredIndex, setHoveredIndex] = useState(0);
 
   const percentage = Math.round((data[hoveredIndex].value / total) * 100);

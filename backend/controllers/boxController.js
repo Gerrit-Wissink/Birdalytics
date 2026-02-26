@@ -142,7 +142,7 @@ class BoxController {
                             photo_url: `images/${box.records[0].image_id}`,
                             timestamp: box.records[0].timestamp
                         },
-                        last_identified_kestrel: stats?.mostRecentKestrel ?? null
+                        last_identified_kestrel: stats.mostRecentKestrel ?? null
                     }
                 );
 
@@ -163,7 +163,12 @@ class BoxController {
                                 modified_bird: record.manual_bird,
                                 image_url: `images/${record.image_id}`,
                                 primary_guess: record.guesses && record.guesses.length > 0 ? record.guesses[0].species.species_name : null,
-                                primary_guess_confidence: record.guesses && record.guesses.length > 0 ? record.guesses[0].model_confidence : null
+                                primary_guess_confidence: record.guesses && record.guesses.length > 0 ? record.guesses[0].model_confidence : null,
+                                other_guesses: record.guesses && record.guesses.length > 1 ? record.guesses.slice(1).map(guess => ({
+                                    species_id: guess.species ? guess.species.species_id : null,
+                                    species_name: guess.species ? guess.species.species_name : null,
+                                    model_confidence: guess.model_confidence
+                                })) : []
                             }))
                         ]
                     }
