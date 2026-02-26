@@ -10,7 +10,10 @@ import apiClient from "../utils/apiClient.jsx";
 
 export default function Overview(){
     const user = localStorage.getItem('user');
-    const [boxesData, setBoxesData] = useState([]);
+    const [boxesData, setBoxesData] = useState({
+        birdboxes: [],
+        birdbox_records: []
+    });
 
     useEffect(() => {
         document.title = "Home - Birdalytics";
