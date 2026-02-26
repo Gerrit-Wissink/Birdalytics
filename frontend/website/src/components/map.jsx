@@ -1,8 +1,7 @@
 import { useEffect, useRef } from 'react'
-import boxes from '../fake-data/birdboxes.json'
 
-const Map = () => {
-  const birdboxData = boxes.birdboxes
+const Map = ({ boxesData }) => {
+  const birdboxData = boxesData.birdboxes
   console.log("Loaded birdbox data:", birdboxData)
   const mapRef = useRef(null)
   const mapInstanceRef = useRef(null)

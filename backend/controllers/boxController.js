@@ -1,5 +1,6 @@
 const sequelize = require('../config/database');
 const { Birdguess, Birdboxes, Birdrecords, Image, SpeciesDictionary } = require('../models');
+const { calculateBoxStats } = require('./utils');
 
 class BoxController {
     // Get all boxes
@@ -72,56 +73,12 @@ class BoxController {
                     ...
                 ]     
             */
-
-            const calculateBoxStats = (box) => {
-                const totalRecords = box.records.length;
-                const photosWithCreatures = box.records.filter(
-                    record => record.guesses && record.guesses.length > 0).length;
-                const numKestrelIdentified = box.records.filter(
-                    record => record.guesses && record.guesses.some(guess => guess.species && guess.species.species_id === 1)).length;
-                const nonKestrelIdentified = photosWithCreatures - numKestrelIdentified;
-                const mostRecentKestrel = box.records.find(record => record.guesses && record.guesses.some(guess => guess.species && guess.species.species_id === 1));
-
-                const ACTIVE_DAY_THRESHOLD = 10;
-                const ACTIVE_DAY_PERIOD = 90;
-
-                const recordDays = {};
-                box.records.forEach(record => {
-                    let recordDate = new Date(record.timestamp);
-                    let dateString = recordDate.toISOString().split('T')[0];
-                    if (!recordDays[dateString]) {
-                        recordDays[dateString] = 0;
-                    }
-                    if (record.guesses && record.guesses.length > 0) {
-                        recordDays[dateString]++;
-                    }
-                    if (Object.keys(recordDays).length > ACTIVE_DAY_PERIOD) {
-                        return;
-                    }
+           if(!boxes || boxes.length === 0) {
+                return res.status(404).json({
+                    success: false,
+                    error: 'No boxes found'
                 });
-                
-                const numActiveDays = Object.keys(recordDays).filter(date => recordDays[date] >= ACTIVE_DAY_THRESHOLD).length;
-                const usageRate = numActiveDays / Math.min(ACTIVE_DAY_PERIOD, Object.keys(recordDays).length);
-
-                const modifiedRecords = box.records.reduce((count, record) => {
-                    if (record.manual_bird !== null) {
-                        return count + 1;
-                    }
-                    return count;
-                }, 0);
-
-                return {
-                    birdbox_id: box.birdbox_id,
-                    totalRecords,
-                    photosWithCreatures,
-                    numKestrelIdentified,
-                    nonKestrelIdentified,
-                    numActiveDays,
-                    usageRate,
-                    modifiedRecords,
-                    mostRecentKestrel
-                };
-            };
+            }
 
             const stats = boxes.map(box => calculateBoxStats(box));
 
@@ -130,7 +87,7 @@ class BoxController {
                 birdbox_records: []
             };
 
-            for(const box of boxes) {
+            for(const [index, box] of boxes.entries()) {
                 formattedData.birdboxes.push(
                     {
                         birdbox_id: box.birdbox_id,
@@ -142,20 +99,20 @@ class BoxController {
                             photo_url: `images/${box.records[0].image_id}`,
                             timestamp: box.records[0].timestamp
                         },
-                        last_identified_kestrel: stats?.mostRecentKestrel ?? null
+                        last_identified_kestrel: stats[index]?.mostRecentKestrel ?? null
                     }
                 );
 
                 formattedData.birdbox_records.push(
                     {
                         birdbox_id: box.birdbox_id,
-                        total_captured_photos: stats.totalRecords,
-                        total_photos_with_creatures: stats.photosWithCreatures,
-                        total_kestrel_identified_photos: stats.numKestrelIdentified,
-                        total_non_kestrel_identified_photos: stats.nonKestrelIdentified,
-                        number_active_days: stats.numActiveDays,
-                        usage_rate: stats.usageRate,
-                        modified_records: stats.modifiedRecords,
+                        total_captured_photos: stats[index]?.totalRecords ?? 0,
+                        total_photos_with_creatures: stats[index]?.photosWithCreatures ?? 0,
+                        total_kestrel_identified_photos: stats[index]?.numKestrelIdentified ?? 0,
+                        total_non_kestrel_identified_photos: stats[index]?.nonKestrelIdentified ?? 0,
+                        number_active_days: stats[index]?.numActiveDays ?? 0,
+                        usage_rate: stats[index]?.usageRate ?? 0,
+                        modified_records: stats[index]?.modifiedRecords ?? 0,
                         records: [
                             ...box.records.map(record => ({
                                 record_id: record.record_id,
@@ -163,7 +120,12 @@ class BoxController {
                                 modified_bird: record.manual_bird,
                                 image_url: `images/${record.image_id}`,
                                 primary_guess: record.guesses && record.guesses.length > 0 ? record.guesses[0].species.species_name : null,
-                                primary_guess_confidence: record.guesses && record.guesses.length > 0 ? record.guesses[0].model_confidence : null
+                                primary_guess_confidence: record.guesses && record.guesses.length > 0 ? record.guesses[0].model_confidence : null,
+                                other_guesses: record.guesses && record.guesses.length > 1 ? record.guesses.slice(1).map(guess => ({
+                                    species_id: guess.species ? guess.species.species_id : null,
+                                    species_name: guess.species ? guess.species.species_name : null,
+                                    model_confidence: guess.model_confidence
+                                })) : []
                             }))
                         ]
                     }
@@ -199,6 +161,98 @@ class BoxController {
             res.json({
                 success: true,
                 data: box
+            });
+        } catch (error) {
+            console.error('Error in getBox:', error);
+            res.status(500).json({
+                success: false,
+                error: 'Failed to fetch box'
+            });
+        }
+    }
+
+    static async getBoxInfo(req, res) {
+        try {
+            const { id } = req.params;
+            const box = await Birdboxes.findByPk(id, {
+                include: [
+                    {
+                        model: Birdrecords,
+                        as: 'records',
+                        include: [
+                            {
+                                model: Birdguess,
+                                as: 'guesses',
+                                include: [
+                                    {
+                                        model: SpeciesDictionary,
+                                        as: 'species',
+                                        attributes: ['species_id', 'species_name']
+                                    }
+                                ],
+                                attributes: ['birdguess_id', 'model', 'model_confidence', 'species_id'],
+                                limit: 1,
+                                order: [['model_confidence', 'DESC']]
+                            }
+                        ],
+                        attributes: ['record_id', 'timestamp', 'manual_bird', 'image_id'],
+                        order: [['timestamp', 'DESC']]
+                    }
+                ]
+            });
+
+            if (!box) {
+                return res.status(404).json({
+                    success: false,
+                    error: 'Box not found'
+                });
+            }
+
+            const stats = calculateBoxStats(box);
+
+            const formattedData = {
+                birdboxes: {
+                    birdbox_id: box.birdbox_id,
+                    birdbox_name: box.name,
+                    birdbox_lat: box.latitude,
+                    birdbox_long: box.longitude,
+                    installation_date: box.created_at,
+                    last_captured_image: {
+                        photo_url: `images/${box.records[0].image_id}`,
+                        timestamp: box.records[0].timestamp
+                    },
+                    last_identified_kestrel: stats?.mostRecentKestrel ?? null
+                },
+                birdbox_records: {
+                    birdbox_id: box.birdbox_id,
+                    total_captured_photos: stats?.totalRecords ?? 0,
+                    total_photos_with_creatures: stats?.photosWithCreatures ?? 0,
+                    total_kestrel_identified_photos: stats?.numKestrelIdentified ?? 0,
+                    total_non_kestrel_identified_photos: stats?.nonKestrelIdentified ?? 0,
+                    number_active_days: stats?.numActiveDays ?? 0,
+                    usage_rate: stats?.usageRate ?? 0,
+                    modified_records: stats?.modifiedRecords ?? 0,
+                    records: [
+                        ...box.records.map(record => ({
+                            record_id: record.record_id,
+                            timestamp: record.timestamp,
+                            modified_bird: record.manual_bird,
+                            image_url: `images/${record.image_id}`,
+                            primary_guess: record.guesses && record.guesses.length > 0 ? record.guesses[0].species.species_name : null,
+                            primary_guess_confidence: record.guesses && record.guesses.length > 0 ? record.guesses[0].model_confidence : null,
+                            other_guesses: record.guesses && record.guesses.length > 1 ? record.guesses.slice(1).map(guess => ({
+                                species_id: guess.species ? guess.species.species_id : null,
+                                species_name: guess.species ? guess.species.species_name : null,
+                                model_confidence: guess.model_confidence
+                            })) : []
+                        }))
+                    ]
+                }
+            };
+
+            res.json({
+                success: true,
+                data: formattedData
             });
         } catch (error) {
             console.error('Error in getBox:', error);

@@ -18,6 +18,11 @@ router.get('/records/', BoxController.getAllBoxesInfo);
 // @access  Public
 router.get('/:id', BoxController.getBox);
 
+// @route   GET /api/boxes/records/:id
+// @desc    Get box by ID with all related info
+// @access  Public
+router.get('/records/:id', BoxController.getBoxInfo);
+
 // @route   POST /api/boxes
 // @desc    Create new box
 // @access  Public
