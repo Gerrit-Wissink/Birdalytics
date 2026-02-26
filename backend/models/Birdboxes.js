@@ -15,7 +15,7 @@ const Birdbox = sequelize.define('Birdbox', {
             len: [1, 100]
         }
     },
-    latitide: {
+    latitude: {
         type: DataTypes.DECIMAL(10, 7),
         allowNull: false,
         validate: {

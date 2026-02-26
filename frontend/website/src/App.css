@@ -1,8 +1,13 @@
 /********** WEBSITE GLOBAL STYLES **********/
 #container{
   max-width: 85vw;
-  margin: auto;
-  margin-bottom: 1rem;
+  margin-bottom: 10%;
+  min-height: calc(100vh - 8vh);
+  flex-grow: 1;
+  overflow-y: auto;
+  width: 100vw;
+  align-items: center;
+  padding: 0 7.5vw;
 }
 
 .stat-box {
@@ -28,7 +33,7 @@
 }
 
 .big-stat-highlight{
-  color: var(--green);
+  color: var(--green-text);
   font-weight: 600;
   font-size: 4rem;
   margin: 0px;
@@ -38,7 +43,7 @@
 }
 
 .small-stat-highlight{
-  color: var(--green);
+  color: var(--green-text);
   font-weight: 600;
   font-size: 2rem;
   margin: 0px;

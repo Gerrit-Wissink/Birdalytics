@@ -1,8 +1,9 @@
 import { useState } from 'react';
 import { useNavigate } from 'react-router-dom';
+import apiClient from '../utils/apiClient';
 import './login.css';
 
-export default function LogIn() {
+export default function Login() {
     const [username, setUsername] = useState('');
     const [password, setPassword] = useState('');
     const [error, setError] = useState('');
@@ -15,15 +16,9 @@ export default function LogIn() {
         setIsLoading(true);
 
         try {
-            const response = await fetch('http://localhost:8000/api/users/login', {
-                method: 'POST',
-                headers: {
-                    'Content-Type': 'application/json',
-                },
-                body: JSON.stringify({ username, password })
-            });
+            const response = await apiClient.post('/users/login', { username, password });
 
-            const data = await response.json();
+            const data = response.data;
 
             if (data.success) {
                 // Store token and user data
@@ -38,7 +33,20 @@ export default function LogIn() {
             }
         } catch (err) {
             console.error('Login error:', err);
-            setError('Unable to connect to server. Please try again.');
+            
+            // Access status code
+            const status = err.response?.status;
+            const errorMessage = err.response?.data?.error;
+            
+            if (status === 401) {
+                setError('Invalid username or password');
+            } else if (status === 500) {
+                setError('Server error. Please try again later.');
+            } else if (status === 404) {
+                setError('Server not found. Please contact support.');
+            } else {
+                setError(errorMessage || 'Login Failed. Please try again.');
+            }
         } finally {
             setIsLoading(false);
         }
@@ -53,7 +61,6 @@ export default function LogIn() {
                 <div id="login-box">
                     <h2>Birdalytics</h2>
                     <form onSubmit={handleSubmit}>
-                        {error && <p className="error-message">{error}</p>}
                         <div className="input-box">
                             <label htmlFor="username">Username</label>
                             <input
@@ -80,6 +87,7 @@ export default function LogIn() {
                                 disabled={isLoading}
                             />
                         </div>
+                        {error && <p className="error-message">{error}</p>}
                         <div className="button-box">
                             <button type="submit" disabled={isLoading}>
                                 {isLoading ? 'Signing In...' : 'Sign In'}

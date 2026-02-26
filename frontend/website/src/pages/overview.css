@@ -1,22 +1,103 @@
-#overview-container {
-  padding: 2rem;
-}
-
 #overview-grid {
   display: grid;
-  grid-template-columns: 80% 20%;
-  gap: 1rem;
-  margin-bottom: 1rem;
+  grid-template-columns: 78% 20%;
+  margin-bottom: 2.5%;
+  max-width: 100%;
+  width: 100%;
+  box-sizing: border-box;
+  justify-content: space-between;
+  align-items: start;
 }
 
 .column-left {
   display: grid;
-  grid-template-rows: 1fr 1fr;
+  grid-template-rows: 1fr 45%;
   gap: 1rem;
+  height: 100%;
+  min-height: 0;
+}
+
+.table-placeholder {
+  height: 100%;
+  width: 100%;
+  min-height: 0;
 }
 
 .column-right {
   display: grid;
   grid-template-rows: auto auto auto auto;
   gap: 1rem;
+}
+
+.leaflet-top, .leaflet-bottom{
+  z-index: 900 !important;
+}
+
+@media screen and (max-width: 1250px) {
+  #overview-grid {
+    grid-template-columns: 1fr;
+    grid-template-rows: auto auto;
+    align-items: center;
+    gap: 1.5rem;
+  }
+
+  .column-left{
+    height: calc(100vh - 8vh);
+  }
+
+  /* Make the stats column 2x3 to arrange items */
+  .column-right{
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    grid-template-rows: auto auto auto;
+    gap: 1rem;
+    grid-template-areas:
+      "pie active"
+      "pie mostActive"
+      "line line";
+  }
+
+  .column-right > div:nth-child(1) { 
+    grid-area: pie;
+    min-width: 0;
+    height: 100%;
+  }
+
+  .column-right > div:nth-child(1) > div { 
+    height: 100%;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    padding: 0px;
+  }
+
+  .column-right > div:nth-child(2) { 
+    grid-area: active;
+    min-width: 0;
+  }
+
+  .column-right > div:nth-child(4) { 
+    grid-area: mostActive;
+    min-width: 0;
+  }
+
+  .column-right > div:nth-child(3) { 
+    grid-area: line;
+    min-width: 0;
+    width: 100%;
+  }
+}
+
+@media screen and (max-width: 600px) {
+  .column-right{
+    grid-template-columns: 1fr;
+    grid-template-rows: auto auto auto auto;
+    gap: 1rem;
+    grid-template-areas:
+      "pie"
+      "active"
+      "mostActive"
+      "line";
+    margin-bottom: 5vh;
+  }
 }
