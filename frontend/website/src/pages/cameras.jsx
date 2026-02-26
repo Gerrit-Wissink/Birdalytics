@@ -1,9 +1,17 @@
 import './cameras.css'
-import { useState } from 'react';
+import { useState, useEffect } from 'react';
 import boxData from '../fake-data/birdboxes.json'
 
 export default function Cameras(){
     // TODO: Replace with GET request to fetch cameras from backend
+    useEffect(() => {
+        const token = localStorage.getItem('token');
+        const tokenExpiry = localStorage.getItem('tokenExpiry');
+        if (!token || (tokenExpiry && new Date(tokenExpiry) < new Date())) {
+            window.location.href = '/#/login';
+        }
+    }, []);
+
     const cameras = boxData.birdboxes
 
     const [showModal, setShowModal] = useState(false);
