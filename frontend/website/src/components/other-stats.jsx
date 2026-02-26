@@ -1,8 +1,8 @@
 
 
-export default function ActiveBoxes() {
+export default function ActiveBoxes({ boxesData }) {
 
-    const numBoxes = 5
+    const numBoxes = boxesData.birdboxes.length;
 
     return (
         <>
@@ -14,7 +14,7 @@ export default function ActiveBoxes() {
     )
 }
 
-export function MostActiveBox() {
+export function MostActiveBox({ boxesData }) {
 
     const MostActiveBox = "Gosnell Big Woods Primary"
 

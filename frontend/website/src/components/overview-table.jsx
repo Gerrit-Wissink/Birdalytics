@@ -1,11 +1,6 @@
 import { useState, useRef } from "react"
 import InfoOutlinedIcon from "@mui/icons-material/InfoOutlined"
-import boxData from '../fake-data/birdboxes.json'
-import boxRecords from '../fake-data/birdbox_records.json'
 import styles from './overview-table.module.css'
-
-const birdboxes = boxData.birdboxes
-const birdboxRecords = boxRecords.birdbox_records
 
 function formatDateTime(date, time) {
   if (!date || !time) return "—";
@@ -50,7 +45,9 @@ function InfoTooltip({ text }) {
   );
 }
 
-export default function BirdboxTable() {
+export default function BirdboxTable({ boxesData }) {
+  const birdboxes = boxesData.birdboxes
+  const birdboxRecords = boxesData.birdbox_records
   const recordsMap = Object.fromEntries(birdboxRecords.map((r) => [r.birdbox_id, r]));
   const colWidths = ["30%", "22%", "15%", "18%", "15%"];
 
