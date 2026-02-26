@@ -1,5 +1,14 @@
 # Birdalytics Backend
 
+## Credentials
+User 1 
+Username : admin
+Password : birdhouse0129
+
+User 2
+Username : testuser
+Password : password123
+
 ## Overview
 Birdalytics is a backend API built with Node.js and Express, designed to support data-driven features for the Birdalytics platform.
 

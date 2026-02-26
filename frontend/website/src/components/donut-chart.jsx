@@ -9,7 +9,7 @@ const data = [
   { value: 18, label: 'Non-Birds', title: 'non-bird' },
 ];
 
-const colors = ['var(--green)', 'var(--orange)', 'var(--purple)'];
+const colors = ['var(--green-text)', 'var(--orange)', 'var(--purple)'];
 
 const total = data.reduce((sum, item) => sum + item.value, 0);
 
