@@ -130,7 +130,7 @@ class BoxController {
                 birdbox_records: []
             };
 
-            for(const box of boxes) {
+            for(const [index, box] of boxes.entries()) {
                 formattedData.birdboxes.push(
                     {
                         birdbox_id: box.birdbox_id,
@@ -142,20 +142,20 @@ class BoxController {
                             photo_url: `images/${box.records[0].image_id}`,
                             timestamp: box.records[0].timestamp
                         },
-                        last_identified_kestrel: stats.mostRecentKestrel ?? null
+                        last_identified_kestrel: stats[index]?.mostRecentKestrel ?? null
                     }
                 );
 
                 formattedData.birdbox_records.push(
                     {
                         birdbox_id: box.birdbox_id,
-                        total_captured_photos: stats.totalRecords,
-                        total_photos_with_creatures: stats.photosWithCreatures,
-                        total_kestrel_identified_photos: stats.numKestrelIdentified,
-                        total_non_kestrel_identified_photos: stats.nonKestrelIdentified,
-                        number_active_days: stats.numActiveDays,
-                        usage_rate: stats.usageRate,
-                        modified_records: stats.modifiedRecords,
+                        total_captured_photos: stats[index]?.totalRecords ?? 0,
+                        total_photos_with_creatures: stats[index]?.photosWithCreatures ?? 0,
+                        total_kestrel_identified_photos: stats[index]?.numKestrelIdentified ?? 0,
+                        total_non_kestrel_identified_photos: stats[index]?.nonKestrelIdentified ?? 0,
+                        number_active_days: stats[index]?.numActiveDays ?? 0,
+                        usage_rate: stats[index]?.usageRate ?? 0,
+                        modified_records: stats[index]?.modifiedRecords ?? 0,
                         records: [
                             ...box.records.map(record => ({
                                 record_id: record.record_id,
