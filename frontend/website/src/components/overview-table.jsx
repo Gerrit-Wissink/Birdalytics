@@ -10,6 +10,15 @@ function formatDateTime(date, time) {
   return `${m}/${d}/${shortYear} - ${hh}:${mm}`;
 }
 
+function formatTimestamp(timestamp) {
+  if (!timestamp) return "—";
+  const [datePart, timePart] = timestamp.split("T");
+  const [y, m, d] = datePart.split("-");
+  const shortYear = y.slice(2);
+  const [hh, mm] = timePart.split(":");
+  return `${m}/${d}/${shortYear} - ${hh}:${mm}`;
+}
+
 function toPercent(value) {
   return `${Math.round(value * 100)}%`;
 }
@@ -86,12 +95,12 @@ export default function BirdboxTable({ boxesData }) {
                   <tr key={box.birdbox_id} className={styles.row}>
                     <td className={styles.td} data-title="Box Name">{box.birdbox_name}</td>
                     <td className={styles.td} data-title="Last Record">
-                      {formatDateTime(box.last_captured_image?.date, box.last_captured_image?.time)}
+                      {formatTimestamp(box.last_captured_image?.timestamp)}
                     </td>
                     <td className={styles.td} data-title="Usage Rate">{record ? toPercent(record.usage_rate) : "—"}</td>
                     <td className={styles.td} data-title="Kestrel Frequency">{kestrelFrequency(record)}</td>
                     <td className={styles.td} data-title="Last Kestrel">
-                      {formatDateTime(box.last_identified_kestrel?.date, box.last_identified_kestrel?.time)}
+                      {formatTimestamp(box.last_identified_kestrel?.timestamp)}
                     </td>
                   </tr>
                 );
