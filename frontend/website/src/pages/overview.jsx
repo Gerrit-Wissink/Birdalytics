@@ -6,7 +6,7 @@ import {MostActiveBox} from "../components/other-stats.jsx";
 import BirdboxTable from "../components/overview-table.jsx"; 
 import './overview.css'
 import { useEffect, useState } from "react";
-import apiClient from "../utils/apiClient.js";
+import { apiClient } from "../utils/apiClient.js";
 
 export default function Overview(){
     const user = localStorage.getItem('user');
