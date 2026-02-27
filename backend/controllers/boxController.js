@@ -28,7 +28,7 @@ class BoxController {
                             }
                         ],
                         attributes: ['record_id', 'timestamp', 'manual_bird', 'image_id'],
-                        order: [['timestamp', 'DESC']]
+                        order: [['record_id', 'DESC']]
                     }
                 ],
                 order: [['name', 'ASC'], ['created_at', 'DESC']]
@@ -196,7 +196,7 @@ class BoxController {
                             }
                         ],
                         attributes: ['record_id', 'timestamp', 'manual_bird', 'image_id'],
-                        order: [['timestamp', 'DESC']]
+                        order: [['record_id', 'DESC']]
                     }
                 ]
             });

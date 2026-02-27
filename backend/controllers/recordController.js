@@ -11,7 +11,9 @@ class RecordController {
         try {
             const records = await Birdrecords.findAll({
                 include: [
-                    { model: Image, as: 'image' },
+                    { model: Image, as: 'image',
+                        attributes: ['image_id', 'timestamp', 'file_size']
+                    },
                     { model: Birdboxes, as: 'birdbox' },
                     { 
                         model: Birdguess, 
