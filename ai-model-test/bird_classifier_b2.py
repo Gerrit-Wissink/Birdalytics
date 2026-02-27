@@ -74,3 +74,10 @@ for path in image_paths:
     print(f"Status: {'[AUTO-CROPPED]' if cropped else '[ORIGINAL VIEW]'}")
     for species, conf in results:
         print(f"  {species}: {conf:.2f}")
+
+def process_image(image_path):
+    print(f"\n--- Processing {image_path} ---")
+    results, cropped = predict_top5(image_path)
+    print(f"Status: {'[AUTO-CROPPED]' if cropped else '[ORIGINAL VIEW]'}")
+    for species, conf in results:
+        print(f"  {species}: {conf:.2f}")
