@@ -30,7 +30,7 @@ export default function Overview(){
     useEffect(() => {
         const fetchBoxesData = async () => {
             try {
-                const response = await apiClient.get('/boxes/records');
+                const response = await apiClient.get('/boxes/record');
                 console.log('Fetch boxes data response:', response);
                 if (response.status === 200) {
                     const data = response.data.data;

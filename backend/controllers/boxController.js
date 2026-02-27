@@ -23,15 +23,17 @@ class BoxController {
                                     }
                                 ],
                                 attributes: ['birdguess_id', 'model', 'model_confidence', 'species_id'],
-                                limit: 1,
-                                order: [['model_confidence', 'DESC']]
                             }
                         ],
-                        attributes: ['record_id', 'timestamp', 'manual_bird', 'image_id'],
-                        order: [['record_id', 'DESC']]
+                        attributes: ['record_id', 'timestamp', 'manual_bird', 'image_id']
                     }
                 ],
-                order: [['name', 'ASC'], ['created_at', 'DESC']]
+                order: [
+                    ['name', 'ASC'], 
+                    ['created_at', 'DESC'],
+                    [{ model: Birdrecords, as: 'records' }, 'record_id', 'DESC'],
+                    [{ model: Birdguess, as: 'guesses' }, 'model_confidence', 'DESC']
+                ]
             });
 
             /* 
@@ -191,13 +193,14 @@ class BoxController {
                                     }
                                 ],
                                 attributes: ['birdguess_id', 'model', 'model_confidence', 'species_id'],
-                                limit: 1,
-                                order: [['model_confidence', 'DESC']]
                             }
                         ],
-                        attributes: ['record_id', 'timestamp', 'manual_bird', 'image_id'],
-                        order: [['record_id', 'DESC']]
+                        attributes: ['record_id', 'timestamp', 'manual_bird', 'image_id']
                     }
+                ],
+                order: [
+                    [{ model: Birdrecords, as: 'records' }, 'record_id', 'DESC'],
+                    [{ model: Birdguess, as: 'guesses' }, 'model_confidence', 'DESC']
                 ]
             });
 

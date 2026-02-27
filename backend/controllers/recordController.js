@@ -24,6 +24,12 @@ class RecordController {
                 order: [['timestamp', 'DESC']]
             });
 
+            records.map(record => {
+                if (record.image) {
+                    record.image.image_url = `/images/${record.image.image_id}`;
+                }
+            });
+
             res.json({
                 success: true,
                 count: records.length,
@@ -50,6 +56,8 @@ class RecordController {
                     error: 'Record not found'
                 });
             }
+
+            record.image.image_url = `/images/${record.image_id}`;
 
             res.json({
                 success: true,
