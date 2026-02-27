@@ -10,7 +10,10 @@ import apiClient from "../utils/apiClient.jsx";
 
 export default function Overview(){
     const user = localStorage.getItem('user');
-    const [boxesData, setBoxesData] = useState([]);
+    const [boxesData, setBoxesData] = useState({
+        birdboxes: [],
+        birdbox_records: []
+    });
 
     useEffect(() => {
         document.title = "Home - Birdalytics";
@@ -27,7 +30,7 @@ export default function Overview(){
     useEffect(() => {
         const fetchBoxesData = async () => {
             try {
-                const response = await apiClient.get('/boxes/records');
+                const response = await apiClient.get('/boxes/record');
                 console.log('Fetch boxes data response:', response);
                 if (response.status === 200) {
                     const data = response.data.data;

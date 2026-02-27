@@ -59,7 +59,7 @@ const Map = ({ boxesData }) => {
         mapInstanceRef.current = null
       }
     }
-  }, [])
+  }, [boxesData]);
 
   return (
     <div style={{ width: '100%', height: '100%' }}>
