@@ -32,7 +32,7 @@ class BoxController {
                     ['name', 'ASC'], 
                     ['created_at', 'DESC'],
                     [{ model: Birdrecords, as: 'records' }, 'record_id', 'DESC'],
-                    [{ model: Birdguess, as: 'guesses' }, 'model_confidence', 'DESC']
+                    [{ model: Birdrecords, as: 'records' }, { model: Birdguess, as: 'guesses' }, 'model_confidence', 'DESC']
                 ]
             });
 
@@ -201,7 +201,7 @@ class BoxController {
                 ],
                 order: [
                     [{ model: Birdrecords, as: 'records' }, 'record_id', 'DESC'],
-                    [{ model: Birdguess, as: 'guesses' }, 'model_confidence', 'DESC']
+                    [{ model: Birdrecords, as: 'records' }, { model: Birdguess, as: 'guesses' }, 'model_confidence', 'DESC']
                 ]
             });
 
