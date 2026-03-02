@@ -15,6 +15,7 @@ const Map = ({ boxesData }) => {
 
       marker.on('mouseover', function () { this.openPopup() })
       marker.on('mouseout', function () { this.closePopup() })
+      marker.on('click', function () { window.location.href = `/#/camInfo?selected=${box.birdbox_id}` })
     })
   }
 
