@@ -1,5 +1,7 @@
 import './upload.css'
-import { useState } from 'react';
+import { useState, useEffect } from 'react';
+import apiClient from '../utils/apiClient';
+
 
 export default function Upload(){
     const [files, setFiles] = useState([]);
@@ -8,6 +10,36 @@ export default function Upload(){
     const [notification, setNotification] = useState('');
     const [notificationType, setNotificationType] = useState('');
     const [isLoading, setIsLoading] = useState(false);
+    const [birdboxes, setBirdboxes] = useState([]);
+
+    useEffect(() => {
+        document.title = 'Upload - Birdalytics';
+        const token = localStorage.getItem('token');
+        const tokenExpiry = localStorage.getItem('tokenExpiry');
+        if (!token || (tokenExpiry && new Date(tokenExpiry) < new Date())) {
+            window.location.href = '/#/login';
+        }
+    }, []);
+
+    useEffect(() => {
+        try {
+            const fetchBirdboxes = async () => {
+                const response = await apiClient.get('/boxes');
+                console.log('Fetch birdboxes response:', response);
+                if (response.status === 200) {
+                    const data = response.data.data;
+                    console.log('Birdboxes data:', data);
+                    setBirdboxes(['-- Please Select a Location', ...data.map(box => box.name)]); // Assuming the birdboxes are in the 'data' property
+                } else {
+                    console.error('Failed to fetch birdboxes:', response.status);
+                }
+            };
+            
+            fetchBirdboxes();
+        }catch (error) {
+            console.error('Error fetching birdboxes:', error);
+        }
+    }, []);
 
     const handleFileChange = (e) => {
         if (e.target.files.length > 0) {
@@ -41,6 +73,14 @@ export default function Upload(){
 
     const handleSubmit = async (e) => {
         e.preventDefault();
+
+        //Validate that a box is selected
+        if (selectedBox === '-- Please Select a Location') {
+            setNotificationType('error');
+            setNotification('Please select a location to upload to.');
+            setTimeout(() => setNotification(''), 4000);
+            return;
+        }
         
         // Validate that either files are selected or URL is provided
         if (files.length === 0 && !urlValue.trim()) {
@@ -67,12 +107,9 @@ export default function Upload(){
             }
             
             // TODO: Replace with actual backend endpoint
-            const response = await fetch('/api/upload', {
-                method: 'POST',
-                body: formData,
-            });
+            const response = await apiClient.post('/images', formData);
             
-            if (response.ok) {
+            if (response.status === 201) {
                 const fileCount = files.length;
                 setNotificationType('success');
                 setNotification(`Successfully uploaded ${fileCount} file${fileCount !== 1 ? 's' : ''} to ${selectedBox}!`);
@@ -108,17 +145,20 @@ export default function Upload(){
         )}
         <section id="upload-container">
             <div id="upload-logo">
-                <img src="./images/GLTLogo.jpg" alt="Genesee Land Trust Logo" />
+                {/* <img src="./images/GLTLogo.jpg" alt="Genesee Land Trust Logo" /> */}
             </div>
             <div id="upload-box">
-                <h2>Birdalytics</h2>
+                <div id="upload-header">
+                    <h2>Birdalytics</h2>
+                    <img src="./images/GLT_birding.png" alt="Bird Icon" style={{width: "50px", height: "50px"}} />
+                </div>
                 <form onSubmit={handleSubmit}>
                     <div className="input-box">
                         <label htmlFor="box-name">Box Name</label>
                         <select id="box-name" value={selectedBox} onChange={(e) => setSelectedBox(e.target.value)}>
-                            <option>Gosnell Big Woods</option>
-                            <option>Box 2</option>
-                            <option>Box 3</option>
+                            {birdboxes.map((box, index) => (
+                                <option key={index} value={box}>{box}</option>
+                            ))}
                         </select>
                     </div>
 
@@ -160,8 +200,8 @@ export default function Upload(){
                     </div>
 
                     <div className="button-group">
-                        <button type="button" className="cancel-btn" onClick={handleReset}>Reset</button>
-                        <button type="submit" className="import-btn">Import</button>
+                        <button type="button" className="cancel-btn" onClick={handleReset} style={{fontFamily: "Lato, sans-serif"}}>Reset</button>
+                        <button type="submit" className="import-btn" style={{fontFamily: "Lato, sans-serif"}}>Submit</button>
                     </div>
                 </form>
             </div>
