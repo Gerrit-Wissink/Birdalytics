@@ -1,17 +1,21 @@
 import { useState, useRef } from "react"
 import InfoOutlinedIcon from "@mui/icons-material/InfoOutlined"
-import boxData from '../fake-data/birdboxes.json'
-import boxRecords from '../fake-data/birdbox_records.json'
 import styles from './overview-table.module.css'
-
-const birdboxes = boxData.birdboxes
-const birdboxRecords = boxRecords.birdbox_records
 
 function formatDateTime(date, time) {
   if (!date || !time) return "—";
   const [y, m, d] = date.split("-");
   const shortYear = y.slice(2);
   const [hh, mm] = time.split(":");
+  return `${m}/${d}/${shortYear} - ${hh}:${mm}`;
+}
+
+function formatTimestamp(timestamp) {
+  if (!timestamp) return "—";
+  const [datePart, timePart] = timestamp.split("T");
+  const [y, m, d] = datePart.split("-");
+  const shortYear = y.slice(2);
+  const [hh, mm] = timePart.split(":");
   return `${m}/${d}/${shortYear} - ${hh}:${mm}`;
 }
 
@@ -50,7 +54,9 @@ function InfoTooltip({ text }) {
   );
 }
 
-export default function BirdboxTable() {
+export default function BirdboxTable({ boxesData }) {
+  const birdboxes = boxesData.birdboxes
+  const birdboxRecords = boxesData.birdbox_records
   const recordsMap = Object.fromEntries(birdboxRecords.map((r) => [r.birdbox_id, r]));
   const colWidths = ["30%", "22%", "15%", "18%", "15%"];
 
@@ -89,12 +95,12 @@ export default function BirdboxTable() {
                   <tr key={box.birdbox_id} className={styles.row}>
                     <td className={styles.td} data-title="Box Name">{box.birdbox_name}</td>
                     <td className={styles.td} data-title="Last Record">
-                      {formatDateTime(box.last_captured_image?.date, box.last_captured_image?.time)}
+                      {formatTimestamp(box.last_captured_image?.timestamp)}
                     </td>
                     <td className={styles.td} data-title="Usage Rate">{record ? toPercent(record.usage_rate) : "—"}</td>
                     <td className={styles.td} data-title="Kestrel Frequency">{kestrelFrequency(record)}</td>
                     <td className={styles.td} data-title="Last Kestrel">
-                      {formatDateTime(box.last_identified_kestrel?.date, box.last_identified_kestrel?.time)}
+                      {formatTimestamp(box.last_identified_kestrel?.timestamp)}
                     </td>
                   </tr>
                 );

@@ -44,7 +44,7 @@ const values = dailyData.map(item => item.value)
 
 const areaColor = 'var(--gradient-green)'
 
-export default function LineGraph() {
+export default function LineGraph({ boxesData }) {
   return (
     <div className='stat-box-graph'>
       <p className='graph-header'>Kestrel Detections/Month</p>

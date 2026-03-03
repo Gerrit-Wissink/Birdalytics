@@ -43,7 +43,7 @@ def capture_photo(condition):
 # Otherwise, increment the timer. The timer is reset whenever a photo is taken.
 # These steps will be repeated until one of the capturing conditons are met.
 while True:
-    print ("Looking for motion... (Photo will be taken automatically if " + str(config.interval_time) + " second(s) have passed)")
+    print ("Looking for motion... (Photo will be taken automatically in " + str(config.interval_time - time_inactive) + " second(s))")
     sleep(1)
     if motion_sensor.is_active:
         capture_photo(1)
