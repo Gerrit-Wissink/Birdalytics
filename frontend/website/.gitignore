@@ -29,3 +29,4 @@ leaflet/
 
 # Configs
 vite.config.js
+.env
