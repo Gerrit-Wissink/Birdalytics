@@ -74,6 +74,18 @@ class BirdController {
             }
 
             // Python stuff here? Should return species_id, model, model_confidence
+            // const response = await fetch('http://localhost:6969/data', {
+            //     method: 'POST',
+            //     body: req.body
+            // });
+
+            if (!response.ok) {
+                throw new Error(`HTTP error! status: ${response.status}`);
+            }
+
+            const result = await response.json();
+            console.log(result);
+
             const species_id = 1
             const model = 'none'
             const model_confidence = 0.0
