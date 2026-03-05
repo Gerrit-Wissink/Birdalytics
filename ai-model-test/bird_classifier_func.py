@@ -53,57 +53,41 @@ class BirdPipeline:
             )
 
         return self._hf_cache[key]
-
-    # Crop bird boxes from YOLO output
-    def _crop_birds(
-        self,
-        pil_img,
-        yolo_result,
-        bird_class_id=14,
-        min_conf=0.25,
-        max_crops=3
-    ):
-
+    
+    def _crop_top_boxes(self, pil_img, yolo_result, min_conf=0.15, max_crops=3, pad=0.15):
         crops = []
         boxes_meta = []
 
         boxes = getattr(yolo_result, "boxes", None)
-
         if boxes is None or len(boxes) == 0:
             return crops, boxes_meta
 
         xyxy = boxes.xyxy.cpu().numpy()
-        cls = boxes.cls.cpu().numpy().astype(int)
         conf = boxes.conf.cpu().numpy()
 
-        # Filter bird detections
-        kept = [
-            (xyxy[i], float(conf[i]))
-            for i in range(len(cls))
-            if cls[i] == bird_class_id and conf[i] >= min_conf
-        ]
-
-        kept.sort(key=lambda x: x[1], reverse=True)
+        # take top boxes by confidence
+        kept = [(xyxy[i], float(conf[i])) for i in range(len(conf)) if conf[i] >= min_conf]
+        kept.sort(key=lambda t: t[1], reverse=True)
         kept = kept[:max_crops]
 
         W, H = pil_img.size
-
         for (x1, y1, x2, y2), c in kept:
+            bw = x2 - x1
+            bh = y2 - y1
 
-            x1 = max(0, int(x1))
-            y1 = max(0, int(y1))
-            x2 = min(W, int(x2))
-            y2 = min(H, int(y2))
+            x1p = max(0, int(x1 - pad * bw))
+            y1p = max(0, int(y1 - pad * bh))
+            x2p = min(W, int(x2 + pad * bw))
+            y2p = min(H, int(y2 + pad * bh))
 
-            if x2 <= x1 or y2 <= y1:
+            if x2p <= x1p or y2p <= y1p:
                 continue
 
-            crop = pil_img.crop((x1, y1, x2, y2)).convert("RGB")
-
+            crop = pil_img.crop((x1p, y1p, x2p, y2p)).convert("RGB")
             crops.append(crop)
 
             boxes_meta.append({
-                "xyxy": [x1, y1, x2, y2],
+                "xyxy": [x1p, y1p, x2p, y2p],
                 "det_conf": c
             })
 
@@ -111,43 +95,103 @@ class BirdPipeline:
 
     # Prediction
     def predict(
-        self,
-        files,
-        filenames,
-        yolo_conf=0.25,
-        max_crops=3,
-        bird_class_id=14,
-        hf_model=None,
-        hf_device=-1
-    ):
-
+    self,
+    files,
+    filenames,
+    yolo_conf=0.15,
+    yolo_iou=0.4, # merge/suppress overlapping detections
+    max_crops=3,
+    hf_model=None,
+    hf_device=-1,
+    pad=0.15, # pad crops for better classification
+    min_box_area_ratio=0.005 # skip tiny boxes (0.5% of image area)
+):
         model_id = hf_model or self.default_hf_model
-
         classifier = self._get_classifier(model_id, hf_device)
 
-        # Run YOLO detection
-        yolo_results = self.yolo(files, conf=yolo_conf, verbose=False)
+        # Run YOLO once as a batch
+        yolo_results = self.yolo(files, conf=yolo_conf, iou=yolo_iou, agnostic_nms=True, verbose=False)
 
         output = []
 
         for img, name, result in zip(files, filenames, yolo_results):
+            W, H = img.size
+            img_area = W * H
 
-            crops, boxes = self._crop_birds(
-                img,
-                result,
-                bird_class_id=bird_class_id,
-                min_conf=yolo_conf,
-                max_crops=max_crops
-            )
+            # build region proposals from top detections
+            boxes = getattr(result, "boxes", None)
+            regions = []
 
-            # Classify bird crops
-            predictions = classifier(crops) if crops else []
+            if boxes is not None and len(boxes) > 0:
+                xyxy = boxes.xyxy.cpu().numpy()
+                conf = boxes.conf.cpu().numpy()
+
+                kept = [(i, float(conf[i])) for i in range(len(conf)) if conf[i] >= yolo_conf]
+                kept.sort(key=lambda t: t[1], reverse=True)
+                kept = kept[:max_crops]
+
+                crops = []
+                meta = []
+
+                for i, det_conf in kept:
+                    x1, y1, x2, y2 = xyxy[i]
+                    bw = x2 - x1
+                    bh = y2 - y1
+
+                    # skip tiny regions (often noise)
+                    if (bw * bh) < (min_box_area_ratio * img_area):
+                        continue
+
+                    # pad + clamp
+                    x1p = max(0, int(x1 - pad * bw))
+                    y1p = max(0, int(y1 - pad * bh))
+                    x2p = min(W, int(x2 + pad * bw))
+                    y2p = min(H, int(y2 + pad * bh))
+                    if x2p <= x1p or y2p <= y1p:
+                        continue
+
+                    crops.append(img.crop((x1p, y1p, x2p, y2p)).convert("RGB"))
+                    meta.append({"xyxy": [x1p, y1p, x2p, y2p], "det_conf": det_conf})
+
+                if crops:
+                    preds = classifier(crops)  # list per crop (top-k list)
+                    for m, p in zip(meta, preds):
+                        regions.append({
+                            **m,
+                            "bird_top1": p[0],
+                            "bird_top5": p
+                        })
+                    classified_on = "yolo_top_boxes"
+                else:
+                    # YOLO had boxes but they were filtered out as tiny/invalid
+                    full = classifier(img)
+                    regions = [{
+                        "xyxy": [0, 0, W, H],
+                        "det_conf": None,
+                        "bird_top1": full[0],
+                        "bird_top5": full
+                    }]
+                    classified_on = "full_image_fallback"
+            else:
+                # no YOLO boxes at all
+                full = classifier(img)
+                regions = [{
+                    "xyxy": [0, 0, W, H],
+                    "det_conf": None,
+                    "bird_top1": full[0],
+                    "bird_top5": full
+                }]
+                classified_on = "full_image_fallback"
+
+            # Choose a best guess per image (highest HF top1 score across regions)
+            best = max((r["bird_top1"] for r in regions), key=lambda d: d["score"])
 
             output.append({
                 "filename": name,
-                "num_birds": len(crops),
-                "boxes": boxes,
-                "bird_predictions": predictions
+                "classified_on": classified_on,
+                "num_regions": len(regions),
+                "best_guess": best,
+                "regions": regions
             })
-
+        
         return output
