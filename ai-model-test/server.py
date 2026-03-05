@@ -33,5 +33,5 @@ def predict():
 
 # Run the application
 if __name__ == '__main__':
-    # This makes the server externally visible (0.0.0.0) and runs on port 6969 by default
-    app.run(host='0.0.0.0', port=6969)
+    # This makes the server externally visible (0.0.0.0) and runs on port 6000 by default
+    app.run(host='0.0.0.0', port=6000)

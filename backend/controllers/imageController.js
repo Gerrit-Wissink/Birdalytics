@@ -2,12 +2,9 @@ const Image = require('../models/Image');
 const Birdrecords = require('../models/Birdrecords');
 const Birdboxes = require('../models/Birdboxes');
 const sequelize = require('../config/database');
+const { classifyImages } = require('./utils');
 
 class ImageController {
-
-    static async classifyImages(req, res) {
-        // Implementation for classifying images
-    }
 
     // Get all images
     static async getAllImages(req, res) {
@@ -95,7 +92,7 @@ class ImageController {
                 });
             }
 
-            const {boxName, imageUrl} = req.body;
+            const { boxName, imageUrl } = req.body;
             console.log('Box name from request:', boxName);
             console.log('Image URL from request:', imageUrl);
 
@@ -167,9 +164,16 @@ class ImageController {
             }
 
             console.log(`\n=== SUCCESS: ${imagesCreated} image(s) created ===\n`);
+            console.log(`=== SENDING IMAGES TO CLASSIFICATION MODEL ===`);
+
+            const results = await classifyImages(boxName, files);
+            console.log('Classification results:', results);
+            console.log(`=== Finished processing all files ===`);
+
             res.status(201).json({
                 success: true,
                 imagesCreated,
+                classificationResults: results
             });
         } catch (error) {
             console.error('\n=== ERROR in createImage ===');

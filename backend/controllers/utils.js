@@ -1,3 +1,6 @@
+const FormData = require('form-data');
+const axios = require('axios');
+
 
 const calculateBoxStats = (box) => {
     const totalRecords = box.records.length;
@@ -49,4 +52,55 @@ const calculateBoxStats = (box) => {
     };
 };
 
-module.exports = { calculateBoxStats };
+const classifyImages = (boxName, files) => {
+    if(!files || files.length === 0) {
+        console.log('No files provided for classification');
+        return;
+    }
+
+    try {
+        const formData = new FormData();
+
+
+        formData.append('boxName', boxName);
+        for (const file of files) {
+            formData.append('files', file.buffer, {
+                filename: file.originalname,
+                contentType: file.mimetype
+            });
+        }
+
+        const response = await axios.post('http://localhost:6000/predict', formData, {
+            headers: formData.getHeaders()
+        });
+
+        if (response.status === 200) {
+            console.log('Classification response:', response.data);
+            const data = response.data;
+
+            if(data.boxName !== boxName) {
+                console.error(`Box name mismatch in response. Expected: ${boxName}, Received: ${data.boxName}`);
+                return;
+            }
+
+            if(!data.results || !Array.isArray(data.results)) {
+                console.error('Invalid results format in classification response:', data.results);
+                return;
+            }
+
+            return data;
+        } else if(response.status === 400) {
+            console.error('Bad request to classification model:', response.data);
+        } else if(response.status === 500) {
+            console.error('Server error from classification model:', response.data);
+        } else if (response.status === 404) {
+            console.error('Classification endpoint not found:', response.data);
+        } else {
+            console.error('Unexpected response from classification model:', response.status, response.data);
+        }
+    }catch (error) {
+        console.error('Error classifying images:', error);
+    }
+}
+
+module.exports = { calculateBoxStats, classifyImages };
