@@ -19,7 +19,7 @@ export default function Cameras(){
         birdboxes: [],
         birdbox_records: []
     });
-    
+
     const [imageMap, setImageMap] = useState({});
 
     useEffect(() => {
@@ -86,7 +86,7 @@ export default function Cameras(){
         
         // Cleanup: revoke object URLs when component unmounts
         return () => {
-            Object.values(imageMap).forEach(url => URL.revokeObjectURL(url));
+            Object.values(newImageMap).forEach(url => URL.revokeObjectURL(url));
         };
     }, [boxesData]);
 

@@ -4,6 +4,11 @@ const Birdboxes = require('../models/Birdboxes');
 const sequelize = require('../config/database');
 
 class ImageController {
+
+    static async classifyImages(req, res) {
+        // Implementation for classifying images
+    }
+
     // Get all images
     static async getAllImages(req, res) {
         try {
