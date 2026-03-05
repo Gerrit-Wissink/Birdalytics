@@ -290,13 +290,13 @@ class BoxController {
     // Create new box
     static async createBox(req, res) {
         try {
-            const { name, latitide, longitude, field_notes } = req.body;
+            const { name, location, latitude, longitude } = req.body;
 
             // Validation
-            if (!name || !latitide || !longitude) {
+            if (!name || !location || !latitude || !longitude) {
                 return res.status(400).json({
                     success: false,
-                    error: 'Please provide name, latitide, and longitude'
+                    error: 'Please provide name, location, and coordinates for the box'
                 });
             }
 
@@ -312,7 +312,7 @@ class BoxController {
                 });
             }
 
-            const newBox = await Birdboxes.create({ name, latitide, longitude, field_notes });
+            const newBox = await Birdboxes.create({ name, latitude, longitude, field_notes });
 
             res.status(201).json({
                 success: true,
@@ -338,7 +338,7 @@ class BoxController {
     static async updateBox(req, res) {
         try {
             const { id } = req.params;
-            const { name, latitide, longitude, field_notes } = req.body;
+            const { name, latitude, longitude, field_notes } = req.body;
 
             const box = await Birdboxes.findByPk(id);
             if (!box) {
