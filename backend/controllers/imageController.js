@@ -111,9 +111,13 @@ class ImageController {
                     throw new Error('Invalid file data from ' + originalname);
                 }
                 
-                const timestamp = new Date();
+                // Parse originalname for Date time string format
+                let date1 = originalname.replace(/[^0-9_-]/g, '').slice(2).replace('_', 'T');
+                const time1 = date1.slice(10).replace(/-/g, ':') + '.000Z';
+                date1 = date1.slice(0, 10);
+                const timestamp = new Date(date1 + time1);
                 console.log('Timestamp:', timestamp.toISOString());
-                
+
                 console.log('Starting database transaction...');
                 transaction = await sequelize.transaction();
                 console.log('Transaction started successfully');
