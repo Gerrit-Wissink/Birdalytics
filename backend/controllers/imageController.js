@@ -1,6 +1,7 @@
 const Image = require('../models/Image');
 const Birdrecords = require('../models/Birdrecords');
 const Birdboxes = require('../models/Birdboxes');
+const Jobs = require('../models/Job');
 const sequelize = require('../config/database');
 
 class ImageController {
@@ -152,6 +153,14 @@ class ImageController {
                     manual_bird: null
                 }, { transaction });
                 console.log('Birdrecord created with ID:', recordRes.record_id);
+
+                console.log('Creating job...');
+                const jobRes = await Jobs.create({
+                    event_type: 'birdrecord.created',
+                    record_id: recordRes.record_id,
+                    processed: false
+                }, { transaction });
+                console.log('Job created with ID:', jobRes.id);
 
                 if(!recordRes || !recordRes.record_id) {
                     console.log('ERROR: Failed to create bird record');
