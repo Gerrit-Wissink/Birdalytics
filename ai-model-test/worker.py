@@ -51,13 +51,17 @@ def load_image_for_record(conn, record_id):
     return img, f"record_{record_id}.jpg"
 
 def get_or_create_species(conn, label):
+    label = " ".join(label.split()).strip().title()
+
     with conn.cursor() as cur:
         cur.execute(
             """
             INSERT INTO species_dictionary (species_name)
             VALUES (%s)
             ON CONFLICT (LOWER(species_name))
-            DO UPDATE SET species_name = EXCLUDED.species_name
+            DO UPDATE SET
+                species_name = EXCLUDED.species_name,
+                updated_at = now()
             RETURNING species_id
             """,
             (label,)
@@ -81,24 +85,28 @@ def upsert_birdguess(conn, record_id, result, model_name):
             ON CONFLICT (record_id, model)
             DO UPDATE SET
                 species_id = EXCLUDED.species_id,
-                model_confidence = EXCLUDED.model_confidence
+                model_confidence = EXCLUDED.model_confidence,
+                updated_at = now()
             RETURNING record_id, species_id, model, model_confidence
             """,
             (record_id, species_id, model_name, confidence)
         )
 
-        print("birdguess upserted:", cur.fetchone())
+        row = cur.fetchone()
+        print("birdguess upserted:", row)
+        return row
 
 def mark_job_processed(conn, job_id):
     with conn.cursor() as cur:
-            cur.execute(
-                """
-                UPDATE outbox_events
-                SET processed = TRUE
-                WHERE id = %s
-                """,
-                (job_id,)
-            )
+        cur.execute(
+            """
+            UPDATE outbox_events
+            SET processed = TRUE
+            WHERE id = %s AND processed = FALSE
+            """,
+            (job_id,)
+        )
+        print("Rows updated:", cur.rowcount)
 
 def process_job(conn, job):
     img, filename = load_image_for_record(conn, job["record_id"])
