@@ -50,8 +50,28 @@ def load_image_for_record(conn, record_id):
     img = Image.open(io.BytesIO(row["image"])).convert("RGB")
     return img, f"record_{record_id}.jpg"
 
+def get_or_create_species(conn, label):
+    with conn.cursor() as cur:
+        cur.execute(
+            """
+            INSERT INTO species_dictionary (species_name)
+            VALUES (%s)
+            ON CONFLICT (LOWER(species_name))
+            DO UPDATE SET species_name = EXCLUDED.species_name
+            RETURNING species_id
+            """,
+            (label,)
+        )
+
+        row = cur.fetchone()
+        return row["species_id"]
+
 def upsert_birdguess(conn, record_id, result, model_name):
     best = result["best_guess"]
+    label = best["label"]
+    confidence = best["score"]
+
+    species_id = get_or_create_species(conn, label)
 
     with conn.cursor() as cur:
         cur.execute(
@@ -64,10 +84,10 @@ def upsert_birdguess(conn, record_id, result, model_name):
                 model_confidence = EXCLUDED.model_confidence
             RETURNING record_id, species_id, model, model_confidence
             """,
-            (record_id, None, model_name, best["score"])
+            (record_id, species_id, model_name, confidence)
         )
-        row = cur.fetchone()
-        print("birdguess upserted:", row)
+
+        print("birdguess upserted:", cur.fetchone())
 
 def mark_job_processed(conn, job_id):
     with conn.cursor() as cur:
@@ -122,7 +142,7 @@ def main():
                     print(f"Error processing job {job['id']}: {e}")
 
             time.sleep(BUSY_SLEEP_SECONDS)
-            
+
     print("Worker shutdown complete")
 
 if __name__ == "__main__":
