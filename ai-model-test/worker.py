@@ -1,5 +1,6 @@
 import io
 import time
+import signal
 from PIL import Image
 from db import get_connection
 from bird_class import BirdPipeline
@@ -7,6 +8,7 @@ from bird_class import BirdPipeline
 IDLE_SLEEP_SECONDS = 2
 BUSY_SLEEP_SECONDS = 0.1
 BATCH_SIZE = 5
+running = True
 
 pipeline = BirdPipeline(
     yolo_weights="yolov8n.pt",
@@ -91,19 +93,20 @@ def process_job(conn, job):
     with conn.transaction():
         upsert_birdguess(conn, job["record_id"], result, pipeline.default_hf_model)
         mark_job_processed(conn, job["id"])
-    
-    # with conn.cursor() as cur:
-    #     cur.execute(
-    #         "SELECT record_id, species_id, model, model_confidence FROM birdguesses WHERE record_id = %s",
-    #         (job["record_id"],)
-    #     )
-    #     print("Post-commit read:", cur.fetchall())
+
+def shutdown_handler(signum, frame):
+    global running
+    print("Shutdown signal received...")
+    running = False
+
+signal.signal(signal.SIGINT, shutdown_handler)   # Ctrl+C
+signal.signal(signal.SIGTERM, shutdown_handler)  # system kill
 
 def main():
     print("Worker started")
 
     with get_connection() as conn:
-        while True:
+        while running:
             jobs = claim_jobs(conn)
 
             if not jobs:
@@ -119,6 +122,8 @@ def main():
                     print(f"Error processing job {job['id']}: {e}")
 
             time.sleep(BUSY_SLEEP_SECONDS)
+            
+    print("Worker shutdown complete")
 
 if __name__ == "__main__":
     main()
