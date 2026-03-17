@@ -1,6 +1,7 @@
 const Image = require('../models/Image');
 const Birdrecords = require('../models/Birdrecords');
 const Birdboxes = require('../models/Birdboxes');
+const Jobs = require('../models/Job');
 const sequelize = require('../config/database');
 const { classifyImages } = require('./utils');
 
@@ -114,9 +115,13 @@ class ImageController {
                     throw new Error('Invalid file data from ' + originalname);
                 }
                 
-                const timestamp = new Date();
+                // Parse originalname for Date time string format
+                let date1 = originalname.replace(/[^0-9_-]/g, '').slice(2).replace('_', 'T');
+                const time1 = date1.slice(10).replace(/-/g, ':') + '.000Z';
+                date1 = date1.slice(0, 10);
+                const timestamp = new Date(date1 + time1);
                 console.log('Timestamp:', timestamp.toISOString());
-                
+
                 console.log('Starting database transaction...');
                 transaction = await sequelize.transaction();
                 console.log('Transaction started successfully');
@@ -151,6 +156,14 @@ class ImageController {
                     manual_bird: null
                 }, { transaction });
                 console.log('Birdrecord created with ID:', recordRes.record_id);
+
+                console.log('Creating job...');
+                const jobRes = await Jobs.create({
+                    event_type: 'birdrecord.created',
+                    record_id: recordRes.record_id,
+                    processed: false
+                }, { transaction });
+                console.log('Job created with ID:', jobRes.id);
 
                 if(!recordRes || !recordRes.record_id) {
                     console.log('ERROR: Failed to create bird record');

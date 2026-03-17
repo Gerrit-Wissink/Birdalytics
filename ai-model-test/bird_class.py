@@ -2,36 +2,27 @@ from PIL import Image
 import io
 from ultralytics import YOLO
 from transformers import pipeline
-from dotenv import load_dotenv
-import os
-import psycopg2
 
+def load_image_for_record(conn, record_id):
+    with conn.cursor() as cur:
+        cur.execute(
+            """
+            SELECT br.record_id, i.image
+            FROM birdrecords br
+            JOIN images i ON i.image_id = br.image_id
+            WHERE br.record_id = %s
+            """,
+            (record_id,)
+        )
+        row = cur.fetchone()
 
-# Load environment variables from .env file
-load_dotenv()
+    if not row:
+        raise ValueError(f"No image found for record_id={record_id}")
 
-def read_images_from_request(request):
-    files = request.files.getlist("files")
+    img = Image.open(io.BytesIO(row["image"])).convert("RGB")
+    filename = f"record_{record_id}.jpg"
 
-    if not files:
-        files = request.files.getlist("files[]")
-
-    images = []
-    filenames = []
-
-    for f in files:
-        if not f or not f.filename:
-            continue
-
-        if not (f.mimetype or "").startswith("image/"):
-            continue
-
-        img = Image.open(io.BytesIO(f.read())).convert("RGB")
-
-        images.append(img)
-        filenames.append(f.filename)
-
-    return images, filenames
+    return img, filename
 
 class BirdPipeline:
 
@@ -99,28 +90,6 @@ class BirdPipeline:
             })
 
         return crops, boxes_meta
-    
-
-    def create_guess_records(self, predictions, record_id, conn):
-        # Implementation for creating guess records
-        cursor = conn.cursor()
-        # Now iterate through the results and insert them into the database
-        for guess in predictions:
-            # First: see if a new record needs to be inserted into species_dictionary
-            cursor.execute("SELECT species_id FROM species_dictionary WHERE species_name = %s", (guess['label'],))
-            species_result = cursor.fetchone()
-            if not species_result:
-                cursor.execute("INSERT INTO species_dictionary (species_name) VALUES (%s) RETURNING species_id", (guess['label'],))
-                species_id = cursor.fetchone()[0]
-            else:
-                species_id = species_result[0]
-            # Then: insert a new record into GuessRecord with the appropriate foreign key to species_dictionary
-            cursor.execute(
-                "INSERT INTO birdguesses (record_id, species_id, model, model_confidence) VALUES (%s, %s, %s, %s)",
-                (record_id, species_id, 'dennisjooo/Birds-Classifier-EfficientNetB2', guess['score'])
-            )
-        conn.commit()
-        cursor.close()
 
     # Prediction
     def predict(

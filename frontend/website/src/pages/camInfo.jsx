@@ -1,9 +1,11 @@
 import styles from './camInfo.module.css'
 import SearchRoundedIcon from '@mui/icons-material/SearchRounded';
 import { FiEdit } from "react-icons/fi";
+import { IoSettingsOutline } from "react-icons/io5";
 import { useState, useEffect } from 'react';
 import apiClient from '../utils/apiClient';
-
+import {MiniPieChart} from '../components/donut-chart';
+import ProgressBar from '../components/progress-bar';
 
 export default function CamInfo(){
 
@@ -11,21 +13,6 @@ export default function CamInfo(){
         birdboxes: [],
         birdbox_records: []
     });
-    
-    const [imageMap, setImageMap] = useState({});
-    const [selectedBox, setSelectedBox] = useState(null);
-
-    useEffect(() => {
-        document.title = "Camera Info - Birdalytics";
-    }, []);
-
-    useEffect(() => {
-        const token = localStorage.getItem('token');
-        const tokenExpiry = localStorage.getItem('tokenExpiry');
-        if (!token || (tokenExpiry && new Date(tokenExpiry) < new Date())) {
-            window.location.href = '/#/login';
-        }
-    }, []);
 
     useEffect(() => {
         const fetchBoxesData = async () => {
@@ -35,7 +22,7 @@ export default function CamInfo(){
                 if (response.status === 200) {
                     const data = response.data.data;
                     console.log('Boxes data:', data);
-                    setBoxesData(data); // Assuming the boxes data is in the 'data' property
+                    setBoxesData(data);
                 } else {
                     console.error('Failed to fetch boxes data:', response.status);
                 }
@@ -47,124 +34,33 @@ export default function CamInfo(){
         fetchBoxesData();
     }, []);
 
-    useEffect(() => {
-        if (boxesData.birdboxes.length === 0) return;
-        
-        console.log("Fetching images for birdboxes...");
-        const fetchImagesForBoxes = async () => {
-            try {
-                const newImageMap = {};
-                
-                for(const box of boxesData.birdboxes) {
-                    if(!box.last_captured_image) {
-                        console.log("No image to fetch for box:", box.birdbox_name);
-                        continue;
-                    }
-                    
-                    const url = box.last_captured_image.photo_url;
-                    const response = await apiClient.get(url, {
-                        responseType: 'blob' // Important: get binary data as blob
-                    });
-                    
-                    // Create object URL from blob
-                    const imageUrl = URL.createObjectURL(response.data);
-                    newImageMap[box.birdbox_id] = imageUrl;
-                    
-                    console.log(`Fetched image for box ${box.birdbox_name}`);
-                }
-                
-                setImageMap(newImageMap);
-            } catch (error) {
-                console.error('Error fetching images for boxes:', error);
-            }
-        };
-        
-        fetchImagesForBoxes();
-        
-        // Cleanup: revoke object URLs when component unmounts
-        return () => {
-            Object.values(newImageMap).forEach(url => URL.revokeObjectURL(url));
-        };
-    }, [boxesData]);
+    const cameras = boxesData.birdboxes
 
-    /* 
-        {
-            "success":true,
-            "data": {
-                "birdboxes": {
-                    "birdbox_id":12,
-                    "birdbox_name":"Salmon Creek Nature Preserve",
-                    "birdbox_lat":"43.2980000",
-                    "birdbox_long":"-77.7750000",
-                    "location":"Salmon Creek Nature Preserve",
-                    "installation_date":"2026-02-15T02:03:04.570Z",
-                    "last_captured_image": {
-                        "photo_url":"images/6",
-                        "timestamp":"2026-02-25T04:22:52.724Z"
-                    },
-                    "last_identified_kestrel": {
-                    "record_id":1,
-                    "timestamp":"2026-02-15T02:03:04.570Z",
-                    "manual_bird":null,
-                    "image_id":1,
-                    "guesses": [
-                        {
-                            "birdguess_id":1,
-                            "model":"ChatGPT",
-                            "model_confidence":"0.9800",
-                            "species_id":1,
-                            "species": {
-                                "species_id":1,
-                                "species_name":"American Kestrel"
-                            }
-                        }
-                    ]
-                }
-            },
-            "birdbox_records": {
-            "birdbox_id":12,
-            "total_captured_photos":2,
-            "total_photos_with_creatures":1,
-            "total_kestrel_identified_photos":1,
-            "total_non_kestrel_identified_photos":0,
-            "number_active_days":0,
-            "usage_rate":0,
-            "modified_records":0,
-            "records":[{"record_id":6,"timestamp":"2026-02-25T04:22:52.724Z","modified_bird":null,"image_url":"images/6","primary_guess":null,"primary_guess_confidence":null,"other_guesses":[]},{"record_id":1,"timestamp":"2026-02-15T02:03:04.570Z","modified_bird":null,"image_url":"images/1","primary_guess":"American Kestrel","primary_guess_confidence":"0.9800","other_guesses":[]}]}}}
-    */
+    const getSelectedIDFromHash = () => {
+        const hashQuery = window.location.hash.includes('?')
+            ? window.location.hash.split('?')[1]
+            : '';
+        return new URLSearchParams(hashQuery).get('selected') || -1;
+    };
+
+    const [selectedID, setSelectedID] = useState(getSelectedIDFromHash);
 
     useEffect(() => {
-        if (boxesData.birdboxes.length === 0) return;
-        
-        const urlParams = new URLSearchParams(window.location.search);
-        const selectedID = parseInt(urlParams.get('selected'));
-        
-        if (selectedID) {
-            const selected_box = boxesData.birdboxes.find(box => box.birdbox_id === selectedID);
-            const selected_record = boxesData.birdbox_records.find(record => record.birdbox_id === selectedID);
-            const selected_combined = {
-                ...selected_box,
-                ...selected_record
-            };
-            setSelectedBox(selected_combined);
-            
-            console.log("Selected box:", selected_combined);
-        }
-    }, [boxesData]);
+        const onHashChange = () => setSelectedID(getSelectedIDFromHash());
+        window.addEventListener('hashchange', onHashChange);
+        return () => window.removeEventListener('hashchange', onHashChange);
+    }, []);
 
-    function changeSelectedBox(box_id) {
-        const selected_box = boxesData.birdboxes.find(box => box.birdbox_id === box_id);
-        const selected_record = boxesData.birdbox_records.find(record => record.birdbox_id === box_id);
-        const selected_combined = {
-            ...selected_box,
-            ...selected_record
-        };
-        setSelectedBox(selected_combined);
-        
-        console.log("Selected box:", selected_combined);
-    }
+    const navigateToCamera = (id) => {
+        const hashPath = window.location.hash.split('?')[0];
+        window.location.hash = `${hashPath}?selected=${id}`;
+    };
 
-    const cameras = boxesData.birdboxes;
+    const selectedCamera = {}
+    selectedCamera.birdboxes = cameras.find((camera) => camera.birdbox_id === parseInt(selectedID)) || cameras[0];
+    selectedCamera.birdbox_records = boxesData.birdbox_records.filter(record => record.birdbox_id === parseInt(selectedID));
+
+    if (!selectedCamera.birdboxes) return null;
 
     return(
     <>
@@ -172,27 +68,55 @@ export default function CamInfo(){
             <div id={styles.cameraSidebar}>
                 <div className={styles.titleSpan}>
                     <h2>Cameras</h2>
-                    <span>
+                    <span style={{display: 'flex', gap: '1em', alignItems: 'center', cursor: 'pointer'}}>
                         <SearchRoundedIcon style={{fontSize: '1.5rem', color:'var(--text)' }} />
                         <FiEdit style={{color: 'var(--text)', fontSize: '1.5rem', marginLeft: '0.5rem' }} />
                     </span>
                 </div>
                 {cameras.map((camera) => (
-                    <div className={styles.cameraItem} key={camera.birdbox_id} onClick={() => changeSelectedBox(camera.birdbox_id)}>
+                    <div
+                        className={styles.cameraItem}
+                        key={camera.birdbox_id}
+                        onClick={() => navigateToCamera(camera.birdbox_id)}
+                        style={{
+                            backgroundColor: camera.birdbox_id === parseInt(selectedID) ? '#B8CEEF' : undefined,
+                            cursor: 'pointer'
+                        }}
+                    >
                         <p>{camera.birdbox_location}</p>
                         <h3>{camera.birdbox_name}</h3>
                     </div>
                 ))}
             </div>
             <div id={styles.cameraContent}>
-                <h1>{selectedBox?.birdbox_name || "Select a Camera"}</h1>
+                <h1 style={{display: 'flex', alignItems: 'center', justifyContent: 'space-between', marginRight: '7.5%'}} >
+                    {selectedCamera.birdboxes.birdbox_name}
+                    <IoSettingsOutline />
+                </h1>
                 <div className = {styles.sideBySide}>
                     <div id={styles.cameraSummary}>
-                        <h3>Camera Summary</h3>
-                        <p>Usage Rate: {selectedBox?.usage_rate || "N/A"}</p>
+                        <h3 style={{margin: '5px 0px'}}>Camera Summary</h3>
+                            <div style={{display: 'flex', justifyContent: 'space-between'}}>
+                            <div className={styles.stackedStats}>
+                                <p>Usage Rate</p>
+                                <p className='small-stat-highlight'>85%</p>
+                            </div>
+                            <div className={styles.stackedStats}>
+                                <p>Kestrel Frequency</p>
+                                <p className='small-stat-highlight'>65%</p>
+                            </div>
+                        </div>
+                        <p>Images Reviewed</p>
+                            <ProgressBar totalImages={100} imagesReviewed={85} /> 
+                            {/* TODO REPLACE WITH REFERENCES TO BOX DATA */}
+                        <p>Species Overview</p>
+                        <MiniPieChart kestrels={44} otherBirds={28} nonBirds={18} />
+
+
                     </div>
                     <div id={styles.identifyBox}>
-                        <h3>Species Identification</h3>
+                        <h3 style={{margin: '5px 0px'}}>Species Identification</h3>
+                        
                     </div>
                 </div>
                 <div>
