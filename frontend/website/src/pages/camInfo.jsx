@@ -87,6 +87,52 @@ export default function CamInfo(){
         };
     }, [boxesData]);
 
+    /* 
+        {
+            "success":true,
+            "data": {
+                "birdboxes": {
+                    "birdbox_id":12,
+                    "birdbox_name":"Salmon Creek Nature Preserve",
+                    "birdbox_lat":"43.2980000",
+                    "birdbox_long":"-77.7750000",
+                    "location":"Salmon Creek Nature Preserve",
+                    "installation_date":"2026-02-15T02:03:04.570Z",
+                    "last_captured_image": {
+                        "photo_url":"images/6",
+                        "timestamp":"2026-02-25T04:22:52.724Z"
+                    },
+                    "last_identified_kestrel": {
+                    "record_id":1,
+                    "timestamp":"2026-02-15T02:03:04.570Z",
+                    "manual_bird":null,
+                    "image_id":1,
+                    "guesses": [
+                        {
+                            "birdguess_id":1,
+                            "model":"ChatGPT",
+                            "model_confidence":"0.9800",
+                            "species_id":1,
+                            "species": {
+                                "species_id":1,
+                                "species_name":"American Kestrel"
+                            }
+                        }
+                    ]
+                }
+            },
+            "birdbox_records": {
+            "birdbox_id":12,
+            "total_captured_photos":2,
+            "total_photos_with_creatures":1,
+            "total_kestrel_identified_photos":1,
+            "total_non_kestrel_identified_photos":0,
+            "number_active_days":0,
+            "usage_rate":0,
+            "modified_records":0,
+            "records":[{"record_id":6,"timestamp":"2026-02-25T04:22:52.724Z","modified_bird":null,"image_url":"images/6","primary_guess":null,"primary_guess_confidence":null,"other_guesses":[]},{"record_id":1,"timestamp":"2026-02-15T02:03:04.570Z","modified_bird":null,"image_url":"images/1","primary_guess":"American Kestrel","primary_guess_confidence":"0.9800","other_guesses":[]}]}}}
+    */
+
     useEffect(() => {
         if (boxesData.birdboxes.length === 0) return;
         

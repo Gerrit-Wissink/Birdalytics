@@ -52,7 +52,7 @@ const calculateBoxStats = (box) => {
     };
 };
 
-const classifyImages = (boxName, files) => {
+const classifyImages = (boxName, files, fileNameMap) => {
     if(!files || files.length === 0) {
         console.log('No files provided for classification');
         return;

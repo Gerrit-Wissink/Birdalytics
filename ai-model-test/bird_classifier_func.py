@@ -2,6 +2,13 @@ from PIL import Image
 import io
 from ultralytics import YOLO
 from transformers import pipeline
+from dotenv import load_dotenv
+import os
+import psycopg2
+
+
+# Load environment variables from .env file
+load_dotenv()
 
 def read_images_from_request(request):
     files = request.files.getlist("files")
@@ -108,12 +115,35 @@ class BirdPipeline:
             })
 
         return crops, boxes_meta
+    
+
+    def create_guess_records(self, predictions, record_id, conn):
+        # Implementation for creating guess records
+        cursor = conn.cursor()
+        # Now iterate through the results and insert them into the database
+        for guess in predictions:
+            # First: see if a new record needs to be inserted into species_dictionary
+            cursor.execute("SELECT species_id FROM species_dictionary WHERE species_name = %s", (guess['label'],))
+            species_result = cursor.fetchone()
+            if not species_result:
+                cursor.execute("INSERT INTO species_dictionary (species_name) VALUES (%s) RETURNING species_id", (guess['label'],))
+                species_id = cursor.fetchone()[0]
+            else:
+                species_id = species_result[0]
+            # Then: insert a new record into GuessRecord with the appropriate foreign key to species_dictionary
+            cursor.execute(
+                "INSERT INTO birdguesses (record_id, species_id, model, model_confidence) VALUES (%s, %s, %s, %s)",
+                (record_id, species_id, 'dennisjooo/Birds-Classifier-EfficientNetB2', guess['score'])
+            )
+        conn.commit()
+        cursor.close()
 
     # Prediction
     def predict(
         self,
         files,
         filenames,
+        file_name_map,
         yolo_conf=0.25,
         max_crops=3,
         bird_class_id=14,
@@ -130,24 +160,45 @@ class BirdPipeline:
 
         output = []
 
-        for img, name, result in zip(files, filenames, yolo_results):
-
-            crops, boxes = self._crop_birds(
-                img,
-                result,
-                bird_class_id=bird_class_id,
-                min_conf=yolo_conf,
-                max_crops=max_crops
+        try:
+            # Open database connection
+            conn = psycopg2.connect(
+                host=os.getenv("DB_HOST"),
+                database=os.getenv("DB_NAME"),
+                user=os.getenv("DB_USER"),
+                password=os.getenv("DB_PASSWORD")
             )
 
-            # Classify bird crops
-            predictions = classifier(crops) if crops else []
+            for img, name, result in zip(files, filenames, yolo_results):
 
-            output.append({
-                "filename": name,
-                "num_birds": len(crops),
-                "boxes": boxes,
-                "bird_predictions": predictions
-            })
+                crops, boxes = self._crop_birds(
+                    img,
+                    result,
+                    bird_class_id=bird_class_id,
+                    min_conf=yolo_conf,
+                    max_crops=max_crops
+                )
+
+                # Classify bird crops
+                predictions = classifier(crops) if crops else []
+
+                record_id = file_name_map.get(name)
+
+                # If no record ID is found for the filename, log a warning and skip database insertion for this image
+                if record_id is None:
+                    print(f"Warning: No record ID found for filename '{name}'. Skipping database insertion for this image.")
+                else:
+                    #insert predictions into database
+                    self.create_guess_records(predictions, record_id, conn)
+
+                    output.append({
+                        "filename": name,
+                        "num_birds": len(crops),
+                        "boxes": boxes,
+                        "bird_predictions": predictions
+                    })
+            conn.close()
+        except Exception as e:
+            print("Error during image processing operations:", e)
 
         return output
