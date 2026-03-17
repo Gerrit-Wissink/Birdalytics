@@ -3,28 +3,26 @@ import io
 from ultralytics import YOLO
 from transformers import pipeline
 
-def read_images_from_request(request):
-    files = request.files.getlist("files")
+def load_image_for_record(conn, record_id):
+    with conn.cursor() as cur:
+        cur.execute(
+            """
+            SELECT br.record_id, i.image
+            FROM birdrecords br
+            JOIN images i ON i.image_id = br.image_id
+            WHERE br.record_id = %s
+            """,
+            (record_id,)
+        )
+        row = cur.fetchone()
 
-    if not files:
-        files = request.files.getlist("files[]")
+    if not row:
+        raise ValueError(f"No image found for record_id={record_id}")
 
-    images = []
-    filenames = []
+    img = Image.open(io.BytesIO(row["image"])).convert("RGB")
+    filename = f"record_{record_id}.jpg"
 
-    for f in files:
-        if not f or not f.filename:
-            continue
-
-        if not (f.mimetype or "").startswith("image/"):
-            continue
-
-        img = Image.open(io.BytesIO(f.read())).convert("RGB")
-
-        images.append(img)
-        filenames.append(f.filename)
-
-    return images, filenames
+    return img, filename
 
 class BirdPipeline:
 
