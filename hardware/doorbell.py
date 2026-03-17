@@ -52,4 +52,5 @@ try:
 	while True:
 		time.sleep(1)
 except KeyboardInterrupt:
-	GPIO.cleanup()
+	print("Process manually interrupted. Exiting...")
+	# GPIO.cleanup()

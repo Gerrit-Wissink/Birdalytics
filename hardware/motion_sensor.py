@@ -8,9 +8,9 @@ import os
 
 home_dir = os.environ['HOME']
 box_id = 'X' # Replace X with location name/ID
-motion_pin_id = 27
-interval_time = 900
-motion_snooze_time = 120
+motion_pin_id = 27 # The pin on the Raspberry Pi that is connected to the data pin on the motion sensor.
+interval_time = 900 # Minimum time, in seconds, to wait before automatically taking a photo.
+motion_snooze_time = 120 # Time, in seconds, to wait between taking photos after a picture is taken.
 
 # Code to initialize the camera
 print("Starting camera...")
@@ -49,13 +49,16 @@ def capture_photo(condition):
 # Otherwise, increment the timer. The timer is reset whenever a photo is taken.
 # These steps will be repeated until one of the capturing conditons are met.
 while True:
-    print ("Looking for motion... (Photo will be taken automatically in " + str(interval_time - time_inactive) + " second(s))")
-    sleep(1)
-    if motion_sensor.is_active:
-        capture_photo(1)
-        time_inactive = 0
-    elif time_inactive >= interval_time:   
-        capture_photo(2)
-        time_inactive = 0
-    else:
-        time_inactive += 1
+    try:
+        print ("Looking for motion... (Photo will be taken automatically in " + str(interval_time - time_inactive) + " second(s))")
+        sleep(1)
+        if motion_sensor.is_active:
+            capture_photo(1)
+            time_inactive = 0
+        elif time_inactive >= interval_time:   
+            capture_photo(2)
+            time_inactive = 0
+        else:
+            time_inactive += 1
+    except KeyboardInterrupt:
+        print("Process manually interrupted. Exiting...")
