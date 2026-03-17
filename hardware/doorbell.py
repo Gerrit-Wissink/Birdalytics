@@ -1,18 +1,20 @@
-import RPi.GPIO as GPIO
+from gpiozero import DigitalInputDevice as GPIO
+# import RPi.GPIO as GPIO
 import subprocess
 import threading
 import time
 import os
 
+home_dir = os.environ['HOME']
 DOORBELL_PIN = 17
 TIMER_DURATION = 1800
 
 hotspot_timer = None
 hotspot_running = False
 
-START_SCRIPT = '/home/pi/start_wifi_ftp.sh'
-STOP_SCRIPT = '/home/pi/stop_wifi_ftp.sh'
-LOG_FILE = '/home/pi/doorbell.log'
+START_SCRIPT = home_dir + 'start_wifi_ftp.sh'
+STOP_SCRIPT = home_dir + 'stop_wifi_ftp.sh'
+LOG_FILE = home_dir + 'doorbell.log'
 
 def log_press():
 	timestamp = time.strftime('%Y-%m-%d %H:%M:%S')
@@ -40,10 +42,11 @@ def turn_on_wifi(channel):
 	hotspot_timer = threading.Timer(TIMER_DURATION, stop_hotspot)
 	hotspot_timer.start()
 
-
-GPIO.setmode(GPIO.BCM)
-GPIO.setup(DOORBELL_PIN, GPIO.IN, pull_up_down=GPIO.PUD_UP)
-GPIO.add_event_detect(DOORBELL_PIN, GPIO.FALLING, callback=turn_on_wifi, bouncetime=300)
+doorbell = GPIO.Button(DOORBELL_PIN, True, .3)
+doorbell.when_pressed = turn_on_wifi
+# GPIO.setmode(GPIO.BCM)
+# GPIO.setup(DOORBELL_PIN, GPIO.IN, pull_up_down=GPIO.PUD_UP)
+# GPIO.add_event_detect(DOORBELL_PIN, GPIO.FALLING, callback=turn_on_wifi, bouncetime=300)
 
 try:
 	while True:

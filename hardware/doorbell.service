@@ -4,10 +4,10 @@ After=multi-user.target
 
 [Service]
 Type=simple
-ExecStart=/usr/bin/python3 /home/pi/doorbell.py
+ExecStart=/usr/bin/python3 /home/birdalytics/doorbell.py
 Restart=on-failure
 User=root
-WorkingDirectory=/home/pi
+WorkingDirectory=/home/birdalytics
 
 [Install]
 WantedBy=multi-user.target

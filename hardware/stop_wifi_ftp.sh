@@ -1,5 +1,4 @@
 #!/bin/bash
-
 sudo systemctl stop vsftpd
 sudo systemctl stop hostapd
 sudo systemctl stop dnsmasq
