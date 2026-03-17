@@ -7,7 +7,7 @@ import datetime
 import os
 
 home_dir = os.environ['HOME']
-box_id = 0
+box_id = 'X' # Replace X with location name/ID
 motion_pin_id = 27
 interval_time = 900
 motion_snooze_time = 120
@@ -29,7 +29,7 @@ time_inactive = 0
 def capture_photo(condition):
         capture_time = datetime.datetime.now()
         timestamp = capture_time.strftime("%Y-%m-%d_%H-%M-%S")
-        filename = "Box" + box_id + "_" + timestamp # Replace X with location name/ID
+        filename = "Box" + box_id + "_" + timestamp
         path = home_dir + "/Pictures/" + filename + ".jpg"
         if condition == 1:
             print("Motion detected.")
