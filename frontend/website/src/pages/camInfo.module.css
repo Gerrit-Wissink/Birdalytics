@@ -15,6 +15,32 @@
     overflow-y: auto;
 }
 
+#cameraSummary{
+    flex-basis: 25%;
+    background-color: var(--gray);
+    border-radius: 10px;
+    padding: 1em 2em;
+    color: var(--text);
+}
+
+#cameraSummary p{
+    font-weight: 600;
+}
+
+#identifyBox{
+    flex-basis: 75%;
+    color: var(--text);
+    border-radius: 10px;
+    padding: 1em 2em;
+    border: 1.5px solid #757575;
+}
+
+.sideBySide{
+    display: flex;
+    flex-direction: row;
+    gap: 1em;
+}
+
 .titleSpan{
     display: flex;
     flex-direction: row;
@@ -35,5 +61,5 @@
 
 #cameraContent{
     flex: 75% 0;
-    margin-left: 2em;
+    margin: 0px 2em;
 }
