@@ -62,4 +62,6 @@
 #cameraContent{
     flex: 75% 0;
     margin: 0px 2em;
+    overflow-y: scroll;
+    padding-right: 1em;
 }
