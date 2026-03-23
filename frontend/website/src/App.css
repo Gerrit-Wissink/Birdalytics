@@ -1,6 +1,6 @@
 /********** WEBSITE GLOBAL STYLES **********/
 #container{
-  max-width: 85vw;
+  /* max-width: 85vw; */
   margin-bottom: 10%;
   min-height: calc(100vh - 8vh);
   flex-grow: 1;
