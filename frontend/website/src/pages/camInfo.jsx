@@ -6,6 +6,9 @@ import { useState, useEffect } from 'react';
 import apiClient from '../utils/apiClient';
 import {MiniPieChart} from '../components/donut-chart';
 import ProgressBar from '../components/progress-bar';
+import BirdboxImageTable from '../components/camera-table';
+
+import fakeRecord from '../fake-data/birdbox_records.json'
 
 export default function CamInfo(){
 
@@ -89,7 +92,7 @@ export default function CamInfo(){
                 ))}
             </div>
             <div id={styles.cameraContent}>
-                <h1 style={{display: 'flex', alignItems: 'center', justifyContent: 'space-between', marginRight: '7.5%'}} >
+                <h1 style={{display: 'flex', alignItems: 'center', justifyContent: 'space-between'}} >
                     {selectedCamera.birdboxes.birdbox_name}
                     <IoSettingsOutline />
                 </h1>
@@ -119,8 +122,11 @@ export default function CamInfo(){
                         
                     </div>
                 </div>
-                <div>
-                    <p>table</p>
+                <div style={{margin: '1em 0px'}}>
+                    <BirdboxImageTable 
+                    birdboxRecord={fakeRecord.birdbox_records[0]}
+                    //this should be whatever record actually stores the array of images
+                    />
                 </div>
             </div>
     </section>
