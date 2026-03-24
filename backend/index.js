@@ -43,13 +43,10 @@ if (process.env.SYNC_DB === 'true') {
     console.log('Database sync disabled (set SYNC_DB=true in .env to enable)');
 }
 
-//Serve static files
-app.use(express.static(path.join(__dirname, 'static')));
-
 // Routes
-app.get('/', (req, res) => {
-    res.json({ 
-        message: 'Birdalytics API', 
+app.get('/api', (req, res) => {
+    res.json({
+        message: 'Birdalytics API',
         version: '1.0.0',
         status: 'running'
     });
@@ -62,6 +59,21 @@ app.use('/api/record', recordRoutes);
 app.use('/api/boxes', boxRoutes);
 app.use('/api/images', imageRoutes);
 app.use('/api/species', speciesRoutes);
+
+//Serve static files
+app.use(express.static(path.join(__dirname, 'static')));
+
+app.get('/{*splat}', (req, res, next) => {
+  res.sendFile(path.join(__dirname, 'static', 'index.html'))
+})
+
+// React catch-all for non-API GET routes
+app.get('/{*splat}', (req, res, next) => {
+    if (req.path.startsWith('/api')) {
+        return next();
+    }
+    res.sendFile(path.join(__dirname, 'static', 'index.html'));
+});
 
 // 404 Handler
 app.use((req, res) => {

@@ -1,0 +1,16 @@
+services:
+  backend:
+    build:
+      context: .
+      dockerfile: backend/Dockerfile.prod
+    depends_on:
+      - db
+    environment:
+      DB_NAME: birdalytics
+      DB_USER: postgres
+      DB_PASSWORD: student
+      DB_HOST: db
+      DB_PORT: 5432
+      NODE_ENV: production
+    ports:
+      - "8000:8000"
