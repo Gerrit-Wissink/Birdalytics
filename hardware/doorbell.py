@@ -1,4 +1,4 @@
-from gpiozero import DigitalInputDevice as GPIO
+from gpiozero import Button
 # import RPi.GPIO as GPIO
 import subprocess
 import threading
@@ -12,9 +12,9 @@ TIMER_DURATION = 1800
 hotspot_timer = None
 hotspot_running = False
 
-START_SCRIPT = home_dir + 'start_wifi_ftp.sh'
-STOP_SCRIPT = home_dir + 'stop_wifi_ftp.sh'
-LOG_FILE = home_dir + 'doorbell.log'
+START_SCRIPT = home_dir + '/start_wifi_ftp.sh'
+STOP_SCRIPT = home_dir + '/stop_wifi_ftp.sh'
+LOG_FILE = home_dir + '/doorbell.log'
 
 def log_press():
 	timestamp = time.strftime('%Y-%m-%d %H:%M:%S')
@@ -24,14 +24,14 @@ def log_press():
 
 def stop_hotspot():
 	global hotspot_running
-	subprocess.run(['sudo', STOP_SCRIPT])
+	subprocess.run(['sudo', 'bash', STOP_SCRIPT])
 	hotspot_running = False
 
 def turn_on_wifi(channel):
 	global hotspot_timer, hotspot_running
 	log_press()
 	if not hotspot_running:
-		subprocess.run(['sudo', START_SCRIPT])
+		subprocess.run(['sudo', 'bash', START_SCRIPT])
 		hotspot_running = True
 	else:
 		pass
@@ -42,7 +42,7 @@ def turn_on_wifi(channel):
 	hotspot_timer = threading.Timer(TIMER_DURATION, stop_hotspot)
 	hotspot_timer.start()
 
-doorbell = GPIO.Button(DOORBELL_PIN, True, .3)
+doorbell = Button(DOORBELL_PIN) #, True,.3)
 doorbell.when_pressed = turn_on_wifi
 # GPIO.setmode(GPIO.BCM)
 # GPIO.setup(DOORBELL_PIN, GPIO.IN, pull_up_down=GPIO.PUD_UP)
@@ -50,6 +50,7 @@ doorbell.when_pressed = turn_on_wifi
 
 try:
 	while True:
+		print("Listening for input...")
 		time.sleep(1)
 except KeyboardInterrupt:
 	print("Process manually interrupted. Exiting...")
