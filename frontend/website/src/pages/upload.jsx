@@ -93,10 +93,22 @@ export default function Upload() {
         setIsLoading(true);
 
         try {
+            console.log('=== UPLOAD DEBUG START ===');
+            console.log('Files array:', files);
+            console.log('Files length:', files.length);
+            console.log('Selected box:', selectedBox);
+            console.log('URL value:', urlValue);
+            
             const formData = new FormData();
 
             // Add selected files to FormData
-            files.forEach((file) => {
+            console.log('Adding files to FormData...');
+            files.forEach((file, index) => {
+                console.log(`File ${index}:`, {
+                    name: file.name,
+                    size: file.size,
+                    type: file.type
+                });
                 formData.append('files', file);
             });
 
@@ -106,11 +118,18 @@ export default function Upload() {
                 formData.append('imageUrl', urlValue);
             }
 
-            const response = await apiClient.post('/images', formData, {
-                headers: {
-                    'Content-Type': 'multipart/form-data'
+            console.log('FormData entries:');
+            for (let [key, value] of formData.entries()) {
+                if (value instanceof File) {
+                    console.log(`  ${key}: [File] ${value.name} (${value.size} bytes)`);
+                } else {
+                    console.log(`  ${key}: ${value}`);
                 }
-            });
+            }
+
+            console.log('Sending upload request...');
+            const response = await apiClient.post('/images', formData);
+            console.log('Response received:', response);
 
             if (response.status === 201) {
                 const fileCount = files.length;
@@ -128,10 +147,13 @@ export default function Upload() {
                 setTimeout(() => setNotification(''), 4000);
             }
         } catch (error) {
+            console.error('Upload error:', error);
+            console.error('Error response:', error.response);
             setNotificationType('error');
             setNotification('Upload failed: ' + error.message + '. Please try again.');
             setTimeout(() => setNotification(''), 4000);
         } finally {
+            console.log('=== UPLOAD DEBUG END ===');
             setIsLoading(false);
         }
     };

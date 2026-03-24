@@ -3,7 +3,6 @@ const Birdrecords = require('../models/Birdrecords');
 const Birdboxes = require('../models/Birdboxes');
 const Jobs = require('../models/Job');
 const sequelize = require('../config/database');
-const { classifyImages } = require('./utils');
 
 class ImageController {
 
@@ -177,13 +176,6 @@ class ImageController {
                 fileNameMap[originalname] = recordRes.record_id ?? -1;
                 console.log(`File ${imagesCreated} processed successfully`);
             }
-
-            console.log(`\n=== SUCCESS: ${imagesCreated} image(s) created ===\n`);
-            console.log(`=== SENDING IMAGES TO CLASSIFICATION MODEL ===`);
-
-            const results = await classifyImages(boxName, files, fileNameMap);
-            console.log('Classification results:', results);
-            console.log(`=== Finished processing all files ===`);
 
             res.status(201).json({
                 success: true,
