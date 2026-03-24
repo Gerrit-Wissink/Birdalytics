@@ -1,10 +1,10 @@
 import {HashRouter as Router, Routes, Route} from "react-router-dom"
 import { ThemeProvider, createTheme } from '@mui/material/styles'
-import CamInfo from "./pages/cameraInfo"
+import CamInfo from "./pages/camInfo"
 import Cameras from "./pages/cameras"
-import LogIn from "./pages/login"
+import Login from "./pages/login"
 import Upload from "./pages/upload"
-import ValGrid from "./pages/valgrid"
+import ValGrid from "./pages/valGrid"
 import Overview from "./pages/overview"
 import Reports from "./pages/reports"
 import NavLayout from "./components/navLayout"
@@ -19,8 +19,8 @@ function App() {
     <ThemeProvider theme={theme}>
       <Router>
         <Routes>
+          <Route path="/login" element={<Login/>}/>
           <Route element={<NavLayout/>}>
-          <Route path="/login" element={<LogIn/>}/>
           <Route path="/" element={<Overview/>}/>
           <Route path="/reports" element={<Reports/>}/>
           <Route path="/upload" element={<Upload/>}/>

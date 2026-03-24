@@ -26,3 +26,7 @@ leaflet/
 *.njsproj
 *.sln
 *.sw?
+
+# Configs
+vite.config.js
+.env

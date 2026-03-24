@@ -1,12 +1,64 @@
 /********** WEBSITE GLOBAL STYLES **********/
 #container{
-  max-width: 90vw;
-  margin: auto;
+  max-width: 85vw;
+  margin-bottom: 10%;
+  min-height: calc(100vh - 8vh);
+  flex-grow: 1;
+  overflow-y: auto;
+  width: 100vw;
+  align-items: center;
+  padding: 0 7.5vw;
 }
 
 .stat-box {
   background-color: var(--gray);
   border-radius: 10px;
   padding: 20px;
-  max-width: fit-content;
+  max-width: 100%;
+  text-align: center;
+  color: var(--text);
+}
+
+.stat-box-graph{
+  background-color: var(--gray);
+  border-radius: 10px;
+  max-width: 100%;
+  padding: 4px 6px 0px 0px;
+}
+
+.graph-header{
+  font-weight: 400;
+  margin-left: 1rem;
+  font-size: 18px;
+}
+
+.big-stat-highlight{
+  color: var(--green-text);
+  font-weight: 600;
+  font-size: 4rem;
+  margin: 0px;
+  font-family: Lato, sans-serif;
+  line-height: 1;
+  padding-bottom: 10px;
+}
+
+.small-stat-highlight{
+  color: var(--green-text);
+  font-weight: 600;
+  font-size: 2rem;
+  margin: 0px;
+  font-family: Lato, sans-serif;
+  padding-bottom: 6px;
+}
+
+.stat-label{
+  font-size: 1.25rem;
+  font-weight: 400;
+  margin: 0px;
+}
+
+.stat-label-small{
+  font-size: 1.1rem;
+  font-weight: 400;
+  margin: 0px;
 }

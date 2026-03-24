@@ -27,4 +27,10 @@ router.put('/:id', UserController.updateUser);
 // @access  Public
 router.delete('/:id', UserController.deleteUser);
 
+// @route   POST /api/users/login
+// @desc    Login user
+// @access  Public
+router.post('/login', UserController.loginUser);
+
+
 module.exports = router;

@@ -1,0 +1,65 @@
+#camInfoContainer{
+    display: flex;
+    flex-direction: row;
+    width: 100vw;
+    height: calc(100vh - 8vh);
+}
+
+#cameraSidebar{
+    flex: 25% 0;
+    padding: 1em;
+    background-color: var(--gray);
+    display: flex;
+    flex-direction: column;
+    gap: 1em;
+    overflow-y: auto;
+}
+
+#cameraSummary{
+    flex-basis: 25%;
+    background-color: var(--gray);
+    border-radius: 10px;
+    padding: 1em 2em;
+    color: var(--text);
+}
+
+#cameraSummary p{
+    font-weight: 600;
+}
+
+#identifyBox{
+    flex-basis: 75%;
+    color: var(--text);
+    border-radius: 10px;
+    padding: 1em 2em;
+    border: 1.5px solid #757575;
+}
+
+.sideBySide{
+    display: flex;
+    flex-direction: row;
+    gap: 1em;
+}
+
+.titleSpan{
+    display: flex;
+    flex-direction: row;
+    justify-content: space-between;
+    align-items: center;
+    padding: 0 .5em 0 1em;
+}
+
+.cameraItem{
+    background-color: #DBDBDB;
+    border-radius: 12px;
+    padding: 1em 1.5em;
+}
+
+.cameraItem p{margin: 0 0 .5em 0; font-weight: 400; color: var(--text);}
+
+.cameraItem h3{margin: 0; font-size: larger;}
+
+#cameraContent{
+    flex: 75% 0;
+    margin: 0px 2em;
+}

@@ -1,0 +1,89 @@
+{
+  "birdboxes": [
+    {
+      "birdbox_id": 1,
+      "birdbox_name": "Salmon Creek Nature Preserve",
+      "birdbox_location": "Salmon Creek Nature Preserve",
+      "birdbox_lat": 43.298,
+      "birdbox_long": -77.775,
+      "installation_date": "2024-03-15",
+      "last_captured_image": {
+        "photo_url": "https://placeholder.com/images/1/img_20250219_143200.jpg",
+        "date": "2025-02-19",
+        "time": "14:32:00"
+      },
+      "last_identified_kestrel": {
+        "date": "2025-02-19",
+        "time": "14:32:00"
+      }
+    },
+    {
+      "birdbox_id": 2,
+      "birdbox_name": "Brookdale Preserve",
+      "birdbox_location": "Brookdale Preserve",
+      "birdbox_lat": 43.077352,
+      "birdbox_long": -77.709582,
+      "installation_date": "2024-05-02",
+      "last_captured_image": {
+        "photo_url": "https://placeholder.com/images/2/img_20250218_091540.jpg",
+        "date": "2025-02-18",
+        "time": "09:15:40"
+      },
+      "last_identified_kestrel": {
+        "date": "2025-02-15",
+        "time": "11:22:08"
+      }
+    },
+    {
+      "birdbox_id": 3,
+      "birdbox_name": "Cornwall Preserve",
+      "birdbox_location": "Cornwall Preserve",
+      "birdbox_lat": 43.279685,
+      "birdbox_long": -77.192146,
+      "installation_date": null,
+      "last_captured_image": {
+        "photo_url": "https://placeholder.com/images/3/img_20250220_101515.jpg",
+        "date": "2025-02-20",
+        "time": "10:15:15"
+      },
+      "last_identified_kestrel": {
+        "date": "2025-02-20",
+        "time": "10:15:15"
+      }
+    },
+    {
+      "birdbox_id": 4,
+      "birdbox_name": "Lehigh Crossing Park",
+      "birdbox_location": "Lehigh Crossing Park",
+      "birdbox_lat": 42.99509,
+      "birdbox_long": -77.437005,
+      "installation_date": "2024-07-19",
+      "last_captured_image": {
+        "photo_url": "https://placeholder.com/images/4/img_20250217_134801.jpg",
+        "date": "2025-02-17",
+        "time": "13:48:01"
+      },
+      "last_identified_kestrel": {
+        "date": "2025-02-10",
+        "time": "09:55:33"
+      }
+    },
+    {
+      "birdbox_id": 5,
+      "birdbox_name": "Ganargua Creek Meadow Preserve",
+      "birdbox_location": "Ganargua Creek Meadow Preserve",
+      "birdbox_lat": 43.038,
+      "birdbox_long": -77.338,
+      "installation_date": null,
+      "last_captured_image": {
+        "photo_url": "https://placeholder.com/images/5/img_20250221_162030.jpg",
+        "date": "2025-02-21",
+        "time": "16:20:30"
+      },
+      "last_identified_kestrel": {
+        "date": "2025-02-21",
+        "time": "16:20:30"
+      }
+    }
+  ]
+}

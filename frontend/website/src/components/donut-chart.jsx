@@ -3,15 +3,7 @@ import { useDrawingArea } from '@mui/x-charts/hooks';
 import { styled } from '@mui/material/styles';
 import { useState } from 'react';
 
-const data = [
-  { value: 44, label: 'American Kestrels', title: 'total kestrel' },
-  { value: 28, label: 'Other Birds', title: 'other bird' },
-  { value: 18, label: 'Non-Birds', title: 'non-bird' },
-];
-
-const colors = ['var(--green)', 'var(--orange)', 'var(--purple)'];
-
-const total = data.reduce((sum, item) => sum + item.value, 0);
+const colors = ['var(--green-text)', 'var(--orange)', 'var(--purple)'];
 
 const size = {
   width: 200,
@@ -29,40 +21,86 @@ function PieCenterLabel({ percentage, title, textColor }) {
   const { width, height, left, top } = useDrawingArea();
   return (
     <>
-      <StyledText x={left + width / 2} y={top + height / 2 - 15} textColor={textColor} style ={{ fontSize: '3rem', fontWeight: 'bold' }}>
+      <StyledText x={left + width / 2} y={top + height / 2 - 15} textColor={textColor} style={{ fontSize: '3rem', fontWeight: 'bold' }}>
         {percentage}%
       </StyledText>
-      <StyledText x={left + width / 2} y={top + height / 2 + 20} style={{ fontSize: '1rem', fontWeight: '400', color: 'var(--text)'}}>
+      <StyledText x={left + width / 2} y={top + height / 2 + 20} style={{ fontSize: '1rem', fontWeight: '400', color: 'var(--text)' }}>
         {title}
       </StyledText>
-      <StyledText x={left + width / 2} y={top + height / 2 + 40} style={{ fontSize: '1rem', fontWeight: '400', color: 'var(--text)'}}>
+      <StyledText x={left + width / 2} y={top + height / 2 + 40} style={{ fontSize: '1rem', fontWeight: '400', color: 'var(--text)' }}>
         frequency
       </StyledText>
     </>
   );
 }
 
-export default function BirdPieChart() {
+export default function BirdPieChart({ kestrels, otherBirds, nonBirds }) {
   const [hoveredIndex, setHoveredIndex] = useState(0);
 
+  const data = [
+    { value: kestrels, label: 'American Kestrels', title: 'total kestrel' },
+    { value: otherBirds, label: 'Other Birds', title: 'other bird' },
+    { value: nonBirds, label: 'Non-Birds', title: 'non-bird' },
+  ];
+
+  const total = data.reduce((sum, item) => sum + item.value, 0);
   const percentage = Math.round((data[hoveredIndex].value / total) * 100);
   const currentColor = colors[hoveredIndex];
   const currentTitle = data[hoveredIndex].title;
 
   return (
     <div className='stat-box'>
-    <PieChart 
-      series={[{ data, innerRadius: 80 }]} 
-      colors={colors}
-      hideLegend
-      {...size}
-      slotProps={{ legend: { hidden: true } }}
-      onItemClick={(event, d) => {
-        setHoveredIndex(d.dataIndex);
-      }}
-    >
-      <PieCenterLabel percentage={percentage} title={currentTitle} textColor={currentColor} />
-    </PieChart>
+      <PieChart
+        series={[{ data, innerRadius: 80 }]}
+        colors={colors}
+        hideLegend
+        {...size}
+        slotProps={{ legend: { hidden: true } }}
+        onItemClick={(event, d) => {
+          setHoveredIndex(d.dataIndex);
+        }}
+      >
+        <PieCenterLabel percentage={percentage} title={currentTitle} textColor={currentColor} />
+      </PieChart>
+    </div>
+  );
+}
+
+const miniSize = {
+  width: 100,
+  height: 100,
+};
+
+export function MiniPieChart({ kestrels, otherBirds, nonBirds }) {
+  const [hoveredIndex, setHoveredIndex] = useState(0);
+
+  const data = [
+    { value: kestrels, label: 'American Kestrels', title: 'total kestrel' },
+    { value: otherBirds, label: 'Other Birds', title: 'other bird' },
+    { value: nonBirds, label: 'Non-Birds', title: 'non-bird' },
+  ];
+
+  const total = kestrels + otherBirds + nonBirds;
+
+  return (
+    <div style={{display: 'flex', alignItems:'center', justifyContent: 'space-between', gap: '10px'}}>
+      <div className='stat-box' style={{padding: '0px'}}>
+        <PieChart
+          series={[{ data, innerRadius: 35 }]}
+          colors={colors}
+          hideLegend
+          {...miniSize}
+          slotProps={{ legend: { hidden: true } }}
+          onItemClick={(event, d) => {
+            setHoveredIndex(d.dataIndex);
+          }}
+        >
+        </PieChart>
+      </div>
+      <div>
+        <p className='small-stat-highlight'>{kestrels}/{total}</p>
+        <p style={{marginTop:'0px'}}>Kestrels Identified</p>
+      </div>
     </div>
   );
 }
