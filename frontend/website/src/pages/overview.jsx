@@ -61,7 +61,7 @@ export default function Overview(){
                 
                 <div className="column-right">
                     <div>
-                        <BirdPieChart boxesData={boxesData} />
+                        <BirdPieChart kestrels={44} otherBirds={28} nonBirds={18} />
                     </div>
 
                     <div>
