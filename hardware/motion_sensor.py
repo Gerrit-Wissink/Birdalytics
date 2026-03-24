@@ -48,8 +48,8 @@ def capture_photo(condition):
 # If motion is not detected for the amount of time defined by interval_time, then take a photo.
 # Otherwise, increment the timer. The timer is reset whenever a photo is taken.
 # These steps will be repeated until one of the capturing conditons are met.
-while True:
-    try:
+try:
+    while True:
         print ("Looking for motion... (Photo will be taken automatically in " + str(interval_time - time_inactive) + " second(s))")
         sleep(1)
         if motion_sensor.is_active:
@@ -60,5 +60,5 @@ while True:
             time_inactive = 0
         else:
             time_inactive += 1
-    except KeyboardInterrupt:
-        print("Process manually interrupted. Exiting...")
+except KeyboardInterrupt:
+    print("Process manually interrupted. Exiting...")
