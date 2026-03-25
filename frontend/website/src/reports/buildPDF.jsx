@@ -21,12 +21,14 @@ export default async function BuildPDF(birdboxes) {
 
     //Title
     doc.setFontSize(16);
+    doc.addFont('NotoSerif-Bold-Normal.ttf', 'NotoSerif-Bold', 'normal');
     doc.setFont('NotoSerif-Bold', 'normal');
     doc.text("Birdbox Report", 14, y);
     y += 8;
 
     //Box list
     doc.setFontSize(11);
+    doc.addFont('Lato-Regular.ttf', 'Lato-Regular', 'normal');
     doc.setFont('Lato-Regular', 'normal');
     birdboxes.forEach((box) => {
         doc.text(`• ${box.birdbox_name}`, 18, y);

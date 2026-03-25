@@ -48,15 +48,6 @@ export default function CamInfo(){
     const [selectedImage, setSelectedImage] = useState(null); //in order to update the Species Identification window on new select
     //selectedImageRef.current?.identified_result or whatever you're trying to access should work
 
-    const getSelectedIDFromHash = () => {
-        const hashQuery = window.location.hash.includes('?')
-            ? window.location.hash.split('?')[1]
-            : '';
-        return new URLSearchParams(hashQuery).get('selected') || -1;
-    };
-
-    const [selectedID, setSelectedID] = useState(getSelectedIDFromHash);
-
     useEffect(() => {
         const selected = new URLSearchParams(window.location.search).get('selected');
         if (selected) {
