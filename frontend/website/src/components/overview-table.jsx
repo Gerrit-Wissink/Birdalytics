@@ -2,14 +2,6 @@ import { useState, useRef } from "react"
 import InfoOutlinedIcon from "@mui/icons-material/InfoOutlined"
 import styles from './overview-table.module.css'
 
-function formatDateTime(date, time) {
-  if (!date || !time) return "—";
-  const [y, m, d] = date.split("-");
-  const shortYear = y.slice(2);
-  const [hh, mm] = time.split(":");
-  return `${m}/${d}/${shortYear} - ${hh}:${mm}`;
-}
-
 function formatTimestamp(timestamp) {
   if (!timestamp) return "—";
   const [datePart, timePart] = timestamp.split("T");

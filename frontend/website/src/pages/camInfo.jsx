@@ -2,7 +2,7 @@ import styles from './camInfo.module.css'
 import SearchRoundedIcon from '@mui/icons-material/SearchRounded';
 import { FiEdit } from "react-icons/fi";
 import { IoSettingsOutline } from "react-icons/io5";
-import { useState, useEffect } from 'react';
+import { useState, useEffect, useRef } from 'react';
 import apiClient from '../utils/apiClient';
 import {MiniPieChart} from '../components/donut-chart';
 import ProgressBar from '../components/progress-bar';
@@ -68,6 +68,7 @@ export default function CamInfo(){
 
     if (!selectedCamera.birdboxes) return null;
 
+    console.log(cameras)
     return(
     <>
     <section id={styles.camInfoContainer}>
@@ -89,7 +90,7 @@ export default function CamInfo(){
                             cursor: 'pointer'
                         }}
                     >
-                        <p>{camera.birdbox_location}</p>
+                        <p>{camera.location}</p>
                         <h3>{camera.birdbox_name}</h3>
                     </div>
                 ))}
