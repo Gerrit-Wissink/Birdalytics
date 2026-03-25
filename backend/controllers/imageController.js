@@ -56,6 +56,40 @@ class ImageController {
         }
     }
 
+    // Get single image by RecordID
+    static async getImageByRecord(req, res) {
+        try {
+            const { recordId } = req.params;
+
+            const im = await Birdrecords.findOne({
+                where: { RecordID: recordId },
+                include: [
+                    {
+                        model: Image,
+                        as: "image",
+                        attributes: ["ImageID", "Image", "Time", "Size"]
+                    }
+                ]
+            });
+
+            if (!im || !im.image) {
+                return res.status(404).json({
+                    success: false,
+                    error: 'Image not found'
+                });
+            }
+
+            res.set('Content-Type', 'image/jpeg');
+            res.send(im.image.Image);
+        } catch (error) {
+            console.error('Error in getImageByRecord:', error);
+            res.status(500).json({
+                success: false,
+                error: 'Failed to fetch image'
+            });
+        }
+    }
+
     static async getImageInfo(req, res) {
         try {
             const { id } = req.params;
@@ -82,7 +116,7 @@ class ImageController {
         try {
             console.log('Request body:', req.body);
             console.log('Request files:', req.files ? `${req.files.length} file(s)` : 'No files');
-            
+
             const files = req.files; // Assuming you're using multer for file uploads
             if (!files || files.length === 0) {
                 console.log('ERROR: No files uploaded');
@@ -99,21 +133,21 @@ class ImageController {
             let imagesCreated = 0;
             const fileNameMap = {};
 
-            for(const file of files) {
+            for (const file of files) {
                 console.log(`\n--- Processing file ${imagesCreated + 1}/${files.length} ---`);
-                const {buffer, size, originalname, mimetype} = file;
+                const { buffer, size, originalname, mimetype } = file;
                 console.log('File details:', {
                     originalname,
                     mimetype,
                     size: `${size} bytes`,
                     hasBuffer: !!buffer
                 });
-                
-                if(!buffer || !size || (mimetype !== 'image/jpeg' && mimetype !== 'image/png')) {
+
+                if (!buffer || !size || (mimetype !== 'image/jpeg' && mimetype !== 'image/png')) {
                     console.log('ERROR: Invalid file data');
                     throw new Error('Invalid file data from ' + originalname);
                 }
-                
+
                 // Parse originalname for Date time string format
                 let date1 = originalname.replace(/[^0-9_-]/g, '').slice(2).replace('_', 'T');
                 const time1 = date1.slice(10).replace(/-/g, ':') + '.000Z';
@@ -124,7 +158,7 @@ class ImageController {
                 console.log('Starting database transaction...');
                 transaction = await sequelize.transaction();
                 console.log('Transaction started successfully');
-                
+
                 console.log('Creating Image record...');
                 const imgRes = await Image.create({
                     image: buffer,
@@ -133,24 +167,24 @@ class ImageController {
                 }, { transaction });
                 console.log('Image created with ID:', imgRes.image_id);
 
-                if(!imgRes || !imgRes.image_id) {
+                if (!imgRes || !imgRes.image_id) {
                     console.log('ERROR: Failed to create image record');
                     throw new Error('Failed to create image record for ' + originalname);
                 }
 
                 console.log('Looking up Birdbox with name:', boxName);
                 const birdbox = await Birdboxes.findOne({ where: { name: boxName }, transaction });
-                
-                if(!birdbox) {
+
+                if (!birdbox) {
                     console.log('ERROR: Birdbox not found');
                     throw new Error('Birdbox not found: ' + boxName);
                 }
                 console.log('Birdbox found with ID:', birdbox.birdbox_id);
 
                 console.log('Creating Birdrecord...');
-                const recordRes = await Birdrecords.create({ 
-                    birdbox_id: birdbox.birdbox_id, 
-                    timestamp, 
+                const recordRes = await Birdrecords.create({
+                    birdbox_id: birdbox.birdbox_id,
+                    timestamp,
                     image_id: imgRes.image_id,
                     manual_bird: null
                 }, { transaction });
@@ -165,7 +199,7 @@ class ImageController {
                 }, { transaction });
                 console.log('Job created with ID:', jobRes.id);
 
-                if(!recordRes || !recordRes.record_id) {
+                if (!recordRes || !recordRes.record_id) {
                     console.log('ERROR: Failed to create bird record');
                     throw new Error('Failed to create bird record for ' + originalname);
                 }
@@ -187,13 +221,13 @@ class ImageController {
             console.error('Error type:', error.name);
             console.error('Error message:', error.message);
             console.error('Full error:', error);
-            
-            if(transaction) {
+
+            if (transaction) {
                 console.log('Rolling back transaction...');
                 await transaction.rollback();
                 console.log('Transaction rolled back');
             }
-            
+
             // Handle Sequelize validation errors
             if (error.name === 'SequelizeValidationError') {
                 console.log('Sequelize validation error:', error.errors.map(e => e.message));
@@ -203,7 +237,7 @@ class ImageController {
                     imagesCreated
                 });
             }
-            
+
             res.status(500).json({
                 success: false,
                 error: 'Failed to create all images: ' + error.message,

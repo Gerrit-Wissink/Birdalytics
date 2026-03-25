@@ -11,6 +11,7 @@ const recordRoutes = require('./routes/recordRoutes');
 const boxRoutes = require('./routes/boxRoutes');
 const imageRoutes = require('./routes/imageRoutes');
 const speciesRoutes = require('./routes/speciesRoutes');
+const jobRoutes = require('./routes/jobRoutes');
 
 // Load environment variables
 dotenv.config();
@@ -65,6 +66,7 @@ app.use('/api/record', recordRoutes);
 app.use('/api/boxes', boxRoutes);
 app.use('/api/images', imageRoutes);
 app.use('/api/species', speciesRoutes);
+app.use('/api/jobs', jobRoutes);
 
 //Serve static files
 app.use(express.static(path.join(__dirname, 'static')));
