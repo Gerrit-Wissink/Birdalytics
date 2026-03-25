@@ -34,10 +34,10 @@ def capture_photo(condition):
         path = "/home/birdalytics/Pictures/" + filename + ".jpg"
         if condition == 1:
             print("Motion detected.")
-            subprocess.run(['logger', '-t', 'motion_senspr', f'Photo taken at {timestamp} (motion detection)'])
+            subprocess.run(['logger', '-t', 'motion_sensor', f'Photo taken at {timestamp} (motion detection)'])
         elif condition == 2:
             print("Time elapsed.")
-            subprocess.run(['logger', '-t', 'motion_senspr', f'Photo taken at {timestamp} (time elapsed)'])
+            subprocess.run(['logger', '-t', 'motion_sensor', f'Photo taken at {timestamp} (time elapsed)'])
         else:
             raise ValueError("Fatal error! Unknown condition " + condition)
         print("Capturing photo...")
