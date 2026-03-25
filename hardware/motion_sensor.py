@@ -4,6 +4,7 @@ from gpiozero import DigitalInputDevice as GPIO
 from picamera2 import Picamera2 as Camera
 from time import sleep
 import datetime
+import subprocess
 import os
 
 home_dir = os.environ['HOME']
@@ -30,11 +31,13 @@ def capture_photo(condition):
         capture_time = datetime.datetime.now()
         timestamp = capture_time.strftime("%Y-%m-%d_%H-%M-%S")
         filename = "Box" + box_id + "_" + timestamp
-        path = home_dir + "/Pictures/" + filename + ".jpg"
+        path = "/home/birdalytics/Pictures/" + filename + ".jpg"
         if condition == 1:
             print("Motion detected.")
+            subprocess.run(['logger', '-t', 'motion_senspr', f'Photo taken at {timestamp} (motion detection)'])
         elif condition == 2:
             print("Time elapsed.")
+            subprocess.run(['logger', '-t', 'motion_senspr', f'Photo taken at {timestamp} (time elapsed)'])
         else:
             raise ValueError("Fatal error! Unknown condition " + condition)
         print("Capturing photo...")
