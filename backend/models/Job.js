@@ -11,6 +11,11 @@ const Job = sequelize.define('Job', {
         type: DataTypes.TEXT,
         allowNull: false
     },
+    file_name: {
+        type: DataTypes.TEXT,
+        allowNull: false,
+        defaultValue: 'image.jpg'
+    },
     record_id: {
         type: DataTypes.INTEGER,
         allowNull: false

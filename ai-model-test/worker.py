@@ -71,30 +71,34 @@ def get_or_create_species(conn, label):
         return row["species_id"]
 
 def upsert_birdguess(conn, record_id, result, model_name):
-    best = result["best_guess"]
-    label = best["label"]
-    confidence = best["score"]
+    best_guesses = result["best_guesses"]
+    rows = []
+    for guess in best_guesses:
 
-    species_id = get_or_create_species(conn, label)
+        label = guess["label"]
+        confidence = guess["score"]
 
-    with conn.cursor() as cur:
-        cur.execute(
-            """
-            INSERT INTO birdguesses (record_id, species_id, model, model_confidence, created_at, updated_at)
-            VALUES (%s, %s, %s, %s, NOW(), NOW())
-            ON CONFLICT (record_id, model)
-            DO UPDATE SET
-                species_id = EXCLUDED.species_id,
-                model_confidence = EXCLUDED.model_confidence,
-                updated_at = now()
-            RETURNING record_id, species_id, model, model_confidence
-            """,
-            (record_id, species_id, model_name, confidence)
-        )
+        species_id = get_or_create_species(conn, label)
 
-        row = cur.fetchone()
-        print("birdguess upserted:", row)
-        return row
+        with conn.cursor() as cur:
+            cur.execute(
+                """
+                INSERT INTO birdguesses (record_id, species_id, model, model_confidence, created_at, updated_at)
+                VALUES (%s, %s, %s, %s, NOW(), NOW())
+                ON CONFLICT (record_id, model)
+                DO UPDATE SET
+                    species_id = EXCLUDED.species_id,
+                    model_confidence = EXCLUDED.model_confidence,
+                    updated_at = now()
+                RETURNING record_id, species_id, model, model_confidence
+                """,
+                (record_id, species_id, model_name, confidence)
+            )
+
+            row = cur.fetchone()
+            print("birdguess upserted:", row)
+            rows.append(row)
+    return rows
 
 def mark_job_processed(conn, job_id):
     with conn.cursor() as cur:
@@ -144,6 +148,7 @@ def main():
             for job in jobs:
                 try:
                     if job["event_type"] == "birdrecord.created":
+                        print("Processing job:", job['id'])
                         process_job(conn, job)
                         print(f"Processed job {job['id']}")
                 except Exception as e:
