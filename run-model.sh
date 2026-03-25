@@ -1,3 +1,5 @@
 cd ai-model-test
+
 pipenv install
-pipenv run python worker.py
+
+python3 worker.py 2>&1 | grep -v "NNPACK"
