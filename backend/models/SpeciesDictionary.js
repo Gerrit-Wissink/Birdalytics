@@ -10,7 +10,6 @@ const SpeciesDictionary = sequelize.define('SpeciesDictionary', {
     species_name: {
         type: DataTypes.STRING(255),
         allowNull: false,
-        unique: true,
         validate: {
             notEmpty: true, //means it cannot be an empty string
             len: [1, 255]
@@ -27,7 +26,13 @@ const SpeciesDictionary = sequelize.define('SpeciesDictionary', {
     tableName: 'species_dictionary',
     timestamps: true,
     createdAt: 'created_at',
-    updatedAt: 'updated_at'
+    updatedAt: 'updated_at',
+    indexes: [
+        {
+            unique: true,
+            fields: ['species_name']
+        }
+    ]
 });
 
 module.exports = SpeciesDictionary;
