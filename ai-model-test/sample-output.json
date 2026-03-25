@@ -1,0 +1,50 @@
+{
+    "boxName": "Cornwall Preserve",
+    "results": [
+        {
+            "bird_predictions": [
+                [
+                    {
+                        "label": "AMERICAN KESTREL",
+                        "score": 0.9999954700469971
+                    },
+                    {
+                        "label": "PEREGRINE FALCON",
+                        "score": 0.000003673761511890916
+                    },
+                    {
+                        "label": "CAMPO FLICKER",
+                        "score": 5.801670113214641e-7
+                    },
+                    {
+                        "label": "BLACK COCKATO",
+                        "score": 9.13143054503962e-8
+                    },
+                    {
+                        "label": "DARJEELING WOODPECKER",
+                        "score": 5.317008344718488e-8
+                    }
+                ]
+            ],
+            "boxes": [
+                {
+                    "det_conf": 0.6572599411010742,
+                    "xyxy": [
+                        153,
+                        61,
+                        335,
+                        300
+                    ]
+                }
+            ],
+            "filename": "Box1_2026-01-01_01-01-01.jpg",
+            "num_birds": 1
+        },
+        {
+            "bird_predictions": [],
+            "boxes": [],
+            "filename": "Box1_2026-02-02_02-02-02.jpg",
+            "num_birds": 0
+        }
+    ]
+}

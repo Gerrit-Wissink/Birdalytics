@@ -19,12 +19,13 @@ def home():
 @app.post("/predict")
 def predict():
     box_name = request.form.get("boxName")
+    file_name_map = request.form.get("fileNameMap")
 
     images, names = read_images_from_request(request)
     if not images:
         return jsonify({"error": "no images"}), 400
 
-    results = pipeline.predict(images, names)
+    results = pipeline.predict(images, names, file_name_map)
 
     return jsonify({
         "boxName": box_name,
@@ -33,5 +34,5 @@ def predict():
 
 # Run the application
 if __name__ == '__main__':
-    # This makes the server externally visible (0.0.0.0) and runs on port 6969 by default
-    app.run(host='0.0.0.0', port=6969)
+    # This makes the server externally visible (0.0.0.0) and runs on port 6000 by default
+    app.run(host='0.0.0.0', port=int(os.getenv("PORT")))

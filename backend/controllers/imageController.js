@@ -3,8 +3,10 @@ const Birdrecords = require('../models/Birdrecords');
 const Birdboxes = require('../models/Birdboxes');
 const Jobs = require('../models/Job');
 const sequelize = require('../config/database');
+const { classifyImages } = require('./utils');
 
 class ImageController {
+
     // Get all images
     static async getAllImages(req, res) {
         try {
@@ -91,11 +93,12 @@ class ImageController {
                 });
             }
 
-            const {boxName, imageUrl} = req.body;
+            const { boxName, imageUrl } = req.body;
             console.log('Box name from request:', boxName);
             console.log('Image URL from request:', imageUrl);
 
             let imagesCreated = 0;
+            const fileNameMap = {};
 
             for(const file of files) {
                 console.log(`\n--- Processing file ${imagesCreated + 1}/${files.length} ---`);
@@ -171,13 +174,21 @@ class ImageController {
                 await transaction.commit();
                 console.log('Transaction committed successfully');
                 imagesCreated++;
+                fileNameMap[originalname] = recordRes.record_id ?? -1;
                 console.log(`File ${imagesCreated} processed successfully`);
             }
 
             console.log(`\n=== SUCCESS: ${imagesCreated} image(s) created ===\n`);
+            console.log(`=== SENDING IMAGES TO CLASSIFICATION MODEL ===`);
+
+            const results = await classifyImages(boxName, files, fileNameMap);
+            console.log('Classification results:', results);
+            console.log(`=== Finished processing all files ===`);
+
             res.status(201).json({
                 success: true,
                 imagesCreated,
+                classificationResults: results
             });
         } catch (error) {
             console.error('\n=== ERROR in createImage ===');

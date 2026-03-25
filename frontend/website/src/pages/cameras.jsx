@@ -8,18 +8,11 @@ import AddCameraModal from '../components/add-camera-modal';
 export default function Cameras(){
     // TODO: Replace with GET request to fetch cameras from backend
     const [showModal, setShowModal] = useState(false);
-    const [formData, setFormData] = useState({
-        cameraName: '',
-        location: '',
-        installationDate: '',
-        coordinates: ''
-    });
-
     const [boxesData, setBoxesData] = useState({
         birdboxes: [],
         birdbox_records: []
     });
-    
+
     const [imageMap, setImageMap] = useState({});
 
     useEffect(() => {
@@ -86,7 +79,7 @@ export default function Cameras(){
         
         // Cleanup: revoke object URLs when component unmounts
         return () => {
-            Object.values(imageMap).forEach(url => URL.revokeObjectURL(url));
+            Object.values(newImageMap).forEach(url => URL.revokeObjectURL(url));
         };
     }, [boxesData]);
 
@@ -98,19 +91,6 @@ export default function Cameras(){
             ...prev,
             [name]: value
         }));
-    };
-
-    const handleAddCamera = (e) => {
-        e.preventDefault();
-        // TODO: Send formData to backend
-        console.log('Adding camera:', formData);
-        setShowModal(false);
-        setFormData({
-            cameraName: '',
-            location: '',
-            installationDate: '',
-            coordinates: ''
-        });
     };
 
     const handleCancelModal = () => {
@@ -150,7 +130,7 @@ export default function Cameras(){
         </section>
 
         {showModal && (
-            <AddCameraModal handleCancelModal={handleCancelModal} handleAddCamera={handleAddCamera} />
+            <AddCameraModal handleCancelModal={handleCancelModal} />
         )}
         </>
     )
