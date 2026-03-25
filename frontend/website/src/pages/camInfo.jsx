@@ -38,6 +38,9 @@ export default function CamInfo(){
     }, []);
 
     const cameras = boxesData.birdboxes
+    const selectedImageRef = useRef(null); //to keep track of the selected 'table row' (Image) in order to display info in the Species Identification box
+    const [selectedImage, setSelectedImage] = useState(null); //in order to update the Species Identification window on new select
+    //selectedImageRef.current?.identified_result or whatever you're trying to access should work
 
     const getSelectedIDFromHash = () => {
         const hashQuery = window.location.hash.includes('?')
@@ -126,6 +129,9 @@ export default function CamInfo(){
                     <BirdboxImageTable 
                     birdboxRecord={fakeRecord.birdbox_records[0]}
                     //this should be whatever record actually stores the array of images
+                    selectedImageRef={selectedImageRef}
+                    onSelectImage={(img) => setSelectedImage(img)}
+                    //update selected image when clicking the table row to rerender the species identification box
                     />
                 </div>
             </div>
