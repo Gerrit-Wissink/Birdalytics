@@ -16,6 +16,12 @@ export default function CamInfo(){
         birdboxes: [],
         birdbox_records: []
     });
+    const [selectedID, setSelectedID] = useState(-1);
+    const [selectedCamera, setSelectedCamera] = useState({
+        birdboxes: null,
+        birdbox_records: null
+    });
+
 
     useEffect(() => {
         const fetchBoxesData = async () => {
@@ -52,21 +58,22 @@ export default function CamInfo(){
     const [selectedID, setSelectedID] = useState(getSelectedIDFromHash);
 
     useEffect(() => {
-        const onHashChange = () => setSelectedID(getSelectedIDFromHash());
-        window.addEventListener('hashchange', onHashChange);
-        return () => window.removeEventListener('hashchange', onHashChange);
+        const selected = new URLSearchParams(window.location.search).get('selected');
+        if (selected) {
+            setSelectedID(selected);
+        }
     }, []);
 
-    const navigateToCamera = (id) => {
-        const hashPath = window.location.hash.split('?')[0];
-        window.location.hash = `${hashPath}?selected=${id}`;
-    };
+    useEffect(() => {
+        if (selectedID === -1) return;
+        const selectedCam = boxesData.birdboxes.find(box => box.birdbox_id === parseInt(selectedID));
+        const selectedRecords = boxesData.birdbox_records.filter(record => record.birdbox_id === parseInt(selectedID));
+        setSelectedCamera({
+            birdboxes: selectedCam,
+            birdbox_records: selectedRecords
+        });
+    }, [selectedID, boxesData]);
 
-    const selectedCamera = {}
-    selectedCamera.birdboxes = cameras.find((camera) => camera.birdbox_id === parseInt(selectedID)) || cameras[0];
-    selectedCamera.birdbox_records = boxesData.birdbox_records.filter(record => record.birdbox_id === parseInt(selectedID));
-
-    if (!selectedCamera.birdboxes) return null;
 
     console.log(cameras)
     return(
@@ -80,11 +87,11 @@ export default function CamInfo(){
                         <FiEdit style={{color: 'var(--text)', fontSize: '1.5rem', marginLeft: '0.5rem' }} />
                     </span>
                 </div>
-                {cameras.map((camera) => (
+                {boxesData.birdboxes && boxesData.birdboxes.map((camera) => (
                     <div
                         className={styles.cameraItem}
                         key={camera.birdbox_id}
-                        onClick={() => navigateToCamera(camera.birdbox_id)}
+                        onClick={() => setSelectedID(camera.birdbox_id)}
                         style={{
                             backgroundColor: camera.birdbox_id === parseInt(selectedID) ? '#B8CEEF' : undefined,
                             cursor: 'pointer'
@@ -96,8 +103,8 @@ export default function CamInfo(){
                 ))}
             </div>
             <div id={styles.cameraContent}>
-                <h1 style={{display: 'flex', alignItems: 'center', justifyContent: 'space-between'}} >
-                    {selectedCamera.birdboxes.birdbox_name}
+                <h1 style={{display: 'flex', alignItems: 'center', justifyContent: 'space-between', marginRight: '7.5%'}} >
+                    {selectedCamera.birdboxes?.birdbox_name}
                     <IoSettingsOutline />
                 </h1>
                 <div className = {styles.sideBySide}>
@@ -114,16 +121,15 @@ export default function CamInfo(){
                             </div>
                         </div>
                         <p>Images Reviewed</p>
-                            <ProgressBar totalImages={100} imagesReviewed={85} /> 
+                            <ProgressBar totalImages={100} imagesReviewed={85} />
                             {/* TODO REPLACE WITH REFERENCES TO BOX DATA */}
                         <p>Species Overview</p>
-                        <MiniPieChart kestrels={44} otherBirds={28} nonBirds={18} />
+                        <MiniPieChart kestrels={selectedCamera.birdbox_records?.total_kestrel_identified_photos || 0} otherBirds={selectedCamera.birdbox_records?.total_non_kestrel_identified_photos || 0} nonBirds={selectedCamera.birdbox_records?.total_captured_photos || 0 - (selectedCamera.birdbox_records?.total_kestrel_identified_photos || 0) - (selectedCamera.birdbox_records?.total_non_kestrel_identified_photos || 0)} />
 
 
                     </div>
                     <div id={styles.identifyBox}>
                         <h3 style={{margin: '5px 0px'}}>Species Identification</h3>
-                        
                     </div>
                 </div>
                 <div style={{margin: '1em 0px'}}>

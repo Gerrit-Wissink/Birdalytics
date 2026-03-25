@@ -3,7 +3,7 @@ import { useState, useEffect } from 'react';
 import apiClient from '../utils/apiClient';
 
 
-export default function Upload(){
+export default function Upload() {
     const [files, setFiles] = useState([]);
     const [selectedBox, setSelectedBox] = useState('Gosnell Big Woods');
     const [urlValue, setUrlValue] = useState('');
@@ -34,9 +34,9 @@ export default function Upload(){
                     console.error('Failed to fetch birdboxes:', response.status);
                 }
             };
-            
+
             fetchBirdboxes();
-        }catch (error) {
+        } catch (error) {
             console.error('Error fetching birdboxes:', error);
         }
     }, []);
@@ -81,7 +81,7 @@ export default function Upload(){
             setTimeout(() => setNotification(''), 4000);
             return;
         }
-        
+
         // Validate that either files are selected or URL is provided
         if (files.length === 0 && !urlValue.trim()) {
             setNotificationType('error');
@@ -93,27 +93,49 @@ export default function Upload(){
         setIsLoading(true);
 
         try {
-            const formData = new FormData();
+            console.log('=== UPLOAD DEBUG START ===');
+            console.log('Files array:', files);
+            console.log('Files length:', files.length);
+            console.log('Selected box:', selectedBox);
+            console.log('URL value:', urlValue);
             
+            const formData = new FormData();
+
             // Add selected files to FormData
-            files.forEach((file) => {
+            console.log('Adding files to FormData...');
+            files.forEach((file, index) => {
+                console.log(`File ${index}:`, {
+                    name: file.name,
+                    size: file.size,
+                    type: file.type
+                });
                 formData.append('files', file);
             });
-            
+
             // Add other form data
             formData.append('boxName', selectedBox);
             if (urlValue) {
                 formData.append('imageUrl', urlValue);
             }
-            
-            // TODO: Replace with actual backend endpoint
+
+            console.log('FormData entries:');
+            for (let [key, value] of formData.entries()) {
+                if (value instanceof File) {
+                    console.log(`  ${key}: [File] ${value.name} (${value.size} bytes)`);
+                } else {
+                    console.log(`  ${key}: ${value}`);
+                }
+            }
+
+            console.log('Sending upload request...');
             const response = await apiClient.post('/images', formData);
-            
+            console.log('Response received:', response);
+
             if (response.status === 201) {
                 const fileCount = files.length;
                 setNotificationType('success');
                 setNotification(`Successfully uploaded ${fileCount} file${fileCount !== 1 ? 's' : ''} to ${selectedBox}!`);
-                
+
                 // Reset form only on successful submission
                 setFiles([]);
                 setUrlValue('');
@@ -125,87 +147,90 @@ export default function Upload(){
                 setTimeout(() => setNotification(''), 4000);
             }
         } catch (error) {
+            console.error('Upload error:', error);
+            console.error('Error response:', error.response);
             setNotificationType('error');
             setNotification('Upload failed: ' + error.message + '. Please try again.');
             setTimeout(() => setNotification(''), 4000);
         } finally {
+            console.log('=== UPLOAD DEBUG END ===');
             setIsLoading(false);
         }
     };
 
-    return(
+    return (
         <>
-        {notification && (
-            <div className={`notification-banner notification-${notificationType}`}>
-                <div className="notification-content">
-                    <span className="notification-icon">{notificationType === 'success' ? '✓' : '✕'}</span>
-                    <span className="notification-text">{notification}</span>
+            {notification && (
+                <div className={`notification-banner notification-${notificationType}`}>
+                    <div className="notification-content">
+                        <span className="notification-icon">{notificationType === 'success' ? '✓' : '✕'}</span>
+                        <span className="notification-text">{notification}</span>
+                    </div>
                 </div>
-            </div>
-        )}
-        <section id="upload-container">
-            <div id="upload-logo">
-                {/* <img src="./images/GLTLogo.jpg" alt="Genesee Land Trust Logo" /> */}
-            </div>
-            <div id="upload-box">
-                <div id="upload-header">
-                    <h2>Birdalytics</h2>
-                    <img src="./images/GLT_birding.png" alt="Bird Icon" style={{width: "50px", height: "50px"}} />
+            )}
+            <section id="upload-container">
+                <div id="upload-logo">
+                    {/* <img src="./images/GLTLogo.jpg" alt="Genesee Land Trust Logo" /> */}
                 </div>
-                <form onSubmit={handleSubmit}>
-                    <div className="input-box">
-                        <label htmlFor="box-name">Box Name</label>
-                        <select id="box-name" value={selectedBox} onChange={(e) => setSelectedBox(e.target.value)}>
-                            {birdboxes.map((box, index) => (
-                                <option key={index} value={box}>{box}</option>
-                            ))}
-                        </select>
+                <div id="upload-box">
+                    <div id="upload-header">
+                        <h2>Birdalytics</h2>
+                        <img src="./images/GLT_birding.png" alt="Bird Icon" style={{ width: "50px", height: "50px" }} />
                     </div>
+                    <form onSubmit={handleSubmit}>
+                        <div className="input-box">
+                            <label htmlFor="box-name">Box Name</label>
+                            <select id="box-name" value={selectedBox} onChange={(e) => setSelectedBox(e.target.value)}>
+                                {birdboxes.map((box, index) => (
+                                    <option key={index} value={box}>{box}</option>
+                                ))}
+                            </select>
+                        </div>
 
-                    <div 
-                        className="drag-drop-area"
-                        onDragOver={handleDragOver}
-                        onDragLeave={handleDragLeave}
-                        onDrop={handleDrop}
-                    >
-                        <div className="drag-drop-icon">📁</div>
-                        <p>Drag & Drop or <label htmlFor="file-input" className="choose-link">Choose files</label> to upload</p>
-                        <p className="file-format">JPG, JPEG</p>
-                        {files.length > 0 && (
-                            <div className="selected-files">
-                                <p className="file-count">{files.length} file(s) selected</p>
-                            </div>
-                        )}
-                        <input 
-                            type="file" 
-                            id="file-input" 
-                            className="file-input" 
-                            accept=".jpg,.jpeg"
-                            onChange={handleFileChange}
-                            multiple
-                        />
-                    </div>
+                        <div
+                            className="drag-drop-area"
+                            onDragOver={handleDragOver}
+                            onDragLeave={handleDragLeave}
+                            onDrop={handleDrop}
+                        >
+                            <div className="drag-drop-icon">📁</div>
+                            <p>Drag & Drop or <label htmlFor="file-input" className="choose-link">Choose files</label> to upload</p>
+                            <p className="file-format">JPG, JPEG</p>
+                            {files.length > 0 && (
+                                <div className="selected-files">
+                                    <p className="file-count">{files.length} file(s) selected</p>
+                                </div>
+                            )}
+                            <input
+                                type="file"
+                                id="file-input"
+                                className="file-input"
+                                accept=".jpg,.jpeg"
+                                onChange={handleFileChange}
+                                multiple
+                            />
+                        </div>
 
-                    <div className="divider">OR</div>
+                        <div className="divider">OR</div>
 
-                    <div className="url-section">
-                        <label htmlFor="url-input">Import from URL</label>
-                        <input 
-                            type="text" 
-                            id="url-input" 
-                            placeholder="Add file URL"
-                            value={urlValue}
-                            onChange={(e) => setUrlValue(e.target.value)}
-                        />
-                    </div>
+                        <div className="url-section">
+                            <label htmlFor="url-input">Import from URL</label>
+                            <input
+                                type="text"
+                                id="url-input"
+                                placeholder="Add file URL"
+                                value={urlValue}
+                                onChange={(e) => setUrlValue(e.target.value)}
+                            />
+                        </div>
 
-                    <div className="button-group">
-                        <button type="button" className="cancel-btn" onClick={handleReset} style={{fontFamily: "Lato, sans-serif"}}>Reset</button>
-                        <button type="submit" className="import-btn" style={{fontFamily: "Lato, sans-serif"}}>Submit</button>
-                    </div>
-                </form>
-            </div>
-        </section>
+                        <div className="button-group">
+                            <button type="button" className="cancel-btn" onClick={handleReset} style={{ fontFamily: "Lato, sans-serif" }}>Reset</button>
+                            <button type="submit" className="import-btn" style={{ fontFamily: "Lato, sans-serif" }}>Submit</button>
+                        </div>
+                    </form>
+                </div>
+            </section>
         </>
     )
 }

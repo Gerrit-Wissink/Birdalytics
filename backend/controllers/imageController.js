@@ -1,9 +1,11 @@
 const Image = require('../models/Image');
 const Birdrecords = require('../models/Birdrecords');
 const Birdboxes = require('../models/Birdboxes');
+const Jobs = require('../models/Job');
 const sequelize = require('../config/database');
 
 class ImageController {
+
     // Get all images
     static async getAllImages(req, res) {
         try {
@@ -90,11 +92,12 @@ class ImageController {
                 });
             }
 
-            const {boxName, imageUrl} = req.body;
+            const { boxName, imageUrl } = req.body;
             console.log('Box name from request:', boxName);
             console.log('Image URL from request:', imageUrl);
 
             let imagesCreated = 0;
+            const fileNameMap = {};
 
             for(const file of files) {
                 console.log(`\n--- Processing file ${imagesCreated + 1}/${files.length} ---`);
@@ -111,9 +114,13 @@ class ImageController {
                     throw new Error('Invalid file data from ' + originalname);
                 }
                 
-                const timestamp = new Date();
+                // Parse originalname for Date time string format
+                let date1 = originalname.replace(/[^0-9_-]/g, '').slice(2).replace('_', 'T');
+                const time1 = date1.slice(10).replace(/-/g, ':') + '.000Z';
+                date1 = date1.slice(0, 10);
+                const timestamp = new Date(date1 + time1);
                 console.log('Timestamp:', timestamp.toISOString());
-                
+
                 console.log('Starting database transaction...');
                 transaction = await sequelize.transaction();
                 console.log('Transaction started successfully');
@@ -149,6 +156,14 @@ class ImageController {
                 }, { transaction });
                 console.log('Birdrecord created with ID:', recordRes.record_id);
 
+                console.log('Creating job...');
+                const jobRes = await Jobs.create({
+                    event_type: 'birdrecord.created',
+                    record_id: recordRes.record_id,
+                    processed: false
+                }, { transaction });
+                console.log('Job created with ID:', jobRes.id);
+
                 if(!recordRes || !recordRes.record_id) {
                     console.log('ERROR: Failed to create bird record');
                     throw new Error('Failed to create bird record for ' + originalname);
@@ -158,13 +173,14 @@ class ImageController {
                 await transaction.commit();
                 console.log('Transaction committed successfully');
                 imagesCreated++;
+                fileNameMap[originalname] = recordRes.record_id ?? -1;
                 console.log(`File ${imagesCreated} processed successfully`);
             }
 
-            console.log(`\n=== SUCCESS: ${imagesCreated} image(s) created ===\n`);
             res.status(201).json({
                 success: true,
                 imagesCreated,
+                classificationResults: results
             });
         } catch (error) {
             console.error('\n=== ERROR in createImage ===');

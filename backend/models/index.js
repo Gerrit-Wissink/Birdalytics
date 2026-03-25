@@ -4,6 +4,7 @@ const Birdguess = require('./Birdguess');
 const Image = require('./Image');
 const SpeciesDictionary = require('./SpeciesDictionary');
 const Birdboxes = require('./Birdboxes');
+const Jobs = require('./Job');
 
 // Birdbox relationships (Birdbox is referenced by Birdrecords)
 Birdboxes.hasMany(Birdrecords, {
@@ -49,6 +50,17 @@ Birdguess.belongsTo(SpeciesDictionary, {
     as: 'species'
 });
 
+Birdrecords.hasMany(Jobs, {
+    foreignKey: "record_id",
+    sourceKey: "record_id",
+    as: "jobs"
+});
+
+Jobs.belongsTo(Birdrecords, {
+    foreignKey: "record_id",
+    targetKey: "record_id",
+    as: "birdRecord"
+});
 
 module.exports = {
     User,
@@ -56,5 +68,6 @@ module.exports = {
     Birdguess,
     Image,
     SpeciesDictionary,
-    Birdboxes
+    Birdboxes,
+    Jobs
 };
