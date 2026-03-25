@@ -1,0 +1,185 @@
+.tableWrapper {
+  background: #f5f6fa;
+  border-radius: 16px;
+  padding: 24px;
+}
+
+.tableHeader {
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+}
+
+/* Search input + filters toggle button*/
+
+.searchRow {
+  display: flex;
+  gap: 12px;
+  align-items: center;
+}
+
+.searchWrapper {
+  flex: 1;
+  position: relative;
+}
+
+.searchIcon {
+  position: absolute;
+  left: 14px;
+  top: 50%;
+  transform: translateY(-50%);
+  color: #999;
+  font-size: 1.2rem !important;
+  z-index: 1;
+}
+
+.searchInput {
+  width: 50%;
+  padding-left: 40px;
+  border-radius: 10px;
+  border: 1.5px solid #d0d0d0;
+  font-size: 1rem;
+  font-weight: 400;
+  height: 42px;
+  background: #fff;
+}
+
+.filtersButton {
+  background: #fff !important;
+  border: 1.5px solid #d0d0d0 !important;
+  color: #222 !important;
+  border-radius: 10px !important;
+  height: 42px;
+  padding: 0 18px !important;
+  font-weight: 500 !important;
+  font-size: 0.95rem !important;
+  display: flex !important;
+  align-items: center !important;
+  gap: 8px !important;
+  cursor: pointer;
+  position: relative;
+  white-space: nowrap;
+  box-shadow: none !important;
+  transition: background 0.15s, border-color 0.15s !important;
+}
+
+/* Highlighted state when the filter row is open */
+.filtersButtonActive {
+  background: #eef3ff !important;
+  border-color: #5b8dee !important;
+  color: #2a5bd7 !important;
+}
+
+.filtersBadge {
+  top: -7px;
+  right: -7px;
+  background: #5b8dee;
+  color: #fff;
+  border-radius: 50%;
+  width: 18px;
+  height: 18px;
+  font-size: 0.7rem;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-weight: 700;
+}
+
+/* ─── Row 2: inline filter chips ─────────────────────────────────────────── */
+
+.filterRow {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 8px;
+  align-items: center;
+  padding: 4px 0 2px 0;
+  animation: filterRowIn 0.15s ease;
+}
+
+@keyframes filterRowIn {
+  from { opacity: 0; transform: translateY(-4px); }
+  to   { opacity: 1; transform: translateY(0); }
+}
+
+/* Each filter is a compact chip-shaped dropdown */
+.filterChip {
+  display: flex;
+  align-items: center;
+}
+
+/* Clear all text button */
+.clearAllButton {
+  background: none;
+  border: none;
+  color: #5b8dee;
+  cursor: pointer;
+  font-size: 0.85rem;
+  font-weight: 600;
+  padding: 4px 8px;
+  border-radius: 6px;
+  transition: background 0.12s;
+  margin-left: 4px;
+}
+
+.clearAllButton:hover {
+  background: #eef3ff;
+}
+
+/* CELL STYLES*/
+
+.dateCell {
+  font-size: 0.95rem;
+}
+
+.kestrelBadge {
+  display: inline-block;
+  background: #b5cc6a;
+  border-radius: 6px;
+  padding: 4px 14px;
+  font-weight: 500;
+  font-size: 0.93rem;
+  letter-spacing: 0.01em;
+}
+
+.birdPlain {
+  font-size: 0.95rem;
+}
+
+.confidenceHighlight {
+  display: inline-block;
+  border-radius: 6px;
+  padding: 4px 14px;
+  font-weight: 500;
+  font-size: 0.95rem;
+  min-width: 52px;
+  text-align: center;
+}
+
+.confidencePlain {
+  display: inline-block;
+  font-size: 0.95rem;
+  min-width: 52px;
+  text-align: center;
+}
+
+.viewImageCell {
+  display: flex;
+  padding-left: 20%;
+  align-items: center;
+  cursor: default;
+  color: var(--text);
+}
+
+.modifiedDash {
+  color: var(--text);
+  font-size: 1.1rem;
+  display: block;
+  padding-left: 20%;
+  color: #888;
+}
+
+.modifiedDate {
+  color: var(--text);
+  padding-left: 20%;
+  text-align: center;
+}

@@ -1,6 +1,5 @@
 import './cameras.css'
 import { useState, useEffect } from 'react';
-import boxData from '../fake-data/birdboxes.json'
 import apiClient from '../utils/apiClient';
 import CameraCard from '../components/camera-card';
 import AddCameraModal from '../components/add-camera-modal';

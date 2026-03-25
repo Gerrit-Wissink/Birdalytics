@@ -66,6 +66,35 @@ export default function BirdPieChart({ kestrels, otherBirds, nonBirds }) {
   );
 }
 
+export function BoxesPieChart({ birdboxes }) {
+  const kestrels = birdboxes.reduce((sum, box) => sum + (box.kestrel_count ?? 0), 0);
+    const otherBirds = birdboxes.reduce((sum, box) => sum + (box.other_bird_count ?? 0), 0);
+    const nonBirds = birdboxes.reduce((sum, box) => sum + (box.non_bird_count ?? 0), 0);
+
+    const data = [
+        { value: kestrels, label: 'American Kestrels' },
+        { value: otherBirds, label: 'Other Birds' },
+        { value: nonBirds, label: 'Non-Birds' },
+    ];
+
+    const total = data.reduce((sum, item) => sum + item.value, 0);
+    const percentage = total > 0 ? Math.round((kestrels / total) * 100) : 0;
+
+    return (
+        <div className='stat-box'>
+            <PieChart
+                series={[{ data, innerRadius: 80 }]}
+                colors={colors}
+                hideLegend
+                {...size}
+                slotProps={{ legend: { hidden: true } }}
+            >
+                <PieCenterLabel percentage={percentage} title="total kestrel" textColor="var(--green)" />
+            </PieChart>
+        </div>
+  );
+}
+
 const miniSize = {
   width: 100,
   height: 100,

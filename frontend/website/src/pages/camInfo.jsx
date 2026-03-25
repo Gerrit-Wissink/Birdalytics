@@ -6,7 +6,9 @@ import { useState, useEffect } from 'react';
 import apiClient from '../utils/apiClient';
 import {MiniPieChart} from '../components/donut-chart';
 import ProgressBar from '../components/progress-bar';
-import BirdboxTable from '../components/overview-table';
+import BirdboxImageTable from '../components/camera-table';
+
+import fakeRecord from '../fake-data/birdbox_records.json'
 
 export default function CamInfo(){
 
@@ -40,6 +42,20 @@ export default function CamInfo(){
 
         fetchBoxesData();
     }, []);
+
+    const cameras = boxesData.birdboxes
+    const selectedImageRef = useRef(null); //to keep track of the selected 'table row' (Image) in order to display info in the Species Identification box
+    const [selectedImage, setSelectedImage] = useState(null); //in order to update the Species Identification window on new select
+    //selectedImageRef.current?.identified_result or whatever you're trying to access should work
+
+    const getSelectedIDFromHash = () => {
+        const hashQuery = window.location.hash.includes('?')
+            ? window.location.hash.split('?')[1]
+            : '';
+        return new URLSearchParams(hashQuery).get('selected') || -1;
+    };
+
+    const [selectedID, setSelectedID] = useState(getSelectedIDFromHash);
 
     useEffect(() => {
         const selected = new URLSearchParams(window.location.search).get('selected');
@@ -115,8 +131,14 @@ export default function CamInfo(){
                         <h3 style={{margin: '5px 0px'}}>Species Identification</h3>
                     </div>
                 </div>
-                <div>
-                    <BirdboxTable boxesData={boxesData} />
+                <div style={{margin: '1em 0px'}}>
+                    <BirdboxImageTable 
+                    birdboxRecord={fakeRecord.birdbox_records[0]}
+                    //this should be whatever record actually stores the array of images
+                    selectedImageRef={selectedImageRef}
+                    onSelectImage={(img) => setSelectedImage(img)}
+                    //update selected image when clicking the table row to rerender the species identification box
+                    />
                 </div>
             </div>
     </section>
