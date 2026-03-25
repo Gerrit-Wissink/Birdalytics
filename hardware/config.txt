@@ -1,6 +1,7 @@
 # For more options and information see
 # http://rptl.io/configtxt
 # Some settings may impact device functionality. See link above for details
+# FOR BIRD BOX PROJECT: Ignore most of these values.
 
 # Uncomment some or all of these to enable the optional hardware interfaces
 #dtparam=i2c_arm=on
@@ -8,7 +9,7 @@
 #dtparam=spi=on
 
 # Enable audio (loads snd_bcm2835)
-dtparam=audio=on
+dtparam=audio=off
 
 # Additional overlays and parameters are documented
 # /boot/firmware/overlays/README
@@ -51,5 +52,5 @@ dtoverlay=dwc2,dr_mode=host
 
 [all]
 dtparam=act_led_trigger=actpwr
-# Specify dtoverlay for specific camera used in bird box project (should be ov5647)
+# FOR BIRD BOX PROJECT: This last line is MANDATORY. Failure to include it will result in errors.
 dtoverlay=ov5647
