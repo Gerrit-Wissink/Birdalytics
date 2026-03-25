@@ -56,9 +56,9 @@ def get_or_create_species(conn, label):
     with conn.cursor() as cur:
         cur.execute(
             """
-            INSERT INTO species_dictionary (species_name)
-            VALUES (%s)
-            ON CONFLICT (LOWER(species_name))
+            INSERT INTO species_dictionary (species_name, created_at, updated_at)
+            VALUES (%s, NOW(), NOW())
+            ON CONFLICT (species_name)
             DO UPDATE SET
                 species_name = EXCLUDED.species_name,
                 updated_at = now()
@@ -80,8 +80,8 @@ def upsert_birdguess(conn, record_id, result, model_name):
     with conn.cursor() as cur:
         cur.execute(
             """
-            INSERT INTO birdguesses (record_id, species_id, model, model_confidence)
-            VALUES (%s, %s, %s, %s)
+            INSERT INTO birdguesses (record_id, species_id, model, model_confidence, created_at, updated_at)
+            VALUES (%s, %s, %s, %s, NOW(), NOW())
             ON CONFLICT (record_id, model)
             DO UPDATE SET
                 species_id = EXCLUDED.species_id,
