@@ -24,6 +24,20 @@ def load_image_for_record(conn, record_id):
 
     return img, filename
 
+def return_top_results(num=3, regions=None):
+    if not regions:
+        return None
+
+    all_preds = []
+    for r in regions:
+        all_preds.extend(r.get("bird_top5", []))
+
+    if not all_preds:
+        return None
+
+    all_preds.sort(key=lambda d: d["score"], reverse=True)
+    return all_preds[:num]
+
 class BirdPipeline:
 
     def __init__(self, yolo_weights, default_hf_model):
@@ -104,11 +118,14 @@ class BirdPipeline:
     pad=0.15, # pad crops for better classification
     min_box_area_ratio=0.005 # skip tiny boxes (0.5% of image area)
 ):
+        print(f"Running prediction on {len(files)} image(s) with model '{hf_model or self.default_hf_model}'")
         model_id = hf_model or self.default_hf_model
         classifier = self._get_classifier(model_id, hf_device)
 
         # Run YOLO once as a batch
+        print("Running YOLO detection...")
         yolo_results = self.yolo(files, conf=yolo_conf, iou=yolo_iou, agnostic_nms=True, verbose=False)
+        print("YOLO detection completed.")
 
         output = []
 
@@ -131,6 +148,7 @@ class BirdPipeline:
                 crops = []
                 meta = []
 
+                print("Creating crops from YOLO detections...")
                 for i, det_conf in kept:
                     x1, y1, x2, y2 = xyxy[i]
                     bw = x2 - x1
@@ -152,6 +170,7 @@ class BirdPipeline:
                     meta.append({"xyxy": [x1p, y1p, x2p, y2p], "det_conf": det_conf})
 
                 if crops:
+                    print(f"Running classification on {len(crops)} crop(s) from YOLO detections...")
                     preds = classifier(crops)  # list per crop (top-k list)
                     for m, p in zip(meta, preds):
                         regions.append({
@@ -160,36 +179,44 @@ class BirdPipeline:
                             "bird_top5": p
                         })
                     classified_on = "yolo_top_boxes"
+                    print(f"Classification completed on {len(crops)} crop(s).")
                 else:
                     # YOLO had boxes but they were filtered out as tiny/invalid
-                    full = classifier(img)
-                    regions = [{
-                        "xyxy": [0, 0, W, H],
-                        "det_conf": None,
-                        "bird_top1": full[0],
-                        "bird_top5": full
-                    }]
-                    classified_on = "full_image_fallback"
+                    print("YOLO detections were all filtered out, skipping classification")
+                    classified_on = None
+
+                if not regions:
+                    print("No valid regions after filtering YOLO detections, skipping classification")
+                    output.append({
+                        "filename": name,
+                        "classified_on": "error",
+                        "num_regions": 0,
+                        "best_guesses": None,
+                        "regions": []
+                    })
+                else: 
+                    # Choose a top 3 guesses per image (highest HF top1 score across regions)
+                    print("Selecting top guesses across regions...")
+                    best = return_top_results(num=3, regions=regions)
+
+                    print("Appending results...")
+                    output.append({
+                        "filename": name,
+                        "classified_on": classified_on,
+                        "num_regions": len(regions),
+                        "best_guesses": best,
+                        "regions": regions
+                    })
             else:
                 # no YOLO boxes at all
-                full = classifier(img)
-                regions = [{
-                    "xyxy": [0, 0, W, H],
-                    "det_conf": None,
-                    "bird_top1": full[0],
-                    "bird_top5": full
-                }]
-                classified_on = "full_image_fallback"
-
-            # Choose a best guess per image (highest HF top1 score across regions)
-            best = max((r["bird_top1"] for r in regions), key=lambda d: d["score"])
-
-            output.append({
-                "filename": name,
-                "classified_on": classified_on,
-                "num_regions": len(regions),
-                "best_guess": best,
-                "regions": regions
-            })
-        
+                print("No YOLO detections, skipping classification")
+                output.append({
+                    "filename": name,
+                    "classified_on": None,
+                    "num_regions": 0,
+                    "best_guesses": None,
+                    "regions": []
+                })
+                
+        print("All images processed.")
         return output

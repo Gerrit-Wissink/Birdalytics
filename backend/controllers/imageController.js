@@ -159,6 +159,7 @@ class ImageController {
                 console.log('Creating job...');
                 const jobRes = await Jobs.create({
                     event_type: 'birdrecord.created',
+                    file_name: originalname,
                     record_id: recordRes.record_id,
                     processed: false
                 }, { transaction });
@@ -180,7 +181,6 @@ class ImageController {
             res.status(201).json({
                 success: true,
                 imagesCreated,
-                classificationResults: results
             });
         } catch (error) {
             console.error('\n=== ERROR in createImage ===');
