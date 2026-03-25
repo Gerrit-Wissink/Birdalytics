@@ -44,11 +44,14 @@ export default function Navbar() {
                 </Link>
                 <div className="nav-links">
                     <div className="primary-nav">
-                        <NavLink to="/cameras" className={({ isActive }) => (isActive ? 'active' : '')}>
+                        <NavLink to="/caminfo" className={({ isActive }) => (isActive ? 'active' : '')}>
                             <span>Cameras</span>
                         </NavLink>
                         <NavLink to="/reports" className={({ isActive }) => (isActive ? 'active' : '')}>
                             <span>Reports</span>
+                        </NavLink>
+                        <NavLink to="/activity" className={({ isActive }) => (isActive ? 'active' : '')}>
+                            <span>Activity</span>
                         </NavLink>
                         <NavLink to="/upload">
                             <span id='upload'>Upload Data</span>
@@ -84,11 +87,14 @@ export default function Navbar() {
 
         <div id = 'sideMenu' className={isOpen ? "open" : "closed"}>
             <div id = 'sideText'>
-            <NavLink to="/cameras" className={({ isActive }) => (isActive ? 'active' : '')}>
+            <NavLink to="/caminfo" className={({ isActive }) => (isActive ? 'active' : '')}>
                 <span>Cameras</span>
             </NavLink>
             <NavLink to="/reports" className={({ isActive }) => (isActive ? 'active' : '')}>
                 <span>Reports</span>
+            </NavLink>
+            <NavLink to="/activity" className={({ isActive }) => (isActive ? 'active' : '')}>
+                <span>Activity</span>
             </NavLink>
             <NavLink to="/upload">
                 <span id='upload'>Upload Data</span>
