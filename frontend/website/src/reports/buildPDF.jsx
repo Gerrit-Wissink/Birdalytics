@@ -165,6 +165,7 @@ export default async function BuildPDF(boxesData, chartImage, lineGraphImage) {
 
     // Title
     doc.setFontSize(16);
+    doc.addFont('NotoSerif-Bold-Normal.ttf', 'NotoSerif-Bold', 'normal');
     doc.setFont('NotoSerif-Bold', 'normal');
     doc.text("Birdbox Report", margin, y);
     y += 8;
@@ -174,6 +175,7 @@ export default async function BuildPDF(boxesData, chartImage, lineGraphImage) {
     const lineHeight = 6;
 
     doc.setFontSize(11);
+    doc.addFont('Lato-Regular.ttf', 'Lato-Regular', 'normal');
     doc.setFont('Lato-Regular', 'normal');
     birdboxes.forEach((box) => {
         doc.text(`• ${box.birdbox_name}`, 18, y);

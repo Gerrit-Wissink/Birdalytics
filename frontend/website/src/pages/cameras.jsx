@@ -80,7 +80,7 @@ export default function Cameras(){
         
         // Cleanup: revoke object URLs when component unmounts
         return () => {
-            Object.values(newImageMap).forEach(url => URL.revokeObjectURL(url));
+            Object.values(imageMap).forEach(url => URL.revokeObjectURL(url));
         };
     }, [boxesData]);
 

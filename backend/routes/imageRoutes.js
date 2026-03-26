@@ -15,6 +15,11 @@ router.get('/', ImageController.getAllImages);
 router.get('/:id', ImageController.getImage);
 
 // @route   GET /api/images/:id
+// @desc    Get image by RecordID
+// @access  Public
+router.get('/record/:id', ImageController.getImageByRecord);
+
+// @route   GET /api/images/:id
 // @desc    Get image by ID
 // @access  Public
 router.get('/info/:id', ImageController.getImageInfo);

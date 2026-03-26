@@ -230,7 +230,9 @@ export default function Upload() {
                         </div>
                     </form>
                 </div>
-            </section>
-        </>
+
+            </section> 
+            {/* PLACE EVERYTHING INSIDE THIS SECTION */}
+       </>
     )
 }
