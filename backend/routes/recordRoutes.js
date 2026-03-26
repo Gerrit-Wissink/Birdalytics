@@ -7,6 +7,11 @@ const RecordController = require('../controllers/recordController');
 // @access  Public
 router.get('/', RecordController.getAllRecords);
 
+// @route   GET /api/record/csv
+// @desc    Get all records as CSV
+// @access  Public
+router.get('/csv', RecordController.getCsvRecords);
+
 // @route   GET /api/record/:id
 // @desc    Get record by ID
 // @access  Public

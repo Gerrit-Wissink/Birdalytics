@@ -3,7 +3,7 @@ const Image = require('../models/Image');
 const Birdboxes = require('../models/Birdboxes');
 const Birdguess = require('../models/Birdguess');
 const SpeciesDictionary = require('../models/SpeciesDictionary');
-const sequelize = require('../config/database');
+const converter = require('json-2-csv');
 
 class RecordController {
     // Get all Birdrecords
@@ -11,17 +11,18 @@ class RecordController {
         try {
             const records = await Birdrecords.findAll({
                 include: [
-                    { model: Image, as: 'image',
+                    {
+                        model: Image, as: 'image',
                         attributes: ['image_id', 'timestamp', 'file_size']
                     },
                     { model: Birdboxes, as: 'birdbox' },
-                    { 
-                        model: Birdguess, 
+                    {
+                        model: Birdguess,
                         as: 'guesses',
                         include: [{ model: SpeciesDictionary, as: 'species' }]
                     }
                 ],
-                order: [['timestamp', 'DESC']]
+                order: [['DateTime', 'DESC']]
             });
 
             records.map(record => {
@@ -37,6 +38,56 @@ class RecordController {
             });
         } catch (error) {
             console.error('Error in getAllRecords:', error);
+            res.status(500).json({
+                success: false,
+                error: 'Failed to fetch records'
+            });
+        }
+    }
+
+    // Get all Birdrecords as CSV file
+    static async getCsvRecords(req, res) {
+        try {
+            const records = await Birdrecords.findAll({
+                include: [
+                    {
+                        model: Birdboxes, as: 'birdbox',
+                        attributes: ['Name']
+                    },
+                    {
+                        model: Birdguess,
+                        as: 'guesses',
+                        attributes: ['Model', 'GuessConfidence'],
+                        include: [{
+                            model: SpeciesDictionary, as: 'species',
+                            attributes: ['SpeciesName']
+                        }]
+                    }
+                ],
+                order: [['DateTime', 'DESC']]
+            });
+
+            const rows = records.map(record => {
+                const csv = record.get({ plain: true });
+                const guess = csv.guesses && csv.guesses.length ? csv.guesses[0] : null;
+
+                return {
+                    DateTime: csv.DateTime,
+                    BirdboxName: csv.birdbox ? csv.birdbox.Name : '',
+                    ManualBird: csv.ManualBird,
+                    GuessSpecies: guess && guess.species ? guess.species.SpeciesName : '',
+                    GuessModel: guess ? guess.Model : '',
+                    GuessConfidence: guess?.GuessConfidence ?? ''
+                };
+            });
+
+            const output = await converter.json2csv(rows);
+
+            res.header('Content-Type', 'text/csv');
+            res.attachment('birdrecords.csv');
+            return res.send(output);
+        } catch (error) {
+            console.error('Error in getCsvRecords:', error);
             res.status(500).json({
                 success: false,
                 error: 'Failed to fetch records'
