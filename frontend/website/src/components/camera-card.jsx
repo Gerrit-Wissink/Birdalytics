@@ -1,5 +1,6 @@
-import '../pages/cameras.css';
+import React from 'react'
 
+import '../pages/cameras.css';
 
 export default function CameraCard ({ camera, image }) {
     return (

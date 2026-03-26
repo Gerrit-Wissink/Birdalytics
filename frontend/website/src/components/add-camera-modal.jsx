@@ -1,3 +1,5 @@
+import React from 'react'
+
 import '../pages/cameras.css';
 import apiClient from '../utils/apiClient';
 import { useState } from 'react';

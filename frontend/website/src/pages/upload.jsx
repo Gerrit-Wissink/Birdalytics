@@ -1,7 +1,7 @@
-import './upload.css'
+import React from 'react'
 import { useState, useEffect } from 'react';
 import apiClient from '../utils/apiClient';
-
+import './upload.css'
 
 export default function Upload() {
     const [files, setFiles] = useState([]);
@@ -230,7 +230,9 @@ export default function Upload() {
                         </div>
                     </form>
                 </div>
-            </section>
-        </>
+
+            </section> 
+            {/* PLACE EVERYTHING INSIDE THIS SECTION */}
+       </>
     )
 }
