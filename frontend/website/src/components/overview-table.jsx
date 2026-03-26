@@ -1,3 +1,4 @@
+import React from 'react'
 import { useState, useRef } from "react"
 import InfoOutlinedIcon from "@mui/icons-material/InfoOutlined"
 import styles from './overview-table.module.css'
