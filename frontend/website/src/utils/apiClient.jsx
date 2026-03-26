@@ -10,11 +10,10 @@ const apiClient = axios.create({
 
 // Add request interceptor to handle FormData
 apiClient.interceptors.request.use((config) => {
-  // Only set Content-Type to JSON if data is not FormData
-  if (!(config.data instanceof FormData)) {
-    config.headers['Content-Type'] = 'application/json';
+  // For FormData, delete Content-Type header so axios sets it with boundary
+  if (config.data instanceof FormData) {
+    delete config.headers['Content-Type'];
   }
-  // For FormData, axios will automatically set the correct Content-Type with boundary
   return config;
 });
 

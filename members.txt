@@ -1,5 +1,7 @@
-David Kim - Project Manager
-Anthony Garcia
-Safwan Sajid - Primary Sponser leason / Secondary Research Lead
-Gerrit Wissink - Development Lead/Backend Expert
+David Kim - Project Manager / Hardware Developer
+Anthony Garcia - AI Lead / Backend Developer
+Safwan Sajid - Primary Sponsor Liason / Secondary Research Lead
+Gerrit Wissink - Development Lead / Backend Expert
 Elise Hayek - Front End Developer / Quality Lead
+Viola Maksuti - Documentation Lead / Frontend Developer
+Evan Matthews - Hardware Lead / Frontend Developer

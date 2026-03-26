@@ -53,19 +53,19 @@ def predict_top5(image_path):
 
 # Example usage
 image_paths = [
-    "ai-model-test\\images\\Test1.jpg",
-    "ai-model-test\\images\\Test1-1.jpg",
-    "ai-model-test\\images\\Test2.jpg",
-    "ai-model-test\\images\\Test2-1.jpg",
-    "ai-model-test\\images\\Test3.jpg",
-    "ai-model-test\\images\\Test3-1.jpg",
-    "ai-model-test\\images\\Test4.jpg",
-    "ai-model-test\\images\\Test4-1.jpg",
-    "ai-model-test\\images\\Test5.jpg",
-    "ai-model-test\\images\\Test6.jpg",
-    "ai-model-test\\images\\Test7.jpg",
-    "ai-model-test\\images\\Test8.jpg",
-    "ai-model-test\\images\\Test9.jpg",
+    "images\\Test1.jpg",
+    "images\\Test1-1.jpg",
+    "images\\Test2.jpg",
+    "images\\Test2-1.jpg",
+    "images\\Test3.jpg",
+    "images\\Test3-1.jpg",
+    "images\\Test4.jpg",
+    "images\\Test4-1.jpg",
+    "images\\Test5.jpg",
+    "images\\Test6.jpg",
+    "images\\Test7.jpg",
+    "images\\Test8.jpg",
+    "images\\Test9.jpg",
 ]
 
 for path in image_paths:

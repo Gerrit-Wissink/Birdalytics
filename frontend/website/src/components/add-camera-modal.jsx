@@ -1,7 +1,51 @@
 import '../pages/cameras.css';
+import apiClient from '../utils/apiClient';
+import { useState } from 'react';
 
 
-export default function AddCameraModal({ handleCancelModal, handleAddCamera }) {
+export default function AddCameraModal({ handleCancelModal }) {
+    const [formData, setFormData] = useState({
+        cameraName: '',
+        location: '',
+        latitude: '',
+        longitude: ''
+    });
+    const [error, setError] = useState("");
+
+    const handleAddCamera = (e) => {
+        e.preventDefault();
+        setError("");
+        try {
+            if(!formData.cameraName || formData.cameraName.trim() === ""
+             || !formData.location || formData.location.trim() === ""
+             || !formData.latitude || formData.latitude.trim() === ""
+             || !formData.longitude || formData.longitude.trim() === "") {
+                setError("All fields are required");
+                return;
+            }
+            console.log('Adding camera:', formData);
+            const result = apiClient.post('/boxes', formData);
+
+            if(result.status === 201) {
+                console.log('Camera added successfully:', result.data);
+                setShowModal(false);
+                setFormData({
+                    cameraName: '',
+                    location: '',
+                    latitude: '',
+                    longitude: ''
+                });
+            } else {
+                console.error('Failed to add camera:', result.status);
+                setError("Failed to add camera. Please try again.");
+            }
+        } catch (error) {
+            console.error('Error adding camera:', error);
+            setError("Failed to add camera. Please try again.");
+        }
+    };
+
+
     return (
         <div className="modal-overlay" onClick={handleCancelModal}>
             <div className="modal" onClick={(e) => e.stopPropagation()}>
@@ -37,29 +81,30 @@ export default function AddCameraModal({ handleCancelModal, handleAddCamera }) {
                     </div>
 
                     <div className="form-group">
-                        <label htmlFor="installationDate">Installation Date</label>
-                        <input 
-                            type="text" 
-                            id="installationDate" 
-                            name="installationDate"
-                            placeholder="YYYY-MM-DD (Ex. 2025-12-31)"
-                            value={formData.installationDate}
-                            onChange={handleInputChange}
-                        />
-                    </div>
-
-                    <div className="form-group">
                         <label htmlFor="coordinates">Camera Coordinates</label>
                         <input 
                             type="text" 
-                            id="coordinates" 
-                            name="coordinates"
-                            placeholder="12.345,-98.765"
-                            value={formData.coordinates}
+                            id="latitude" 
+                            name="latitude"
+                            placeholder="Latitude"
+                            value={formData.latitude}
+                            onChange={handleInputChange}
+                        />
+                    </div>
+                    
+                    <div className="form-group">
+                        <label htmlFor="longitude">Camera Longitude</label>
+                        <input 
+                            type="text" 
+                            id="longitude" 
+                            name="longitude"
+                            placeholder="Longitude"
+                            value={formData.longitude}
                             onChange={handleInputChange}
                         />
                     </div>
 
+                    {error && <span style={{ color: 'red' }}>{error}</span>}
                     <div className="modal-buttons">
                         <button type="button" className="cancel-btn" onClick={handleCancelModal}>Cancel</button>
                         <button type="submit" className="add-btn">Add</button>

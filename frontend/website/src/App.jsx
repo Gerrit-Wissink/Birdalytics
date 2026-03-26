@@ -7,6 +7,7 @@ import Upload from "./pages/upload"
 import ValGrid from "./pages/valGrid"
 import Overview from "./pages/overview"
 import Reports from "./pages/reports"
+import Activity from './pages/activity'
 import NavLayout from "./components/navLayout"
 
 import './App.css'
@@ -22,6 +23,7 @@ function App() {
           <Route path="/login" element={<Login/>}/>
           <Route element={<NavLayout/>}>
           <Route path="/" element={<Overview/>}/>
+          <Route path="/activity" element = {<Activity/>}/>
           <Route path="/reports" element={<Reports/>}/>
           <Route path="/upload" element={<Upload/>}/>
           <Route path="/valgrid" element={<ValGrid/>}/>
