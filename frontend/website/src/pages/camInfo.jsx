@@ -129,6 +129,18 @@ export default function CamInfo(){
                     </div>
                     <div id={styles.identifyBox}>
                         <h3 style={{margin: '5px 0px'}}>Species Identification</h3>
+                        {selectedRow && (
+                            <div>
+                                <div>
+                                    <img src={imageMap[selectedRow.record_id]} alt={selectedCamera.birdbox?.birdbox_name} className="camera-image" />
+                                </div>
+                                <div>
+                                    <p>{selectedRow.primary_guess ?? 'N/A'}</p>
+                                    <p>Confidence: {Math.round(selectedRow.primary_guess_confidence * 100)}%</p>
+                                    <hr/>
+                                </div>
+                            </div>
+                        )}
                     </div>
                 </div>
                 <div style={{margin: '1em 0px'}}>
