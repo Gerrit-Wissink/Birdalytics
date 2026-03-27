@@ -2,7 +2,7 @@ import styles from './camInfo.module.css'
 import SearchRoundedIcon from '@mui/icons-material/SearchRounded';
 import { FiEdit } from "react-icons/fi";
 import { IoSettingsOutline } from "react-icons/io5";
-import { useState, useEffect, useRef } from 'react';
+import { useState, useEffect } from 'react';
 import apiClient from '../utils/apiClient';
 import { MiniPieChart } from '../components/donut-chart';
 import ProgressBar from '../components/progress-bar';
@@ -18,10 +18,13 @@ export default function CamInfo() {
 
     // Tracks which birdbox_id is currently selected — null until fetch resolves
     const [selectedID, setSelectedID] = useState(null);
+    const [selectedRow, setSelectedRow] = useState(null); //in order to update the Species Identification window on new select
+    const [selectedCamera, setSelectedCamera] = useState({
+        birdbox: null,
+        birdbox_records: []
+    });
 
-    // Ref + state for the selected table row image (NEEDS TO BE SET UP)
-    const selectedImageRef = useRef(null);
-    const [selectedImage, setSelectedImage] = useState(null);
+    const [imageMap, setImageMap] = useState({});
 
     useEffect(() => {
         const fetchBoxesData = async () => {
@@ -47,10 +50,6 @@ export default function CamInfo() {
 
         fetchBoxesData();
     }, []);
-
-    const cameras = boxesData.birdboxes
-    const selectedRowRef = useRef(null); //to keep track of the selected 'table row' (Image) in order to display info in the Species Identification box
-    const [selectedRow, setSelectedRow] = useState(null); //in order to update the Species Identification window on new select
     //selectedImageRow.current?.identified_result or whatever you're trying to access should work
 
     useEffect(() => {
@@ -69,6 +68,48 @@ export default function CamInfo() {
             birdbox_records: selectedRecords
         });
     }, [selectedID, boxesData]);
+
+    useEffect(() => {
+        console.log('Selected camera updated:', selectedCamera);
+        setSelectedRow(null); // Reset selected row when camera changes
+        const fetchImagesForBox = async () => {
+            try {
+                const records = selectedCamera.birdbox_records.records || [];
+                const newImageMap = {};
+                
+                for(const record of records) {
+                    if(!record.image_url) {
+                        console.log("No image to fetch for record:", record.record_id);
+                        continue;
+                    }
+                    
+                    const url = record.image_url;
+                    const response = await apiClient.get(url, {
+                        responseType: 'blob' // Important: get binary data as blob
+                    });
+
+                    // Create object URL from blob
+                    const imageUrl = URL.createObjectURL(response.data);
+                    newImageMap[record.record_id] = imageUrl;
+                    
+                    console.log(`Fetched image for record ${record.record_id}`);
+                }
+
+                setImageMap(newImageMap);
+            }catch (error) {
+                console.error('Error fetching images for box:', error);
+            }
+        }
+
+        fetchImagesForBox();
+
+        // Cleanup: revoke object URLs when component unmounts
+        return () => {
+            Object.values(imageMap).forEach(url => URL.revokeObjectURL(url));
+        };
+
+    }, [selectedCamera]);
+
 
 
     return(
@@ -101,7 +142,7 @@ export default function CamInfo() {
 
             <div id={styles.cameraContent}>
                 <h1 style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', marginRight: '7.5%' }}>
-                    {selectedCamera.birdbox?.birdbox_name}
+                    {selectedCamera.birdbox?.birdbox_name ?? 'Select a Camera'}
                     <IoSettingsOutline />
                 </h1>
 
@@ -137,20 +178,22 @@ export default function CamInfo() {
                         <h3 style={{margin: '5px 0px'}}>Species Identification</h3>
                         {selectedRow && (
                             <div>
-                                <p>{selectedRow.primary_guess ?? 'N/A'}</p>
-                                <p>Confidence: {Math.round(selectedRow.primary_guess_confidence * 100)}%</p>
-                                <hr/>
+                                <div>
+                                    <img src={imageMap[selectedRow.record_id]} alt={camera.birdbox_name} className="camera-image" />
+                                </div>
+                                <div>
+                                    <p>{selectedRow.primary_guess ?? 'N/A'}</p>
+                                    <p>Confidence: {Math.round(selectedRow.primary_guess_confidence * 100)}%</p>
+                                    <hr/>
+                                </div>
                             </div>
                         )}
                     </div>
                 </div>
                 <div style={{margin: '1em 0px'}}>
                     <BirdboxImageTable 
-                    birdboxRecord={fakeRecord.birdbox_records[0]}
-                    //this should be whatever record actually stores the array of images
-                    selectedRowRef={selectedRowRef}
-                    onSelectRow={(row) => setSelectedRow(row)}
-                    //update selected row when clicking the table row to rerender the species identification box
+                        box={selectedCamera}
+                        onSelectRow={(row) => setSelectedRow(row)}
                     />
                 </div>
             </div>

@@ -62,7 +62,7 @@ const MODIFIED_OPTIONS = [
 
 // ─── Component ───────────────────────────────────────────────────────────────
 
-export default function BirdboxImageTable({ box, selectedRowRef, onSelectRow }) {
+export default function BirdboxImageTable({ box, onSelectRow }) {
   console.log('PASSED IN RECORD: ', box);
 
   const rows = useMemo(() => parseImages(box), [box]);
@@ -123,21 +123,15 @@ export default function BirdboxImageTable({ box, selectedRowRef, onSelectRow }) 
     modifiedFilter !== 'all',
   ].filter(Boolean).length;
 
-  // Keep ref in sync for parent access
-  useEffect(() => {
-    if (selectedRowRef) selectedRowRef.current = selectedRow;
-  }, [selectedRow, selectedRowRef]);
-
   // Reset to first row when birdbox changes
   useEffect(() => {
     const first = rows[0] ?? null;
     setSelectedRow(first);
-    if (selectedRowRef) selectedRowRef.current = first;
-  }, [box.birdbox_id]);
+    if (onSelectRow) onSelectRow(first);
+  }, [box.birdbox_id, onSelectRow]);
 
   const handleRowSelect = (e) => {
     setSelectedRow(e.value);
-    if (selectedRowRef) selectedRowRef.current = e.value;
     if (onSelectRow) onSelectRow(e.value);
   };
 
@@ -313,7 +307,7 @@ export default function BirdboxImageTable({ box, selectedRowRef, onSelectRow }) 
         value={filteredRows}
         header={tableHeader}
         selectionMode="single"
-        selection={selectedImage}
+        selection={selectedRow}
         onSelectionChange={handleRowSelect}
         dataKey="image_id"
         globalFilter={globalFilter}
