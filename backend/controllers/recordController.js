@@ -22,7 +22,7 @@ class RecordController {
                         include: [{ model: SpeciesDictionary, as: 'species' }]
                     }
                 ],
-                order: [['DateTime', 'DESC']]
+                order: [['timestamp', 'DESC']]
             });
 
             records.map(record => {
@@ -51,20 +51,23 @@ class RecordController {
             const records = await Birdrecords.findAll({
                 include: [
                     {
-                        model: Birdboxes, as: 'birdbox',
-                        attributes: ['Name']
+                        model: Birdboxes,
+                        as: 'birdbox',
+                        attributes: ['name']
                     },
                     {
                         model: Birdguess,
                         as: 'guesses',
-                        attributes: ['Model', 'GuessConfidence'],
-                        include: [{
-                            model: SpeciesDictionary, as: 'species',
-                            attributes: ['SpeciesName']
-                        }]
+                        attributes: ['model', 'model_confidence'],
+                        include: [
+                            {
+                                model: SpeciesDictionary, as: 'species',
+                                attributes: ['species_name']
+                            }
+                        ]
                     }
                 ],
-                order: [['DateTime', 'DESC']]
+                order: [['timestamp', 'DESC']]
             });
 
             const rows = records.map(record => {
@@ -72,12 +75,12 @@ class RecordController {
                 const guess = csv.guesses && csv.guesses.length ? csv.guesses[0] : null;
 
                 return {
-                    DateTime: csv.DateTime,
-                    BirdboxName: csv.birdbox ? csv.birdbox.Name : '',
-                    ManualBird: csv.ManualBird,
-                    GuessSpecies: guess && guess.species ? guess.species.SpeciesName : '',
-                    GuessModel: guess ? guess.Model : '',
-                    GuessConfidence: guess?.GuessConfidence ?? ''
+                    DateTime: new Date(csv.timestamp).toISOString(),
+                    BirdboxName: csv.birdbox ? csv.birdbox.name : '',
+                    ManualBird: csv.manual_bird ?? '',
+                    GuessSpecies: guess && guess.species ? guess.species.species_name : '',
+                    GuessModel: guess ? guess.model : '',
+                    GuessConfidence: guess ? Number(guess.model_confidence).toFixed(3) : ''
                 };
             });
 
