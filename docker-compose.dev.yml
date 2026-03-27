@@ -6,7 +6,7 @@ services:
   backend:
     environment:
       NODE_ENV: development
-      SYNC_DB: "true"
+      SYNC_DB: "false"
     ports:
       - "8000:8000"
 

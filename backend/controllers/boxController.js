@@ -29,7 +29,7 @@ class BoxController {
                     }
                 ],
                 order: [
-                    ['name', 'ASC'], 
+                    ['name', 'ASC'],
                     ['created_at', 'DESC'],
                     [{ model: Birdrecords, as: 'records' }, 'record_id', 'DESC'],
                     [{ model: Birdrecords, as: 'records' }, { model: Birdguess, as: 'guesses' }, 'model_confidence', 'DESC']
@@ -75,7 +75,7 @@ class BoxController {
                     ...
                 ]     
             */
-           if(!boxes || boxes.length === 0) {
+            if (!boxes || boxes.length === 0) {
                 return res.status(404).json({
                     success: false,
                     error: 'No boxes found'
@@ -89,7 +89,8 @@ class BoxController {
                 birdbox_records: []
             };
 
-            for(const [index, box] of boxes.entries()) {
+            for (const [index, box] of boxes.entries()) {
+                const latestRecord = box.records?.[0];
                 formattedData.birdboxes.push(
                     {
                         birdbox_id: box.birdbox_id,
@@ -98,10 +99,12 @@ class BoxController {
                         birdbox_long: box.longitude,
                         location: box.location_name ?? box.name,
                         installation_date: box.created_at,
-                        last_captured_image: {
-                            photo_url: `images/${box.records[0].image_id}`,
-                            timestamp: box.records[0].timestamp
-                        },
+                        last_captured_image: latestRecord
+                            ? {
+                                photo_url: `images/${latestRecord.image_id}`,
+                                timestamp: latestRecord.timestamp
+                            }
+                            : null,
                         last_identified_kestrel: stats[index]?.mostRecentKestrel ?? null
                     }
                 );
@@ -215,6 +218,8 @@ class BoxController {
 
             const stats = calculateBoxStats(box);
 
+            const latestRecord = box.records?.[0];
+
             const formattedData = {
                 birdboxes: {
                     birdbox_id: box.birdbox_id,
@@ -223,10 +228,12 @@ class BoxController {
                     birdbox_long: box.longitude,
                     location: box.location_name ?? box.name,
                     installation_date: box.created_at,
-                    last_captured_image: {
-                        photo_url: `images/${box.records[0].image_id}`,
-                        timestamp: box.records[0].timestamp
-                    },
+                    last_captured_image: latestRecord
+                        ? {
+                            photo_url: `images/${latestRecord.image_id}`,
+                            timestamp: latestRecord.timestamp
+                        }
+                        : null,
                     last_identified_kestrel: stats?.mostRecentKestrel ?? null
                 },
                 birdbox_records: {
@@ -280,7 +287,7 @@ class BoxController {
                 count: boxes.length,
                 data: boxes
             });
-        }catch (error) {
+        } catch (error) {
             console.error('Error in getAllBoxes:', error);
             res.status(500).json({
                 success: false,
@@ -292,7 +299,7 @@ class BoxController {
     // Create new box
     static async createBox(req, res) {
         try {
-            const { name, location, latitude, longitude } = req.body;
+            const { name, location, latitude, longitude, field_notes } = req.body;
 
             // Validation
             if (!name || !location || !latitude || !longitude) {
@@ -365,7 +372,7 @@ class BoxController {
                 });
             }
 
-            await box.update({ name, latitide, longitude, field_notes });
+            await box.update({ name, latitude, longitude, field_notes });
 
             res.json({
                 success: true,
