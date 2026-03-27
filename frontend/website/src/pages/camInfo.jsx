@@ -171,7 +171,7 @@ export default function CamInfo() {
                             </div>
                             <div className={styles.stackedStats}>
                                 <p>Kestrel Frequency</p>
-                                <p className='small-stat-highlight'>{selectedCamera.birdbox_records?.[0]?.kestrel_frequency || 0}%</p>
+                                <p className='small-stat-highlight'>{(selectedCamera.birdbox_records?.[0]?.total_kestrel_identified_photos / selectedCamera.birdbox_records?.[0]?.total_photos_with_creatures) || 0}%</p>
                             </div>
                         </div>
 
@@ -194,11 +194,16 @@ export default function CamInfo() {
                         {selectedRow && (
                             <div>
                                 <div>
-                                    <img src={imageMap[selectedRow.record_id]} alt={selectedCamera.birdbox?.birdbox_name} className="camera-image" />
+                                    <img 
+                                        src={imageMap[selectedRow.record_id]} 
+                                        alt={selectedCamera.birdbox?.birdbox_name} 
+                                        className="camera-image"
+                                        style={{ maxWidth: '640px', maxHeight: '480px', objectFit: 'contain' }}
+                                    />
                                 </div>
                                 <div>
-                                    <p>{selectedRow.primary_guess ?? 'N/A'}</p>
-                                    <p>Confidence: {Math.round(selectedRow.primary_guess_confidence * 100)}%</p>
+                                    <strong>Species:</strong> <p>{selectedRow.primary_guess ?? 'N/A'}</p>
+                                    <strong>Confidence:</strong> <p>{Math.round(selectedRow.primary_guess_confidence * 100)}%</p>
                                     <hr/>
                                 </div>
                             </div>
