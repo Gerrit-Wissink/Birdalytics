@@ -20,8 +20,8 @@ export default function CamInfo() {
     const [selectedID, setSelectedID] = useState(null);
     const [selectedRow, setSelectedRow] = useState(null); //in order to update the Species Identification window on new select
     const [selectedCamera, setSelectedCamera] = useState({
-        birdbox: null,
-        birdbox_records: []
+        birdbox: {},
+        birdbox_records: {}
     });
 
     const [imageMap, setImageMap] = useState({});
@@ -192,7 +192,7 @@ export default function CamInfo() {
                 </div>
                 <div style={{margin: '1em 0px'}}>
                     <BirdboxImageTable 
-                        box={selectedCamera}
+                        box={selectedCamera.birdbox_records.records || []}
                         onSelectRow={(row) => setSelectedRow(row)}
                         imageMap={imageMap}
                     />
