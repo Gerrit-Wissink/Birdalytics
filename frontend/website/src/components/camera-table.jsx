@@ -62,7 +62,7 @@ const MODIFIED_OPTIONS = [
 
 // ─── Component ───────────────────────────────────────────────────────────────
 
-export default function BirdboxImageTable({ box, onSelectRow }) {
+export default function BirdboxImageTable({ box, onSelectRow, onSelectImage }) {
   console.log('PASSED IN RECORD: ', box);
 
   const rows = useMemo(() => parseImages(box), [box]);
@@ -133,6 +133,23 @@ export default function BirdboxImageTable({ box, onSelectRow }) {
   const handleRowSelect = (e) => {
     setSelectedRow(e.value);
     if (onSelectRow) onSelectRow(e.value);
+  // Keep ref in sync for parent access
+  useEffect(() => {
+    if (selectedImageRef) selectedImageRef.current = selectedImage;
+  }, [selectedImage, selectedImageRef]);
+
+  // Reset to first row at start and when birdbox changes
+  useEffect(() => {
+    const first = rows[0] ?? null;
+    setSelectedImage(first);
+    if (selectedImageRef) selectedImageRef.current = first;
+    if (onSelectImage) onSelectImage(first);
+  }, [birdboxRecord.birdbox_id]);
+
+  const handleRowSelect = (e) => {
+    setSelectedImage(e.value);
+    if (selectedImageRef) selectedImageRef.current = e.value;
+    if (onSelectImage) onSelectImage(e.value);
   };
 
   const handleClearFilters = () => {
