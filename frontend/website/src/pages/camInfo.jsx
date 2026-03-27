@@ -133,7 +133,7 @@ export default function CamInfo(){
                 </div>
                 <div style={{margin: '1em 0px'}}>
                     <BirdboxImageTable 
-                        box={selectedCamera.birdbox_records.records || []}
+                        box={selectedCamera.birdbox_records[0]}
                         onSelectRow={(row) => setSelectedRow(row)}
                         imageMap={imageMap}
                     />
