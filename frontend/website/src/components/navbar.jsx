@@ -51,9 +51,6 @@ export default function Navbar() {
                         <NavLink to="/reports" className={({ isActive }) => (isActive ? 'active' : '')}>
                             <span>Reports</span>
                         </NavLink>
-                        <NavLink to="/activity" className={({ isActive }) => (isActive ? 'active' : '')}>
-                            <span>Activity</span>
-                        </NavLink>
                         <NavLink to="/upload">
                             <span id='upload'>Upload Data</span>
                         </NavLink>
@@ -93,9 +90,6 @@ export default function Navbar() {
             </NavLink>
             <NavLink to="/reports" className={({ isActive }) => (isActive ? 'active' : '')}>
                 <span>Reports</span>
-            </NavLink>
-            <NavLink to="/activity" className={({ isActive }) => (isActive ? 'active' : '')}>
-                <span>Activity</span>
             </NavLink>
             <NavLink to="/upload">
                 <span id='upload'>Upload Data</span>

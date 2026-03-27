@@ -123,7 +123,7 @@ export default function CamInfo() {
                     <div id={styles.identifyBox}>
                         <h3 style={{ margin: '5px 0px' }}>Species Identification</h3>
                         {/* selectedImage updates on every row click, triggering a re-render here */}
-                        {console.log(selectedImage.photo_url)}
+                        {console.log("Selected Image: ", selectedImage?.photo_url)}
                         {selectedImage && (
                             <p>{selectedImage.identified_result}</p>
                         )}

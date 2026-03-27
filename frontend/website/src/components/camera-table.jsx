@@ -127,7 +127,7 @@ export default function BirdboxImageTable({ birdboxRecord, selectedImageRef, onS
     if (selectedImageRef) selectedImageRef.current = selectedImage;
   }, [selectedImage, selectedImageRef]);
 
-  // Reset to first row on mount and when birdbox changes
+  // Reset to first row at start and when birdbox changes
   useEffect(() => {
     const first = rows[0] ?? null;
     setSelectedImage(first);
