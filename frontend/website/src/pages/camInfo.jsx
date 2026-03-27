@@ -2,7 +2,7 @@ import styles from './camInfo.module.css'
 import SearchRoundedIcon from '@mui/icons-material/SearchRounded';
 import { FiEdit } from "react-icons/fi";
 import { IoSettingsOutline } from "react-icons/io5";
-import { useState, useEffect, useRef } from 'react';
+import { useState, useEffect } from 'react';
 import apiClient from '../utils/apiClient';
 import { MiniPieChart } from '../components/donut-chart';
 import ProgressBar from '../components/progress-bar';
@@ -18,10 +18,13 @@ export default function CamInfo() {
 
     // Tracks which birdbox_id is currently selected — null until fetch resolves
     const [selectedID, setSelectedID] = useState(null);
+    const [selectedRow, setSelectedRow] = useState(null); //in order to update the Species Identification window on new select
+    const [selectedCamera, setSelectedCamera] = useState({
+        birdbox: null,
+        birdbox_records: []
+    });
 
-    // Ref + state for the selected table row image (NEEDS TO BE SET UP)
-    const selectedImageRef = useRef(null);
-    const [selectedImage, setSelectedImage] = useState(null);
+    const [imageMap, setImageMap] = useState({});
 
     useEffect(() => {
         const fetchBoxesData = async () => {
@@ -47,16 +50,71 @@ export default function CamInfo() {
 
         fetchBoxesData();
     }, []);
+    //selectedImageRow.current?.identified_result or whatever you're trying to access should work
 
-    // selected birdbox and record taken from boxesData + selectedID.
-    const selectedCamera = {
-        birdbox: boxesData.birdboxes.find(b => b.birdbox_id === selectedID) ?? null,
-        record: boxesData.birdbox_records.find(r => r.birdbox_id === selectedID) ?? null,
-    };
+    useEffect(() => {
+        const selected = new URLSearchParams(window.location.search).get('selected');
+        if (selected) {
+            setSelectedID(selected);
+        }
+    }, []);
 
-    return (
-        <>
-        <section id={styles.camInfoContainer}>
+    useEffect(() => {
+        if (selectedID === -1) return;
+        const selectedCam = boxesData.birdboxes.find(box => box.birdbox_id === parseInt(selectedID));
+        const selectedRecords = boxesData.birdbox_records.filter(record => record.birdbox_id === parseInt(selectedID));
+        setSelectedCamera({
+            birdboxes: selectedCam,
+            birdbox_records: selectedRecords
+        });
+    }, [selectedID, boxesData]);
+
+    useEffect(() => {
+        console.log('Selected camera updated:', selectedCamera);
+        setSelectedRow(null); // Reset selected row when camera changes
+        const fetchImagesForBox = async () => {
+            try {
+                const records = selectedCamera.birdbox_records.records || [];
+                const newImageMap = {};
+                
+                for(const record of records) {
+                    if(!record.image_url) {
+                        console.log("No image to fetch for record:", record.record_id);
+                        continue;
+                    }
+                    
+                    const url = record.image_url;
+                    const response = await apiClient.get(url, {
+                        responseType: 'blob' // Important: get binary data as blob
+                    });
+
+                    // Create object URL from blob
+                    const imageUrl = URL.createObjectURL(response.data);
+                    newImageMap[record.record_id] = imageUrl;
+                    
+                    console.log(`Fetched image for record ${record.record_id}`);
+                }
+
+                setImageMap(newImageMap);
+            }catch (error) {
+                console.error('Error fetching images for box:', error);
+            }
+        }
+
+        fetchImagesForBox();
+
+        // Cleanup: revoke object URLs when component unmounts
+        return () => {
+            Object.values(imageMap).forEach(url => URL.revokeObjectURL(url));
+        };
+
+    }, [selectedCamera]);
+
+
+
+    return(
+    <>
+    <section id={styles.camInfoContainer}>
             <div id={styles.cameraSidebar}>
                 <div className={styles.titleSpan}>
                     <h2>Cameras</h2>
@@ -84,7 +142,7 @@ export default function CamInfo() {
 
             <div id={styles.cameraContent}>
                 <h1 style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', marginRight: '7.5%' }}>
-                    {selectedCamera.birdbox?.birdbox_name}
+                    {selectedCamera.birdbox?.birdbox_name ?? 'Select a Camera'}
                     <IoSettingsOutline />
                 </h1>
 
@@ -94,11 +152,11 @@ export default function CamInfo() {
                         <div style={{ display: 'flex', justifyContent: 'space-between' }}>
                             <div className={styles.stackedStats}>
                                 <p>Usage Rate</p>
-                                <p className='small-stat-highlight'>85%</p>
+                                <p className='small-stat-highlight'>{selectedCamera.birdbox_records?.usage_rate || 0}%</p>
                             </div>
                             <div className={styles.stackedStats}>
                                 <p>Kestrel Frequency</p>
-                                <p className='small-stat-highlight'>65%</p>
+                                <p className='small-stat-highlight'>{selectedCamera.birdbox_records?.kestrel_frequency || 0}%</p>
                             </div>
                         </div>
 
@@ -107,20 +165,36 @@ export default function CamInfo() {
                         {/* TODO REPLACE WITH REFERENCES TO BOX DATA: TOTAL IMAGES WITH LOW CONFIDENCE AND TOTAL MODIFIED WITH LOW CONFIDENCE??? */}
 
                         <p>Species Overview</p>
-                        {selectedCamera.record && (
-                            <MiniPieChart
-                                kestrels={selectedCamera.record.total_kestrel_identified_photos}
-                                otherBirds={selectedCamera.record.total_non_kestrel_identified_photos}
-                                nonBirds={
-                                    selectedCamera.record.total_captured_photos -
-                                    (selectedCamera.record.total_kestrel_identified_photos +
-                                     selectedCamera.record.total_non_kestrel_identified_photos)
-                                }
-                            />
-                        )}
+                        <MiniPieChart 
+                            kestrels={selectedCamera.birdbox_records?.total_kestrel_identified_photos || 0}
+                            otherBirds={selectedCamera.birdbox_records?.total_non_kestrel_identified_photos || 0} 
+                            nonBirds={selectedCamera.birdbox_records?.total_captured_photos || 0 - (selectedCamera.birdbox_records?.total_kestrel_identified_photos || 0) - (selectedCamera.birdbox_records?.total_non_kestrel_identified_photos || 0)} 
+                        />
+
+
                     </div>
 
                     <div id={styles.identifyBox}>
+                        <h3 style={{margin: '5px 0px'}}>Species Identification</h3>
+                        {selectedRow && (
+                            <div>
+                                <div>
+                                    <img src={imageMap[selectedRow.record_id]} alt={camera.birdbox_name} className="camera-image" />
+                                </div>
+                                <div>
+                                    <p>{selectedRow.primary_guess ?? 'N/A'}</p>
+                                    <p>Confidence: {Math.round(selectedRow.primary_guess_confidence * 100)}%</p>
+                                    <hr/>
+                                </div>
+                            </div>
+                        )}
+                    </div>
+                </div>
+                <div style={{margin: '1em 0px'}}>
+                    <BirdboxImageTable 
+                        box={selectedCamera}
+                        onSelectRow={(row) => setSelectedRow(row)}
+                    />
                         <h3 style={{ margin: '5px 0px' }}>Species Identification</h3>
                         {/* selectedImage updates on every row click, triggering a re-render here */}
                         {console.log("Selected Image: ", selectedImage?.photo_url)}
