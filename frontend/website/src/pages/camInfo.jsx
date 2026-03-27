@@ -123,6 +123,7 @@ export default function CamInfo() {
                     <div id={styles.identifyBox}>
                         <h3 style={{ margin: '5px 0px' }}>Species Identification</h3>
                         {/* selectedImage updates on every row click, triggering a re-render here */}
+                        {console.log("Selected Image: ", selectedImage?.photo_url)}
                         {selectedImage && (
                             <p>{selectedImage.identified_result}</p>
                         )}
@@ -135,7 +136,9 @@ export default function CamInfo() {
                             birdboxRecord={FakeRecord.birdbox_records[0]}
                             //TODO REPLACE THIS WITH REFERENCE TO ACTUAL BOX DATA selectedCamera.record
                             selectedImageRef={selectedImageRef}
-                            onSelectImage={(img) => setSelectedImage(img)}
+                            onSelectImage={(img) => {
+                                setSelectedImage(img)
+                            }}
                         />
                     )}
                 </div>
