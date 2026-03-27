@@ -179,7 +179,7 @@ export default function CamInfo() {
                         {selectedRow && (
                             <div>
                                 <div>
-                                    <img src={imageMap[selectedRow.record_id]} alt={camera.birdbox_name} className="camera-image" />
+                                    <img src={imageMap[selectedRow.record_id]} alt={selectedCamera.birdbox?.birdbox_name} className="camera-image" />
                                 </div>
                                 <div>
                                     <p>{selectedRow.primary_guess ?? 'N/A'}</p>
