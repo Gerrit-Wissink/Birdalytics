@@ -62,8 +62,8 @@ const MODIFIED_OPTIONS = [
 
 // ─── Component ───────────────────────────────────────────────────────────────
 
-export default function BirdboxImageTable({ birdboxRecord, selectedImageRef }) {
-  console.log('PASSED IN RECORD: ', birdboxRecord);
+export default function BirdboxImageTable({ box, onSelectRow, imageMap }) {
+  console.log('PASSED IN RECORD: ', box);
 
   const rows = useMemo(() => parseImages(birdboxRecord), [birdboxRecord]);
 
@@ -123,21 +123,16 @@ export default function BirdboxImageTable({ birdboxRecord, selectedImageRef }) {
     modifiedFilter !== 'all',
   ].filter(Boolean).length;
 
-  // Keep ref in sync for parent access
-  useEffect(() => {
-    if (selectedImageRef) selectedImageRef.current = selectedImage;
-  }, [selectedImage, selectedImageRef]);
-
   // Reset to first row when birdbox changes
   useEffect(() => {
     const first = rows[0] ?? null;
-    setSelectedImage(first);
-    if (selectedImageRef) selectedImageRef.current = first;
-  }, [birdboxRecord.birdbox_id]);
+    setSelectedRow(first);
+    if (onSelectRow) onSelectRow(first);
+  }, [box.birdbox_id, onSelectRow]);
 
   const handleRowSelect = (e) => {
-    setSelectedImage(e.value);
-    if (selectedImageRef) selectedImageRef.current = e.value;
+    setSelectedRow(e.value);
+    if (onSelectRow) onSelectRow(e.value);
   };
 
   const handleClearFilters = () => {
@@ -173,8 +168,17 @@ export default function BirdboxImageTable({ birdboxRecord, selectedImageRef }) {
     );
   };
 
-  const viewImageTemplate = () => (
-    <span className={styles.viewImageCell}>
+  const viewImageTemplate = (row) => (
+    <span 
+      className={styles.viewImageCell}
+      onClick={() => {
+        const imageUrl = imageMap?.[row.record_id];
+        if (imageUrl) {
+          window.open(imageUrl, '_blank');
+        }
+      }}
+      style={{ cursor: 'pointer' }}
+    >
       <PhotoOutlinedIcon style={{ fontSize: '1.7rem' }} />
     </span>
   );

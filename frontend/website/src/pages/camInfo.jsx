@@ -133,15 +133,13 @@ export default function CamInfo(){
                 </div>
                 <div style={{margin: '1em 0px'}}>
                     <BirdboxImageTable 
-                    birdboxRecord={fakeRecord.birdbox_records[0]}
-                    //this should be whatever record actually stores the array of images
-                    selectedImageRef={selectedImageRef}
-                    onSelectImage={(img) => setSelectedImage(img)}
-                    //update selected image when clicking the table row to rerender the species identification box
+                        box={selectedCamera}
+                        onSelectRow={(row) => setSelectedRow(row)}
+                        imageMap={imageMap}
                     />
                 </div>
             </div>
-    </section>
+        </section>
     </>
-    )
+    );
 }
