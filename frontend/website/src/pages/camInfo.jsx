@@ -18,8 +18,8 @@ export default function CamInfo(){
     });
     const [selectedID, setSelectedID] = useState(-1);
     const [selectedCamera, setSelectedCamera] = useState({
-        birdboxes: null,
-        birdbox_records: null
+        birdbox: {},
+        birdbox_records: {}
     });
 
 
@@ -133,7 +133,7 @@ export default function CamInfo(){
                 </div>
                 <div style={{margin: '1em 0px'}}>
                     <BirdboxImageTable 
-                        box={selectedCamera}
+                        box={selectedCamera.birdbox_records.records || []}
                         onSelectRow={(row) => setSelectedRow(row)}
                         imageMap={imageMap}
                     />
