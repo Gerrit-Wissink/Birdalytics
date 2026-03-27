@@ -7,7 +7,7 @@ import apiClient from '../utils/apiClient';
 import { MiniPieChart } from '../components/donut-chart';
 import ProgressBar from '../components/progress-bar';
 import BirdboxImageTable from '../components/camera-table';
-import FakeRecord from '../fake-data/birdbox_records.json'
+import AddCameraModal from '../components/add-camera-modal';
 
 export default function CamInfo() {
 
@@ -25,6 +25,9 @@ export default function CamInfo() {
     });
 
     const [imageMap, setImageMap] = useState({});
+
+    const [showAddCameraModal, setShowAddCameraModal] = useState(false);
+    
 
     useEffect(() => {
         const fetchBoxesData = async () => {
@@ -135,7 +138,8 @@ export default function CamInfo() {
                     <h2>Cameras</h2>
                     <span style={{ display: 'flex', gap: '1em', alignItems: 'center', cursor: 'pointer' }}>
                         <SearchRoundedIcon style={{ fontSize: '1.5rem', color: 'var(--text)' }} />
-                        <FiEdit style={{ color: 'var(--text)', fontSize: '1.5rem', marginLeft: '0.5rem' }} />
+                        <FiEdit style={{ color: 'var(--text)', fontSize: '1.5rem', marginLeft: '0.5rem' }} 
+                            onClick={() => setShowAddCameraModal(true)} />
                     </span>
                 </div>
 
@@ -219,6 +223,9 @@ export default function CamInfo() {
                 </div>
             </div>
         </section>
+        {showAddCameraModal && (
+            <AddCameraModal setShowModal={setShowAddCameraModal} />
+        )}
     </>
     );
 }

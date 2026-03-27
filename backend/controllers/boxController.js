@@ -25,7 +25,7 @@ class BoxController {
                                 attributes: ['birdguess_id', 'model', 'model_confidence', 'species_id'],
                             }
                         ],
-                        attributes: ['record_id', 'timestamp', 'manual_bird', 'image_id']
+                        attributes: ['record_id', 'timestamp', 'manual_bird', 'image_id', 'updated_at']
                     }
                 ],
                 order: [
@@ -121,6 +121,7 @@ class BoxController {
                                 record_id: record.record_id,
                                 timestamp: record.timestamp,
                                 modified_bird: record.manual_bird,
+                                modified_date: record.updated_at,
                                 image_url: `images/${record.image_id}`,
                                 primary_guess: record.guesses && record.guesses.length > 0 ? record.guesses[0].species.species_name : null,
                                 primary_guess_confidence: record.guesses && record.guesses.length > 0 ? record.guesses[0].model_confidence : null,
@@ -196,7 +197,7 @@ class BoxController {
                                 attributes: ['birdguess_id', 'model', 'model_confidence', 'species_id'],
                             }
                         ],
-                        attributes: ['record_id', 'timestamp', 'manual_bird', 'image_id']
+                        attributes: ['record_id', 'timestamp', 'manual_bird', 'image_id', 'updated_at']
                     }
                 ],
                 order: [
@@ -242,6 +243,7 @@ class BoxController {
                             record_id: record.record_id,
                             timestamp: record.timestamp,
                             modified_bird: record.manual_bird,
+                            modified_date: record.updated_at,
                             image_url: `images/${record.image_id}`,
                             primary_guess: record.guesses && record.guesses.length > 0 ? record.guesses[0].species.species_name : null,
                             primary_guess_confidence: record.guesses && record.guesses.length > 0 ? record.guesses[0].model_confidence : null,

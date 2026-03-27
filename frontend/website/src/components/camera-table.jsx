@@ -196,8 +196,8 @@ export default function BirdboxImageTable({ box, onSelectRow, imageMap }) {
 
   const modifiedTemplate = (row) => {
     // RIGHT NOW THIS WILL ALWAYS RETURN FALSE
-    const display = formatModifiedDate(row.modified_date);
-    return display
+    const display = formatModifiedDate(row.modified_date ?? '-');
+    return row.modified_bird
       ? <span className={styles.modifiedDate}>{display}</span>
       : <span className={styles.modifiedDash}>—</span>;
   };
