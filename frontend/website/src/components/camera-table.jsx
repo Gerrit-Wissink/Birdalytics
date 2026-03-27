@@ -128,7 +128,7 @@ export default function BirdboxImageTable({ box, onSelectRow, imageMap }) {
     const first = rows[0] ?? null;
     setSelectedRow(first);
     if (onSelectRow) onSelectRow(first);
-  }, [box, onSelectRow]);
+  }, [box]);
 
   const handleRowSelect = (e) => {
     setSelectedRow(e.value);
@@ -144,9 +144,13 @@ export default function BirdboxImageTable({ box, onSelectRow, imageMap }) {
 
   // ─── Column templates ──────────────────────────────────────────────────────
 
-  const dateTimeTemplate = (row) => (
-    <span className={styles.dateCell}>{formatDateDisplay(row.date, row.time)}</span>
-  );
+  const dateTimeTemplate = (row) => {
+    if (!row.timestamp) return <span className={styles.dateCell}>—</span>;
+    const date = new Date(row.timestamp);
+    const dateStr = date.toLocaleDateString('en-US', { month: 'short', day: 'numeric', year: 'numeric' });
+    const timeStr = date.toLocaleTimeString('en-US', { hour: '2-digit', minute: '2-digit' });
+    return <span className={styles.dateCell}>{dateStr} - {timeStr}</span>;
+  };
 
   const birdTemplate = (row) => {
     if(!row.primary_guess) {
