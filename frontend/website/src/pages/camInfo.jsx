@@ -194,30 +194,11 @@ export default function CamInfo() {
                     <BirdboxImageTable 
                         box={selectedCamera}
                         onSelectRow={(row) => setSelectedRow(row)}
+                        imageMap={imageMap}
                     />
-                        <h3 style={{ margin: '5px 0px' }}>Species Identification</h3>
-                        {/* selectedImage updates on every row click, triggering a re-render here */}
-                        {console.log("Selected Image: ", selectedImage?.photo_url)}
-                        {selectedImage && (
-                            <p>{selectedImage.identified_result}</p>
-                        )}
-                    </div>
-                </div>
-
-                <div style={{ margin: '1em 0px' }}>
-                    {selectedCamera.record && (
-                        <BirdboxImageTable
-                            birdboxRecord={FakeRecord.birdbox_records[0]}
-                            //TODO REPLACE THIS WITH REFERENCE TO ACTUAL BOX DATA selectedCamera.record
-                            selectedImageRef={selectedImageRef}
-                            onSelectImage={(img) => {
-                                setSelectedImage(img)
-                            }}
-                        />
-                    )}
                 </div>
             </div>
         </section>
-        </>
+    </>
     );
 }
