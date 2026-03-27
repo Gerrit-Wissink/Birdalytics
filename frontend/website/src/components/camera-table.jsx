@@ -156,8 +156,12 @@ export default function BirdboxImageTable({ box, onSelectRow, imageMap }) {
   };
 
   const confidenceTemplate = (row) => {
-    const pct = Math.round(row.confidence_score * 100);
-    const bg = getConfidenceBg(row.confidence_score);
+    if(!row.primary_guess_confidence) {
+      return <span className={styles.noConfidence}>—</span>;
+    }
+    const pctNum = parseFloat(row.primary_guess_confidence);
+    const pct = Math.round(pctNum * 100);
+    const bg = getConfidenceBg(pctNum);
     return (
       <span
         className={bg !== 'transparent' ? styles.confidenceHighlight : styles.confidencePlain}
