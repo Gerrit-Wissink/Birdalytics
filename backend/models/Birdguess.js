@@ -39,7 +39,7 @@ const Birdguess = sequelize.define('Birdguess', {
     indexes: [
         {
             unique: true,
-            fields: ['record_id', 'model']
+            fields: ['record_id', 'model', 'species_id']
         }
     ]
 });

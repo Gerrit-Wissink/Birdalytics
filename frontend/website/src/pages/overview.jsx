@@ -1,3 +1,4 @@
+import React from 'react'
 import Map from "../components/map.jsx";
 import BirdPieChart from "../components/donut-chart.jsx";
 import LineGraph from "../components/line-graph.jsx";

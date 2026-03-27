@@ -1,3 +1,4 @@
+import React from 'react'
 import { Link, NavLink, useNavigate, useLocation } from "react-router-dom";
 import { useState, useEffect } from "react";
 import './navbar.css';
@@ -44,7 +45,7 @@ export default function Navbar() {
                 </Link>
                 <div className="nav-links">
                     <div className="primary-nav">
-                        <NavLink to="/cameras" className={({ isActive }) => (isActive ? 'active' : '')}>
+                        <NavLink to="/caminfo" className={({ isActive }) => (isActive ? 'active' : '')}>
                             <span>Cameras</span>
                         </NavLink>
                         <NavLink to="/reports" className={({ isActive }) => (isActive ? 'active' : '')}>
@@ -84,7 +85,7 @@ export default function Navbar() {
 
         <div id = 'sideMenu' className={isOpen ? "open" : "closed"}>
             <div id = 'sideText'>
-            <NavLink to="/cameras" className={({ isActive }) => (isActive ? 'active' : '')}>
+            <NavLink to="/caminfo" className={({ isActive }) => (isActive ? 'active' : '')}>
                 <span>Cameras</span>
             </NavLink>
             <NavLink to="/reports" className={({ isActive }) => (isActive ? 'active' : '')}>

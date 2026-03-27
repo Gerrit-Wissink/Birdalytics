@@ -71,9 +71,14 @@ def get_or_create_species(conn, label):
         return row["species_id"]
 
 def upsert_birdguess(conn, record_id, result, model_name):
-    best = result["best_guess"]
-    label = best["label"]
-    confidence = best["score"]
+    best_guesses = result.get("best_guesses", [])
+    if not best_guesses:
+        print(f"No best_guesses found for record_id={record_id}")
+        return []
+    best_guess = best_guesses[0]
+
+    label = best_guess["label"]
+    confidence = best_guess["score"]
 
     species_id = get_or_create_species(conn, label)
 
@@ -82,9 +87,7 @@ def upsert_birdguess(conn, record_id, result, model_name):
             """
             INSERT INTO birdguesses (record_id, species_id, model, model_confidence, created_at, updated_at)
             VALUES (%s, %s, %s, %s, NOW(), NOW())
-            ON CONFLICT (record_id, model)
-            DO UPDATE SET
-                species_id = EXCLUDED.species_id,
+            ON CONFLICT (record_id, species_id, model) DO UPDATE SET
                 model_confidence = EXCLUDED.model_confidence,
                 updated_at = now()
             RETURNING record_id, species_id, model, model_confidence
@@ -93,8 +96,8 @@ def upsert_birdguess(conn, record_id, result, model_name):
         )
 
         row = cur.fetchone()
-        print("birdguess upserted:", row)
-        return row
+        print("birdguess inserted:", row)
+    return row
 
 def mark_job_processed(conn, job_id):
     with conn.cursor() as cur:
@@ -144,6 +147,7 @@ def main():
             for job in jobs:
                 try:
                     if job["event_type"] == "birdrecord.created":
+                        print("Processing job:", job['id'])
                         process_job(conn, job)
                         print(f"Processed job {job['id']}")
                 except Exception as e:

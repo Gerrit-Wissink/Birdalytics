@@ -1,6 +1,9 @@
 import jsPDF from 'jspdf';
 import autoTable from 'jspdf-autotable';
 
+import '../../public/fonts/NotoSerif-Bold-Normal.js';
+import '../../public/fonts/Lato-Regular-Normal.js';
+
 // HELPERS
 
 function formatTimestamp(timestamp) {
@@ -145,54 +148,126 @@ export default async function BuildPDF(boxesData, chartImage, lineGraphImage) {
 
     const doc = new jsPDF();
     const pageWidth = doc.internal.pageSize.getWidth();
+    const pageHeight = doc.internal.pageSize.getHeight();
+    const margin = 14;
 
-    //Rectangle header
+    // Rectangle header
     doc.setFillColor(0, 76, 152);
     doc.rect(0, 0, pageWidth, 20, 'F');
-    //header logo
+
+    // Header logo
     const logo = await loadImageAsBase64('/images/GLTLogo.jpg');
     if (logo) {
-        doc.addImage(logo, 'PNG', 4, 3, 0, 14); // x, y, width (0 = auto), height
+        doc.addImage(logo, 'PNG', 4, 3, 0, 14);
     }
 
     let y = 30;
 
-    //Title
+    // Title
     doc.setFontSize(16);
+    doc.addFont('NotoSerif-Bold-Normal.ttf', 'NotoSerif-Bold', 'normal');
     doc.setFont('NotoSerif-Bold', 'normal');
-    doc.text("Birdbox Report", 14, y);
+    doc.text("Birdbox Report", margin, y);
     y += 8;
 
-    //Box list
+    // Box list
+    const listStartY = y;
+    const lineHeight = 6;
+
     doc.setFontSize(11);
+    doc.addFont('Lato-Regular.ttf', 'Lato-Regular', 'normal');
     doc.setFont('Lato-Regular', 'normal');
     birdboxes.forEach((box) => {
         doc.text(`• ${box.birdbox_name}`, 18, y);
-        y += 6;
+        y += lineHeight;
     });
 
+    const listEndY = y;
+    const listHeight = listEndY - listStartY;
+
+    // Stat cards
+    const mostActive = getMostActive(birdboxes, recordsMap);
+    const leastActive = getLeastActive(birdboxes, recordsMap);
+
+    const mostActiveLines = wrapName(mostActive?.birdbox_name);
+    const leastActiveLines = wrapName(leastActive?.birdbox_name);
+
+    const cardW = 50;
+    const cardH = (mostActiveLines.length > 1 || leastActiveLines.length > 1) ? 28 : 20;
+    const cardGap = 5;
+    const cardsX = pageWidth - margin - cardW * 2 - cardGap;
+    const cardsY = listStartY + (listHeight - cardH) / 2 - 3;
+
+    drawStatCard(doc, cardsX, cardsY, cardW, cardH, 'Most Active Camera', mostActiveLines, [87, 113, 14]);
+    drawStatCard(doc, cardsX + cardW + cardGap, cardsY, cardW, cardH, 'Least Active Camera', leastActiveLines, [199, 110, 1]);
+
+    y = Math.max(listEndY, cardsY + cardH) + 4;
+
+    // Table
     autoTable(doc, {
-        startY: y + 4,
-        head: [['Box Name', 'Location', 'Last Captured', 'Last Kestrel']],
-        headStyles:{
-            fillColor: [0, 76, 152]
+        startY: y,
+        head: [['Box Name', 'Last Record', 'Usage Rate', 'Kestrel Frequency', 'Last Kestrel']],
+        headStyles: {
+            fillColor: [0, 76, 152],
         },
-        body: birdboxes.map((box) => [
-            box.birdbox_name,
-            box.location,
-            box.last_captured_image?.timestamp
-                ? new Date(box.last_captured_image.timestamp).toLocaleString().replace(', ', '\n')
-                : 'N/A',
-            box.last_identified_kestrel?.timestamp
-                ? new Date(box.last_identified_kestrel.timestamp).toLocaleString().replace(', ', '\n')
-                : 'N/A',
-        ]),
+        body: birdboxes.map((box) => {
+            const record = recordsMap[box.birdbox_id];
+            return [
+                box.birdbox_name,
+                formatTimestamp(box.last_captured_image?.timestamp),
+                record ? toPercent(record.usage_rate) : "—",
+                kestrelFrequency(record),
+                formatTimestamp(box.last_identified_kestrel?.timestamp),
+            ];
+        }),
     });
+
+    // Sighting breakdown section — placed below the table
+    {
+        const afterTable = doc.lastAutoTable.finalY + 10;
+        const lineGraphW = pageWidth - margin * 2;
+        const lineGraphH = lineGraphW * (300 / 900);
+        const chartSize = 70;
+        const sectionH = (lineGraphImage ? lineGraphH + 8 : 0) + chartSize;
+
+        let sectionY;
+        if (afterTable + sectionH > pageHeight - margin) {
+            doc.addPage();
+            sectionY = 20;
+        } else {
+            sectionY = afterTable;
+        }
+
+        // Section title
+        doc.setFontSize(14);
+        doc.setFont('NotoSerif-Bold', 'normal');
+        doc.text("Sighting Breakdown", margin, sectionY);
+        sectionY += 6;
+
+        // Line graph — full width, above the pie chart
+        if (lineGraphImage) {
+            doc.addImage(lineGraphImage, 'PNG', margin, sectionY, lineGraphW, lineGraphH);
+            sectionY += lineGraphH + 8;
+        }
+
+        // Pie chart + breakdown boxes side by side
+        if (chartImage) {
+            doc.addImage(chartImage, 'PNG', margin, sectionY, chartSize, chartSize);
+
+            const boxX = margin + chartSize + 10;
+            const boxW = pageWidth - boxX - margin;
+            const rowH = 16;
+            const rowGap = 6;
+            const rowCount = 3;
+            const blockH = rowCount * rowH + (rowCount - 1) * rowGap;
+            const breakdownY = sectionY + (chartSize - blockH) / 2;
+            drawSightingBreakdown(doc, birdbox_records, boxX, breakdownY, boxW);
+        }
+    }
 
     doc.save('report.pdf');
 }
 
-//helper func to convert the image to base64 for embedding in PDF
 async function loadImageAsBase64(url) {
     try {
         const response = await fetch(url);
@@ -204,7 +279,7 @@ async function loadImageAsBase64(url) {
             reader.readAsDataURL(blob);
         });
     } catch (err) {
-        console.error('Failed to load logo:', err);
+        console.error('Failed to load:', err);
         return null;
     }
 }

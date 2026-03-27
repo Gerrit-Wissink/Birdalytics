@@ -1,8 +1,10 @@
-import './cameras.css'
+import React from 'react'
+
 import { useState, useEffect } from 'react';
 import apiClient from '../utils/apiClient';
 import CameraCard from '../components/camera-card';
 import AddCameraModal from '../components/add-camera-modal';
+import './cameras.css'
 
 export default function Cameras(){
     // TODO: Replace with GET request to fetch cameras from backend
@@ -78,7 +80,7 @@ export default function Cameras(){
         
         // Cleanup: revoke object URLs when component unmounts
         return () => {
-            Object.values(newImageMap).forEach(url => URL.revokeObjectURL(url));
+            Object.values(imageMap).forEach(url => URL.revokeObjectURL(url));
         };
     }, [boxesData]);
 
