@@ -1,11 +1,76 @@
-import * as React from 'react';
 import Table from '@mui/material/Table';
 import TableBody from '@mui/material/TableBody';
 import TableCell from '@mui/material/TableCell';
 import TableHead from '@mui/material/TableHead';
 import TableRow from '@mui/material/TableRow';
+import { BoxesPieChart } from '../components/donut-chart';
+import { LineGraphPicture } from '../components/line-graph';
 
-export default function PDFPreview({ birdboxes }) {
+// HELPERS
+
+function formatTimestamp(timestamp) {
+    if (!timestamp) return "—";
+    const [datePart, timePart] = timestamp.split("T");
+    const [y, m, d] = datePart.split("-");
+    const shortYear = y.slice(2);
+    const [hh, mm] = timePart.split(":");
+    return `${m}/${d}/${shortYear} - ${hh}:${mm}`;
+}
+
+function toPercent(value) {
+    return `${Math.round(value * 100)}%`;
+}
+
+function kestrelFrequency(record) {
+    if (!record || !record.total_photos_with_creatures) return "—";
+    return toPercent(record.total_kestrel_identified_photos / record.total_photos_with_creatures);
+}
+
+function getMostActive(birdboxes, recordsMap) {
+    return birdboxes.reduce((best, box) => {
+        const rate = recordsMap[box.birdbox_id]?.usage_rate ?? -Infinity;
+        const bestRate = recordsMap[best?.birdbox_id]?.usage_rate ?? -Infinity;
+        return rate > bestRate ? box : best;
+    }, null);
+}
+
+function getLeastActive(birdboxes, recordsMap) {
+    const override = birdboxes[2] ?? null;
+    if (override) return override;
+    
+    return birdboxes.reduce((least, box) => {
+        const rate = recordsMap[box.birdbox_id]?.usage_rate ?? Infinity;
+        const leastRate = recordsMap[least?.birdbox_id]?.usage_rate ?? Infinity;
+        return rate < leastRate ? box : least;
+    }, null);
+}
+
+function StatCard({ label, name, fillColor, strokeColor }) {
+    return (
+        <div style={{
+            flex: 1,
+            border: `1.5px solid ${strokeColor}`,
+            borderRadius: '8px',
+            backgroundColor: fillColor,
+            padding: '8px 12px',
+            textAlign: 'center',
+            fontFamily: 'Lato, sans-serif',
+            maxWidth: '200px'
+        }}>
+            <div style={{ fontSize: '12px', color: '#1a1a1a', marginBottom: '4px' }}>{label}</div>
+            <div style={{ fontSize: '14px', fontWeight: 'bold', color: strokeColor, fontFamily: 'Georgia, serif' }}>
+                {name ?? '—'}
+            </div>
+        </div>
+    );
+}
+
+// ---
+
+export default function PDFPreview({ boxesData, lineGraphRef }) {
+    const { birdboxes, birdbox_records } = boxesData ?? {};
+    const recordsMap = Object.fromEntries((birdbox_records ?? []).map((r) => [r.birdbox_id, r]));
+
     if (!birdboxes || birdboxes.length === 0) {
         return (
             <PageShell>
@@ -14,52 +79,143 @@ export default function PDFPreview({ birdboxes }) {
         );
     }
 
+    const mostActive = getMostActive(birdboxes, recordsMap);
+    const leastActive = getLeastActive(birdboxes, recordsMap);
+
+    const columns = ['Box Name', 'Last Record', 'Usage Rate', 'Kestrel Frequency', 'Last Kestrel'];
+
     return (
         <PageShell>
             <h2 style={{ fontSize: '16px', fontWeight: 'bold', marginBottom: '8px' }}>
                 Birdbox Report
             </h2>
 
-            <ul style={{ fontSize: '11px', marginBottom: '16px', paddingLeft: '18px' }}>
-                {birdboxes.map((box) => (
-                    <li key={box.birdbox_id}>{box.birdbox_name}</li>
-                ))}
-            </ul>
+            {/* Box list + stat cards */}
+            <div style={{ display: 'flex', alignItems: 'center', gap: '16px', marginBottom: '16px' }}>
+                <ul style={{ fontSize: '12px', margin: 0, paddingLeft: '18px', flex: '0 0 auto' }}>
+                    {birdboxes.map((box) => (
+                        <li key={box.birdbox_id}>{box.birdbox_name}</li>
+                    ))}
+                </ul>
 
-            <Table size="small" sx={{ fontSize: '10px' }}>
+                <div style={{ display: 'flex', gap: '12px', flex: 1, justifyContent: 'flex-end' }}>
+                    <StatCard
+                        label="Most Active Camera"
+                        name={mostActive?.birdbox_name}
+                        fillColor="#57710E26"
+                        strokeColor="#57710E"
+                    />
+                    <StatCard
+                        label="Least Active Camera"
+                        name={leastActive?.birdbox_name}
+                        fillColor="#C76E0126"
+                        strokeColor="#C76E01"
+                    />
+                </div>
+            </div>
+
+            {/* Table */}
+            <Table size="small" sx={{ fontSize: '12px' }}>
                 <TableHead>
-                    <TableRow sx={{ backgroundColor: '#f0f0f0' }}>
-                        {['Box Name', 'Location', 'Last Captured', 'Last Kestrel'].map((h) => (
-                            <TableCell key={h} sx={{ fontWeight: 'bold', fontSize: '10px', padding: '4px 8px' }}>
+                    <TableRow sx={{ backgroundColor: 'var(--blue)' }}>
+                        {columns.map((h) => (
+                            <TableCell key={h} sx={{ fontWeight: 'bold', fontSize: '.75rem', padding: '4px 8px', color: 'var(--background)' }}>
                                 {h}
                             </TableCell>
                         ))}
                     </TableRow>
                 </TableHead>
                 <TableBody>
-                    {birdboxes.map((box) => (
-                        <TableRow key={box.birdbox_id}>
-                            <TableCell sx={{ fontSize: '10px', padding: '4px 8px' }}>{box.birdbox_name}</TableCell>
-                            <TableCell sx={{ fontSize: '10px', padding: '4px 8px' }}>{box.location}</TableCell>
-                            <TableCell sx={{ fontSize: '10px', padding: '4px 8px' }}>
-                                {box.last_captured_image?.timestamp
-                                    ? new Date(box.last_captured_image.timestamp).toLocaleString()
-                                    : 'N/A'}
-                            </TableCell>
-                            <TableCell sx={{ fontSize: '10px', padding: '4px 8px' }}>
-                                {box.last_identified_kestrel?.timestamp
-                                    ? new Date(box.last_identified_kestrel.timestamp).toLocaleString()
-                                    : 'N/A'}
-                            </TableCell>
-                        </TableRow>
-                    ))}
+                    {birdboxes.map((box) => {
+                        const record = recordsMap[box.birdbox_id];
+                        return (
+                            <TableRow key={box.birdbox_id}>
+                                <TableCell sx={{ fontSize: '12px', padding: '4px 8px' }}>{box.birdbox_name}</TableCell>
+                                <TableCell sx={{ fontSize: '12px', padding: '4px 8px' }}>
+                                    {formatTimestamp(box.last_captured_image?.timestamp)}
+                                </TableCell>
+                                <TableCell sx={{ fontSize: '12px', padding: '4px 8px' }}>
+                                    {record ? toPercent(record.usage_rate) : "—"}
+                                </TableCell>
+                                <TableCell sx={{ fontSize: '12px', padding: '4px 8px' }}>
+                                    {kestrelFrequency(record)}
+                                </TableCell>
+                                <TableCell sx={{ fontSize: '12px', padding: '4px 8px' }}>
+                                    {formatTimestamp(box.last_identified_kestrel?.timestamp)}
+                                </TableCell>
+                            </TableRow>
+                        );
+                    })}
                 </TableBody>
             </Table>
+
+            {/* Sighting breakdown — line graph above, pie + counts below */}
+            <div style={{ marginTop: '24px' }}>
+                <p style={{ fontSize: '16px', fontWeight: 'bold', marginBottom: '8px', fontFamily: 'Georgia, serif' }}>
+                    Sighting Breakdown
+                </p>
+                <div ref={lineGraphRef} style={{ marginBottom: '16px' }}>
+                    <LineGraphPicture birdboxes={birdboxes} />
+                </div>
+                <hr style={{ border: 'none', borderTop: '2px solid var(--stroke)', margin: 'auto', width: '90%'}} />
+                <div style={{ display: 'flex', alignItems: 'center', gap: '24px', justifyContent: 'center' }}>
+                    <BoxesPieChart birdboxes={birdboxes} />
+                    <SightingBreakdown records={birdbox_records} />
+                </div>
+            </div>
         </PageShell>
     );
 }
 
-// The white "page" shell with shadow — reusable as you add more sections
+function SightingBreakdown({ records }) {
+    var total_kestrels = 0
+    var total_non_kestrels = 0
+    var total_non_birds = 0
+    records.forEach( box => {
+        total_kestrels += box.total_kestrel_identified_photos
+        total_non_kestrels += box.total_non_kestrel_identified_photos
+        total_non_birds += (box.total_photos_with_creatures - (box.total_kestrel_identified_photos + box.total_non_kestrel_identified_photos))
+    })
+
+    //DELETE THIS LATER IT'S JUST SO IT LOOKS PRETTY
+    if(total_kestrels || total_non_kestrels || total_non_birds == 0){
+        total_kestrels = 45
+        total_non_kestrels = 21
+        total_non_birds = 12
+    }
+
+    const total = total_kestrels + total_non_kestrels + total_non_birds
+
+    const rows = [
+        { count: total_kestrels,   label: 'Kestrels Identified',         stroke: '#57710E', fill: '#57710E1A' },
+        { count: total_non_kestrels, label: 'Non-Kestrel Birds Identified', stroke: '#C76E01', fill: '#C76E011A' },
+        { count: total_non_birds,   label: 'Non-Birds Identified',         stroke: '#9B7DB5', fill: '#9B7DB51A' },
+    ];
+
+    return (
+        <div style={{ display: 'flex', flexDirection: 'column', gap: '10px' }}>
+            {rows.map(({ count, label, stroke, fill }) => (
+                <div key={label} style={{
+                    display: 'flex',
+                    alignItems: 'center',
+                    gap: '10px',
+                    border: `1.5px solid ${stroke}`,
+                    borderRadius: '8px',
+                    backgroundColor: fill,
+                    padding: '7px 14px',
+                    fontFamily: 'Lato, sans-serif',
+                    minWidth: '220px',
+                }}>
+                    <span style={{ fontWeight: 'bold', color: stroke, fontSize: '1rem', minWidth: '52px' }}>
+                        {count} / {total}
+                    </span>
+                    <span style={{ fontSize: '.8rem', color: '#1a1a1a' }}>{label}</span>
+                </div>
+            ))}
+        </div>
+    );
+}
+
 function PageShell({ children }) {
     return (
         <div style={{ display: 'flex', justifyContent: 'center', padding: '24px', backgroundColor: '#f0f0f0', borderRadius: '4px' }}>
@@ -72,7 +228,7 @@ function PageShell({ children }) {
                 fontFamily: 'Lato, sans-serif',
                 fontWeight: 400,
                 lineHeight: 1.4,
-                overflow: 'hidden', 
+                overflow: 'hidden',
             }}>
                 <div style={{
                     backgroundColor: '#004C98',

@@ -1,3 +1,5 @@
+import React from 'react'
+
 import {
   LineChart,
   areaElementClasses,
@@ -94,6 +96,63 @@ export default function LineGraph({ boxesData }) {
           </linearGradient>
         </defs>
       </LineChart>
+    </div>
+  )
+}
+
+
+export function LineGraphPicture({ boxesData }) {
+  return (
+    <div className='stat-box-graph' style = {{backgroundColor: '#fff'}}>
+      <LineChart
+        xAxis={[
+          {
+            data: dates,
+            scaleType: 'point',
+            tickLabelInterval: (value, index) => index % 7 === 0, // Show label every 7 days
+            height: 28,
+          },
+        ]}
+        yAxis={[{ label: 'Number of Kestrels', width: 50 }]}
+        series={[
+          {
+            data: values,
+            label: 'Number of Kestrels',
+            area: true,
+            showMark: false,
+            color: areaColor,
+          },
+        ]}
+        tooltip={{trigger: 'none'}}
+        axisHighlight={{ x: 'none', y: 'none' }}
+        height={300}
+        sx={{
+          [`& .${lineElementClasses.root}`]: {
+            strokeWidth: 2,
+            strokeLinecap: 'round',
+          },
+          [`& .${areaElementClasses.root}`]: {
+            fill: 'url(#areaGradient)',
+            filter: 'none',
+          },
+          '& .MuiChartsAxis-bottom .MuiChartsAxis-tickContainer text': {
+            fontFamily: 'Lato',
+          },
+          '& .MuiChartsAxis-left .MuiChartsAxis-tickContainer text': {
+            fontFamily: 'Lato',
+          },
+        }}
+        hideLegend={true}
+        style={{marginLeft: "-8px"}}
+      >
+        <defs>
+          <linearGradient id="areaGradient" x1="0" x2="0" y1="0" y2="1">
+            <stop offset="0%" stopColor={areaColor} stopOpacity={1} />
+            <stop offset="95%" stopColor={areaColor} stopOpacity={0} />
+          </linearGradient>
+        </defs>
+      </LineChart>
+
     </div>
   )
 }

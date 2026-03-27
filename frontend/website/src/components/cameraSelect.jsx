@@ -1,3 +1,4 @@
+import React from 'react'
 import { useState, useEffect } from 'react';
 import OutlinedInput from '@mui/material/OutlinedInput';
 import InputLabel from '@mui/material/InputLabel';
@@ -7,28 +8,8 @@ import ListItemText from '@mui/material/ListItemText';
 import Select from '@mui/material/Select';
 import CheckBoxOutlineBlankIcon from '@mui/icons-material/CheckBoxOutlineBlank';
 import CheckBoxIcon from '@mui/icons-material/CheckBox';
-import apiClient from '../utils/apiClient';
 
-export default function BirdBoxSelect({ boxes, setBoxes, selectedBoxNames, setSelectedBoxNames }) {
-
-    useEffect(() => {
-        const fetchBoxesData = async () => {
-            try {
-                const response = await apiClient.get('/boxes/record');
-                if (response.status === 200) {
-                    const fetchedBoxes = response.data.data.birdboxes;
-                    setBoxes(fetchedBoxes);
-                    setSelectedBoxNames(fetchedBoxes.map((b) => b.birdbox_name));
-                } else {
-                    console.error('Failed to fetch boxes data:', response.status);
-                }
-            } catch (error) {
-                console.error('Error fetching boxes data:', error);
-            }
-        };
-        fetchBoxesData();
-    }, []);
-
+export default function BirdBoxSelect({ boxes, selectedBoxNames, setSelectedBoxNames }) {
     const ITEM_HEIGHT = 48;
     const ITEM_PADDING_TOP = 8;
     const MenuProps = {
