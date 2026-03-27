@@ -123,12 +123,12 @@ export default function BirdboxImageTable({ box, onSelectRow, imageMap }) {
     modifiedFilter !== 'all',
   ].filter(Boolean).length;
 
-  // Reset to first row when birdbox changes
+  // Reset to first row when birdbox ID changes
   useEffect(() => {
     const first = rows[0] ?? null;
     setSelectedRow(first);
     if (onSelectRow) onSelectRow(first);
-  }, [box]);
+  }, [box?.birdbox_id]);
 
   const handleRowSelect = (e) => {
     setSelectedRow(e.value);
@@ -180,7 +180,7 @@ export default function BirdboxImageTable({ box, onSelectRow, imageMap }) {
     <span 
       className={styles.viewImageCell}
       onClick={() => {
-        const imageUrl = imageMap?.[row.record_id];
+        const imageUrl = `https://birdalytics.webdev.gccis.rit.edu/api/${row.image_url}`;
         if (imageUrl) {
           window.open(imageUrl, '_blank');
         }
