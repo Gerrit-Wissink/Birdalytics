@@ -74,6 +74,63 @@ export default function CamInfo(){
         });
     }, [selectedID, boxesData]);
 
+    useEffect(() => {
+        console.log('Selected camera updated:', selectedCamera);
+        setSelectedRow(null); // Reset selected row when camera changes
+        const fetchImagesForBox = async () => {
+            try {
+                const records = selectedCamera.birdbox_records?.[0]?.records || [];
+                console.log('Records found:', records.length, records);
+                
+                if (records.length === 0) {
+                    console.log('No records to fetch images for');
+                    setImageMap({});
+                    return;
+                }
+                
+                const newImageMap = {};
+                
+                for(const record of records) {
+                    console.log(`Processing record ${record.record_id}, image_url: ${record.image_url}`);
+                    
+                    if(!record.image_url) {
+                        console.log("No image_url for record:", record.record_id);
+                        continue;
+                    }
+                    
+                    try {
+                        console.log(`Fetching image from: ${record.image_url}`);
+                        const response = await apiClient.get(record.image_url, {
+                            responseType: 'blob'
+                        });
+
+                        if (response.status === 200) {
+                            const imageUrl = URL.createObjectURL(response.data);
+                            newImageMap[record.record_id] = imageUrl;
+                            console.log(`✓ Successfully fetched image for record ${record.record_id}`);
+                        }
+                    } catch (err) {
+                        console.error(`✗ Failed to fetch image for record ${record.record_id}:`, err.message);
+                    }
+                }
+
+                console.log('Setting imageMap with', Object.keys(newImageMap).length, 'images');
+                setImageMap(newImageMap);
+            } catch (error) {
+                console.error('Error in fetchImagesForBox:', error);
+            }
+        }
+
+        fetchImagesForBox();
+
+        // Cleanup: revoke object URLs when component unmounts
+        return () => {
+            Object.values(imageMap).forEach(url => URL.revokeObjectURL(url));
+        };
+
+    }, [selectedCamera]);
+
+
 
     return(
     <>
@@ -112,18 +169,22 @@ export default function CamInfo(){
                             <div style={{display: 'flex', justifyContent: 'space-between'}}>
                             <div className={styles.stackedStats}>
                                 <p>Usage Rate</p>
-                                <p className='small-stat-highlight'>85%</p>
+                                <p className='small-stat-highlight'>{selectedCamera.birdbox_records?.[0]?.usage_rate || 0}%</p>
                             </div>
                             <div className={styles.stackedStats}>
                                 <p>Kestrel Frequency</p>
-                                <p className='small-stat-highlight'>65%</p>
+                                <p className='small-stat-highlight'>{selectedCamera.birdbox_records?.[0]?.kestrel_frequency || 0}%</p>
                             </div>
                         </div>
                         <p>Images Reviewed</p>
                             <ProgressBar totalImages={100} imagesReviewed={85} />
                             {/* TODO REPLACE WITH REFERENCES TO BOX DATA */}
                         <p>Species Overview</p>
-                        <MiniPieChart kestrels={selectedCamera.birdbox_records?.total_kestrel_identified_photos || 0} otherBirds={selectedCamera.birdbox_records?.total_non_kestrel_identified_photos || 0} nonBirds={selectedCamera.birdbox_records?.total_captured_photos || 0 - (selectedCamera.birdbox_records?.total_kestrel_identified_photos || 0) - (selectedCamera.birdbox_records?.total_non_kestrel_identified_photos || 0)} />
+                        <MiniPieChart 
+                            kestrels={selectedCamera.birdbox_records?.[0]?.total_kestrel_identified_photos || 0}
+                            otherBirds={selectedCamera.birdbox_records?.[0]?.total_non_kestrel_identified_photos || 0} 
+                            nonBirds={selectedCamera.birdbox_records?.[0]?.total_captured_photos || 0 - (selectedCamera.birdbox_records?.[0]?.total_kestrel_identified_photos || 0) - (selectedCamera.birdbox_records?.[0]?.total_non_kestrel_identified_photos || 0)} 
+                        />
 
 
                     </div>
@@ -145,7 +206,7 @@ export default function CamInfo(){
                 </div>
                 <div style={{margin: '1em 0px'}}>
                     <BirdboxImageTable 
-                        box={selectedCamera.birdbox_records[0]}
+                        box={selectedCamera.birdbox_records?.[0]}
                         onSelectRow={(row) => setSelectedRow(row)}
                         imageMap={imageMap}
                     />
