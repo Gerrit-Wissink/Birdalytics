@@ -5,7 +5,7 @@ import apiClient from '../utils/apiClient';
 import { useState } from 'react';
 
 
-export default function AddCameraModal({ handleCancelModal }) {
+export default function AddCameraModal({ setShowModal }) {
     const [formData, setFormData] = useState({
         cameraName: '',
         location: '',
@@ -45,6 +45,16 @@ export default function AddCameraModal({ handleCancelModal }) {
             console.error('Error adding camera:', error);
             setError("Failed to add camera. Please try again.");
         }
+    };
+
+    const handleCancelModal = () => {
+        setShowModal(false);
+        setFormData({
+            cameraName: '',
+            location: '',
+            latitude: '',
+            longitude: ''
+        });
     };
 
 

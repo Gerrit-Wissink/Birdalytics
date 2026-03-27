@@ -86,22 +86,8 @@ export default function Cameras(){
 
     const cameras = boxesData.birdboxes
 
-    const handleInputChange = (e) => {
-        const { name, value } = e.target;
-        setFormData(prev => ({
-            ...prev,
-            [name]: value
-        }));
-    };
-
     const handleCancelModal = () => {
         setShowModal(false);
-        setFormData({
-            cameraName: '',
-            location: '',
-            installationDate: '',
-            coordinates: ''
-        });
     };
 
     return(
