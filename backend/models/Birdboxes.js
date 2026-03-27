@@ -15,6 +15,11 @@ const Birdbox = sequelize.define('Birdbox', {
             len: [1, 100]
         }
     },
+    location_name: {
+        type: DataTypes.STRING(100),
+        allowNull: false,
+        defaultValue: "Rochester, NY"
+    },
     latitude: {
         type: DataTypes.DECIMAL(10, 7),
         allowNull: false,

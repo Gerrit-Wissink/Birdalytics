@@ -44,9 +44,9 @@ export default function CamInfo(){
     }, []);
 
     const cameras = boxesData.birdboxes
-    const selectedImageRef = useRef(null); //to keep track of the selected 'table row' (Image) in order to display info in the Species Identification box
-    const [selectedImage, setSelectedImage] = useState(null); //in order to update the Species Identification window on new select
-    //selectedImageRef.current?.identified_result or whatever you're trying to access should work
+    const selectedRowRef = useRef(null); //to keep track of the selected 'table row' (Image) in order to display info in the Species Identification box
+    const [selectedRow, setSelectedRow] = useState(null); //in order to update the Species Identification window on new select
+    //selectedImageRow.current?.identified_result or whatever you're trying to access should work
 
     useEffect(() => {
         const selected = new URLSearchParams(window.location.search).get('selected');
@@ -103,32 +103,43 @@ export default function CamInfo(){
                             <div style={{display: 'flex', justifyContent: 'space-between'}}>
                             <div className={styles.stackedStats}>
                                 <p>Usage Rate</p>
-                                <p className='small-stat-highlight'>85%</p>
+                                <p className='small-stat-highlight'>{selectedCamera.birdbox_records?.usage_rate || 0}%</p>
                             </div>
                             <div className={styles.stackedStats}>
                                 <p>Kestrel Frequency</p>
-                                <p className='small-stat-highlight'>65%</p>
+                                <p className='small-stat-highlight'>{selectedCamera.birdbox_records?.kestrel_frequency || 0}%</p>
                             </div>
                         </div>
                         <p>Images Reviewed</p>
                             <ProgressBar totalImages={100} imagesReviewed={85} />
                             {/* TODO REPLACE WITH REFERENCES TO BOX DATA */}
                         <p>Species Overview</p>
-                        <MiniPieChart kestrels={selectedCamera.birdbox_records?.total_kestrel_identified_photos || 0} otherBirds={selectedCamera.birdbox_records?.total_non_kestrel_identified_photos || 0} nonBirds={selectedCamera.birdbox_records?.total_captured_photos || 0 - (selectedCamera.birdbox_records?.total_kestrel_identified_photos || 0) - (selectedCamera.birdbox_records?.total_non_kestrel_identified_photos || 0)} />
+                        <MiniPieChart 
+                            kestrels={selectedCamera.birdbox_records?.total_kestrel_identified_photos || 0}
+                            otherBirds={selectedCamera.birdbox_records?.total_non_kestrel_identified_photos || 0} 
+                            nonBirds={selectedCamera.birdbox_records?.total_captured_photos || 0 - (selectedCamera.birdbox_records?.total_kestrel_identified_photos || 0) - (selectedCamera.birdbox_records?.total_non_kestrel_identified_photos || 0)} 
+                        />
 
 
                     </div>
                     <div id={styles.identifyBox}>
                         <h3 style={{margin: '5px 0px'}}>Species Identification</h3>
+                        {selectedRow && (
+                            <div>
+                                <p>{selectedRow.primary_guess ?? 'N/A'}</p>
+                                <p>Confidence: {Math.round(selectedRow.primary_guess_confidence * 100)}%</p>
+                                <hr/>
+                            </div>
+                        )}
                     </div>
                 </div>
                 <div style={{margin: '1em 0px'}}>
                     <BirdboxImageTable 
                     birdboxRecord={fakeRecord.birdbox_records[0]}
                     //this should be whatever record actually stores the array of images
-                    selectedImageRef={selectedImageRef}
-                    onSelectImage={(img) => setSelectedImage(img)}
-                    //update selected image when clicking the table row to rerender the species identification box
+                    selectedRowRef={selectedRowRef}
+                    onSelectRow={(row) => setSelectedRow(row)}
+                    //update selected row when clicking the table row to rerender the species identification box
                     />
                 </div>
             </div>

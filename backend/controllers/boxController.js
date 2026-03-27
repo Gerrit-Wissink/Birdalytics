@@ -96,7 +96,7 @@ class BoxController {
                         birdbox_name: box.name,
                         birdbox_lat: box.latitude,
                         birdbox_long: box.longitude,
-                        location: box.name,
+                        location: box.location_name ?? box.name,
                         installation_date: box.created_at,
                         last_captured_image: {
                             photo_url: `images/${box.records[0].image_id}`,
@@ -220,7 +220,7 @@ class BoxController {
                     birdbox_name: box.name,
                     birdbox_lat: box.latitude,
                     birdbox_long: box.longitude,
-                    location: box.name,
+                    location: box.location_name ?? box.name,
                     installation_date: box.created_at,
                     last_captured_image: {
                         photo_url: `images/${box.records[0].image_id}`,

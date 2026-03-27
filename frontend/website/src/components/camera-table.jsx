@@ -31,11 +31,11 @@ const formatModifiedDate = (dateStr) => {
   return new Date(dateStr).toLocaleDateString('en-US', { month: 'short', day: 'numeric' });
 };
 
-const parseImages = (birdboxRecord) => {
-  if (!birdboxRecord?.images) return [];
-  return birdboxRecord.images.map((img) => ({
-    ...img,
-    _datetime: new Date(`${img.date}T${img.time}`),
+const parseImages = (box) => {
+  if (!box?.records) return [];
+  return box.records.map((record) => ({
+    ...record,
+    _datetime: new Date(`${record.timestamp}`),
   }));
 };
 
@@ -62,13 +62,13 @@ const MODIFIED_OPTIONS = [
 
 // ─── Component ───────────────────────────────────────────────────────────────
 
-export default function BirdboxImageTable({ birdboxRecord, selectedImageRef }) {
-  console.log('PASSED IN RECORD: ', birdboxRecord);
+export default function BirdboxImageTable({ box, selectedRowRef, onSelectRow }) {
+  console.log('PASSED IN RECORD: ', box);
 
-  const rows = useMemo(() => parseImages(birdboxRecord), [birdboxRecord]);
+  const rows = useMemo(() => parseImages(box), [box]);
 
   // Selection — auto-initialize to first row
-  const [selectedImage, setSelectedImage] = useState(() => rows[0] ?? null);
+  const [selectedRow, setSelectedRow] = useState(() => rows[0] ?? null);
 
   // Search + filter visibility
   const [globalFilter, setGlobalFilter] = useState('');
@@ -92,7 +92,7 @@ export default function BirdboxImageTable({ birdboxRecord, selectedImageRef }) {
   // Apply all active filters
   const filteredRows = useMemo(() => {
     return rows.filter((row) => {
-      if (birdFilter !== 'all' && row.identified_result !== birdFilter) return false;
+      if (birdFilter !== 'all' && row.primary_guess !== birdFilter) return false;
 
     if (dateRange !== null) {
         const [start, end] = dateRange;
@@ -104,9 +104,9 @@ export default function BirdboxImageTable({ birdboxRecord, selectedImageRef }) {
         }
     }
 
-      if (confidenceFilter === 'high' && row.confidence_score < 0.8) return false;
-      if (confidenceFilter === 'medium' && (row.confidence_score < 0.5 || row.confidence_score >= 0.8)) return false;
-      if (confidenceFilter === 'low' && row.confidence_score >= 0.5) return false;
+      if (confidenceFilter === 'high' && row.primary_guess_confidence < 0.8) return false;
+      if (confidenceFilter === 'medium' && (row.primary_guess_confidence < 0.5 || row.primary_guess_confidence >= 0.8)) return false;
+      if (confidenceFilter === 'low' && row.primary_guess_confidence >= 0.5) return false;
 
       if (modifiedFilter === 'modified' && !row.modified_date) return false;
       if (modifiedFilter === 'unmodified' && row.modified_date) return false;
@@ -125,19 +125,20 @@ export default function BirdboxImageTable({ birdboxRecord, selectedImageRef }) {
 
   // Keep ref in sync for parent access
   useEffect(() => {
-    if (selectedImageRef) selectedImageRef.current = selectedImage;
-  }, [selectedImage, selectedImageRef]);
+    if (selectedRowRef) selectedRowRef.current = selectedRow;
+  }, [selectedRow, selectedRowRef]);
 
   // Reset to first row when birdbox changes
   useEffect(() => {
     const first = rows[0] ?? null;
-    setSelectedImage(first);
-    if (selectedImageRef) selectedImageRef.current = first;
-  }, [birdboxRecord.birdbox_id]);
+    setSelectedRow(first);
+    if (selectedRowRef) selectedRowRef.current = first;
+  }, [box.birdbox_id]);
 
   const handleRowSelect = (e) => {
-    setSelectedImage(e.value);
-    if (selectedImageRef) selectedImageRef.current = e.value;
+    setSelectedRow(e.value);
+    if (selectedRowRef) selectedRowRef.current = e.value;
+    if (onSelectRow) onSelectRow(e.value);
   };
 
   const handleClearFilters = () => {
@@ -154,15 +155,22 @@ export default function BirdboxImageTable({ birdboxRecord, selectedImageRef }) {
   );
 
   const birdTemplate = (row) => {
-    if (row.identified_result === 'kestrel') {
-      return <span className={styles.kestrelBadge}>{capitalize(row.identified_result)}</span>;
+    if(!row.primary_guess) {
+      return <span className={styles.noBird}>None</span>;
     }
-    return <span className={styles.birdPlain}>{capitalize(row.identified_result)}</span>;
+    if (row.primary_guess.includes('kestrel')) {
+      return <span className={styles.kestrelBadge}>{capitalize(row.primary_guess)}</span>;
+    }
+    return <span className={styles.birdPlain}>{capitalize(row.primary_guess)}</span>;
   };
 
   const confidenceTemplate = (row) => {
-    const pct = Math.round(row.confidence_score * 100);
-    const bg = getConfidenceBg(row.confidence_score);
+    if(!row.primary_guess_confidence) {
+      return <span className={styles.noConfidence}>—</span>;
+    }
+    const pctNum = parseDouble(row.primary_guess_confidence);
+    const pct = Math.round(pctNum * 100);
+    const bg = getConfidenceBg(pctNum);
     return (
       <span
         className={bg !== 'transparent' ? styles.confidenceHighlight : styles.confidencePlain}
@@ -173,13 +181,23 @@ export default function BirdboxImageTable({ birdboxRecord, selectedImageRef }) {
     );
   };
 
-  const viewImageTemplate = () => (
-    <span className={styles.viewImageCell}>
+  const viewImageTemplate = (row) => (
+    <span 
+      className={styles.viewImageCell}
+      onClick={() => {
+        const imageUrl = row.image_url
+        if (imageUrl) {
+          window.open(`https://birdalytics.webdev.gccis.rit.edu/api/${imageUrl}`, '_blank');
+        }
+      }}
+      style={{ cursor: 'pointer' }}
+    >
       <PhotoOutlinedIcon style={{ fontSize: '1.7rem' }} />
     </span>
   );
 
   const modifiedTemplate = (row) => {
+    // RIGHT NOW THIS WILL ALWAYS RETURN FALSE
     const display = formatModifiedDate(row.modified_date);
     return display
       ? <span className={styles.modifiedDate}>{display}</span>
