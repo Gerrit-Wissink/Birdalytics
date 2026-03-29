@@ -62,7 +62,7 @@ const MODIFIED_OPTIONS = [
 
 // ─── Component ───────────────────────────────────────────────────────────────
 
-export default function BirdboxImageTable({ box, onSelectRow, onSelectImage }) {
+export default function BirdboxImageTable({ box, onSelectRow, imageMap }) {
   console.log('PASSED IN RECORD: ', box);
 
   const rows = useMemo(() => parseImages(box), [box]);
@@ -123,33 +123,16 @@ export default function BirdboxImageTable({ box, onSelectRow, onSelectImage }) {
     modifiedFilter !== 'all',
   ].filter(Boolean).length;
 
-  // Reset to first row when birdbox changes
+  // Reset to first row when birdbox ID changes
   useEffect(() => {
     const first = rows[0] ?? null;
     setSelectedRow(first);
     if (onSelectRow) onSelectRow(first);
-  }, [box.birdbox_id, onSelectRow]);
+  }, [box?.birdbox_id]);
 
   const handleRowSelect = (e) => {
     setSelectedRow(e.value);
     if (onSelectRow) onSelectRow(e.value);
-  // Keep ref in sync for parent access
-  useEffect(() => {
-    if (selectedImageRef) selectedImageRef.current = selectedImage;
-  }, [selectedImage, selectedImageRef]);
-
-  // Reset to first row at start and when birdbox changes
-  useEffect(() => {
-    const first = rows[0] ?? null;
-    setSelectedImage(first);
-    if (selectedImageRef) selectedImageRef.current = first;
-    if (onSelectImage) onSelectImage(first);
-  }, [birdboxRecord.birdbox_id]);
-
-  const handleRowSelect = (e) => {
-    setSelectedImage(e.value);
-    if (selectedImageRef) selectedImageRef.current = e.value;
-    if (onSelectImage) onSelectImage(e.value);
   };
 
   const handleClearFilters = () => {
@@ -161,9 +144,13 @@ export default function BirdboxImageTable({ box, onSelectRow, onSelectImage }) {
 
   // ─── Column templates ──────────────────────────────────────────────────────
 
-  const dateTimeTemplate = (row) => (
-    <span className={styles.dateCell}>{formatDateDisplay(row.date, row.time)}</span>
-  );
+  const dateTimeTemplate = (row) => {
+    if (!row.timestamp) return <span className={styles.dateCell}>—</span>;
+    const date = new Date(row.timestamp);
+    const dateStr = date.toLocaleDateString('en-US', { month: 'short', day: 'numeric', year: 'numeric' });
+    const timeStr = date.toLocaleTimeString('en-US', { hour: '2-digit', minute: '2-digit' });
+    return <span className={styles.dateCell}>{dateStr} - {timeStr}</span>;
+  };
 
   const birdTemplate = (row) => {
     if(!row.primary_guess) {
@@ -179,7 +166,7 @@ export default function BirdboxImageTable({ box, onSelectRow, onSelectImage }) {
     if(!row.primary_guess_confidence) {
       return <span className={styles.noConfidence}>—</span>;
     }
-    const pctNum = parseDouble(row.primary_guess_confidence);
+    const pctNum = parseFloat(row.primary_guess_confidence);
     const pct = Math.round(pctNum * 100);
     const bg = getConfidenceBg(pctNum);
     return (
@@ -196,9 +183,9 @@ export default function BirdboxImageTable({ box, onSelectRow, onSelectImage }) {
     <span 
       className={styles.viewImageCell}
       onClick={() => {
-        const imageUrl = row.image_url
+        const imageUrl = `https://birdalytics.webdev.gccis.rit.edu/api/${row.image_url}`;
         if (imageUrl) {
-          window.open(`https://birdalytics.webdev.gccis.rit.edu/api/${imageUrl}`, '_blank');
+          window.open(imageUrl, '_blank');
         }
       }}
       style={{ cursor: 'pointer' }}
@@ -209,8 +196,8 @@ export default function BirdboxImageTable({ box, onSelectRow, onSelectImage }) {
 
   const modifiedTemplate = (row) => {
     // RIGHT NOW THIS WILL ALWAYS RETURN FALSE
-    const display = formatModifiedDate(row.modified_date);
-    return display
+    const display = formatModifiedDate(row.modified_date ?? '-');
+    return row.modified_bird
       ? <span className={styles.modifiedDate}>{display}</span>
       : <span className={styles.modifiedDash}>—</span>;
   };

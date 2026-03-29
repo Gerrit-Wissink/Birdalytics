@@ -1,9 +1,6 @@
 import jsPDF from 'jspdf';
 import autoTable from 'jspdf-autotable';
 
-import '../../public/fonts/NotoSerif-Bold-Normal.js';
-import '../../public/fonts/Lato-Regular-Normal.js';
-
 // HELPERS
 
 function formatTimestamp(timestamp) {

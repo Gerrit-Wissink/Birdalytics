@@ -24,7 +24,11 @@ services:
     depends_on:
       - db
     environment:
-      DATABASE_URL: postgresql://postgres:student@db:5432/birdalytics
+      DB_HOST: db
+      DB_PORT: 5432
+      DB_NAME: birdalytics
+      DB_USER: postgres
+      DB_PASSWORD: student
 
 volumes:
   pgdata:
