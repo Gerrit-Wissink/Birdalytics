@@ -3,15 +3,14 @@ import { DataView } from 'primereact/dataview';
 import { InputText } from 'primereact/inputtext';
 import { Dropdown } from 'primereact/dropdown';
 import { Calendar } from 'primereact/calendar';
-import { Button } from 'primereact/button';
-import 'primereact/resources/themes/lara-light-blue/theme.css';
-import 'primereact/resources/primereact.min.css';
 import PhotoCameraOutlinedIcon from '@mui/icons-material/PhotoCameraOutlined';
 import SearchRoundedIcon from '@mui/icons-material/SearchRounded';
 import FilterListRoundedIcon from '@mui/icons-material/FilterListRounded';
 import BirdBoxSelect from '../components/cameraSelect'
 import FakeRecords from '../fake-data/birdbox_records.json'
 import FakeBoxes from '../fake-data/birdboxes.json'
+import useFilters from '../components/useFilters'; 
+import FilterPanel from '../components/filterPanel';
 
 import styles from './valGrid.module.css';
 import 'primereact/resources/themes/lara-light-blue/theme.css';
@@ -46,20 +45,7 @@ export default function ValGrid({ boxesData }){
         return `${Math.round(parseFloat(score) * 100)}%`;
     };
 
-    //FILTER AND SORT -- Hoping to pull this out and make it it's own component across this and camera-table
-    const CONFIDENCE_OPTIONS = [
-        { label: 'All Confidence Scores', value: 'all' },
-        { label: '80%+', value: 'high' },
-        { label: '50–79%', value: 'medium' },
-        { label: 'Below 50%', value: 'low' },
-    ];
-    
-    const MODIFIED_OPTIONS = [
-        { label: 'All Modified Statuses', value: 'all' },
-        { label: 'Modified only', value: 'modified' },
-        { label: 'Unmodified only', value: 'unmodified' },
-    ];
-    
+    //SORTS 
     const SORT_FIELD_OPTIONS = [
         { label: 'Date', value: 'timestamp' },
         { label: 'Confidence Score', value: 'primary_guess_confidence' },
@@ -84,17 +70,9 @@ export default function ValGrid({ boxesData }){
     const [globalFilter, setGlobalFilter] = useState('');
     const [filterOpen, setFilterOpen] = useState(false);
     
-    // Filter states (mirrors camera-table.jsx)
-    const [birdFilter, setBirdFilter] = useState('all');
-    const [dateRange, setDateRange] = useState(null);
-    const [confidenceFilter, setConfidenceFilter] = useState('all');
-    const [modifiedFilter, setModifiedFilter] = useState('all');
-    
     // Sort states
     const [sortField, setSortField] = useState('timestamp');
     const [sortOrder, setSortOrder] = useState(-1); // newest first by default
-
-    //FLATTENING RECORDS
 
     // Map box IDs to their name for easier look-up
     const boxNameById = useMemo(() => {
@@ -124,58 +102,18 @@ export default function ValGrid({ boxesData }){
         );
 }, [birdbox_records, selectedBoxNames, boxNameById]);
 
-    // Get species filter options from existing results
-  const birdOptions = useMemo(() => {
-    const unique = [...new Set(allRecords.map((r) => r.primary_guess).filter(Boolean))].sort();
-    return [
-      { label: 'All Species', value: 'all' },
-      ...unique.map((b) => ({ label: capitalize(b), value: b })),
-    ];
-  }, [allRecords]);
-
-    // FILTERS
-  const filteredRecords = useMemo(() => {
-    return allRecords.filter((row) => {
-      // Global search (species and camera name)
-      if (globalFilter) {
-        const q = globalFilter.toLowerCase();
-        const matchesSearch =
-          (row.primary_guess ?? '').toLowerCase().includes(q) ||
-          (row.birdbox_name ?? '').toLowerCase().includes(q);
-        if (!matchesSearch) return false;
-      }
- 
-      // Species
-      if (birdFilter !== 'all' && row.primary_guess !== birdFilter) return false;
- 
-      // Date range
-      if (dateRange !== null) {
-        const [start, end] = dateRange;
-        if (start && row._datetime < start) return false;
-        if (end) {
-          const endOfDay = new Date(end);
-          endOfDay.setHours(23, 59, 59, 999);
-          if (row._datetime > endOfDay) return false;
-        }
-      }
- 
-      // Confidence
-      const conf = row.primary_guess_confidence !== null ? parseFloat(row.primary_guess_confidence) : null;
-      if (confidenceFilter === 'high' && (conf === null || conf < 0.8)) return false;
-      if (confidenceFilter === 'medium' && (conf === null || conf < 0.5 || conf >= 0.8)) return false;
-      if (confidenceFilter === 'low' && (conf === null || conf >= 0.5)) return false;
- 
-      // Modified
-      if (modifiedFilter === 'modified' && !row.modified_bird) return false;
-      if (modifiedFilter === 'unmodified' && row.modified_bird) return false;
- 
-      return true;
-    });
-  }, [allRecords, globalFilter, birdFilter, dateRange, confidenceFilter, modifiedFilter]);
+//all filters for useFilters hook
+    const {
+        birdFilter, setBirdFilter,
+        dateRange, setDateRange,
+        confidenceFilter, setConfidenceFilter,
+        modifiedFilter, setModifiedFilter,
+        birdOptions, filteredRows, activeFilterCount, handleClearFilters,
+    } = useFilters(allRecords, { modifiedKey: 'modified_bird' });
  
     // SORTING
   const sortedRecords = useMemo(() => {
-    return [...filteredRecords].sort((a, b) => {
+    return [...filteredRows].sort((a, b) => {
       let aVal, bVal;
       if (sortField === 'timestamp') {
         aVal = a._datetime;
@@ -188,22 +126,7 @@ export default function ValGrid({ boxesData }){
       if (aVal > bVal) return 1 * sortOrder;
       return 0;
     });
-  }, [filteredRecords, sortField, sortOrder]);
-
-    // COUNT ACTIVE FILTERS
-  const activeFilterCount = [
-    birdFilter !== 'all',
-    dateRange !== null,
-    confidenceFilter !== 'all',
-    modifiedFilter !== 'all',
-  ].filter(Boolean).length;
- 
-  const handleClearFilters = () => {
-    setBirdFilter('all');
-    setDateRange(null);
-    setConfidenceFilter('all');
-    setModifiedFilter('all');
-  };
+  }, [filteredRows, sortField, sortOrder]);
 
   // FILTER SORT AND SEARCH HEADER
   const header = (
@@ -259,56 +182,16 @@ export default function ValGrid({ boxesData }){
  
       {/* Row 2: Filter panel (when opened) */}
       {filterOpen && (
-        <div className={styles.panelRow}>
-          <div onClick={(e) => e.stopPropagation()}>
-            <Dropdown
-              value={birdFilter}
-              options={birdOptions}
-              onChange={(e) => setBirdFilter(e.value)}
-              placeholder="Species"
-              filter
-            />
-          </div>
- 
-          <div onClick={(e) => e.stopPropagation()}>
-            <Calendar
-              value={dateRange}
-              onChange={(e) => setDateRange(e.value ?? null)}
-              selectionMode="range"
-              readOnlyInput
-              placeholder="Date range"
-              showButtonBar
-              hideOnRangeSelection
-              appendTo="self"
-              style={{ width: '220px' }}
-            />
-          </div>
- 
-          <div onClick={(e) => e.stopPropagation()}>
-            <Dropdown
-              value={confidenceFilter}
-              options={CONFIDENCE_OPTIONS}
-              onChange={(e) => setConfidenceFilter(e.value)}
-              placeholder="Confidence"
-            />
-          </div>
- 
-          <div onClick={(e) => e.stopPropagation()}>
-            <Dropdown
-              value={modifiedFilter}
-              options={MODIFIED_OPTIONS}
-              onChange={(e) => setModifiedFilter(e.value)}
-              placeholder="Modified"
-            />
-          </div>
- 
-          {activeFilterCount > 0 && (
-            <button className={styles.clearAllButton} onClick={handleClearFilters}>
-              Clear all
-            </button>
-          )}
-        </div>
-      )}
+        <FilterPanel
+            birdFilter={birdFilter}         setBirdFilter={setBirdFilter}
+            dateRange={dateRange}           setDateRange={setDateRange}
+            confidenceFilter={confidenceFilter} setConfidenceFilter={setConfidenceFilter}
+            modifiedFilter={modifiedFilter} setModifiedFilter={setModifiedFilter}
+            birdOptions={birdOptions}
+            activeFilterCount={activeFilterCount}
+            handleClearFilters={handleClearFilters}
+        />
+)}
  
     </div>
   );

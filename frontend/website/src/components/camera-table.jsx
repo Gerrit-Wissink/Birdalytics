@@ -8,6 +8,9 @@ import { Calendar } from 'primereact/calendar';
 import PhotoOutlinedIcon from '@mui/icons-material/PhotoOutlined';
 import SearchRoundedIcon from '@mui/icons-material/SearchRounded';
 import FilterListRoundedIcon from '@mui/icons-material/FilterListRounded';
+import useFilters from '../components/useFilters'; 
+import FilterPanel from '../components/filterPanel';
+
 import styles from './camera-table.module.css';
 import 'primereact/resources/themes/lara-light-blue/theme.css';
 import 'primereact/resources/primereact.min.css';
@@ -45,21 +48,6 @@ const getConfidenceBg = (score) => {
   return 'transparent';
 };
 
-// ─── Filter option constants ─────────────────────────────────────────────────
-
-const CONFIDENCE_OPTIONS = [
-  { label: 'All Confidence Scores', value: 'all' },
-  { label: '80%+', value: 'high' },
-  { label: '50–79%', value: 'medium' },
-  { label: 'Below 50%', value: 'low' },
-];
-
-const MODIFIED_OPTIONS = [
-  { label: 'All Modified Statuses', value: 'all' },
-  { label: 'Modified only', value: 'modified' },
-  { label: 'Unmodified only', value: 'unmodified' },
-];
-
 // ─── Component ───────────────────────────────────────────────────────────────
 
 export default function BirdboxImageTable({ box, onSelectRow, imageMap }) {
@@ -74,54 +62,14 @@ export default function BirdboxImageTable({ box, onSelectRow, imageMap }) {
   const [globalFilter, setGlobalFilter] = useState('');
   const [filterOpen, setFilterOpen] = useState(false);
 
-  // Filter states
-  const [birdFilter, setBirdFilter] = useState('all');
-  const [dateRange, setDateRange] = useState((null));
-  const [confidenceFilter, setConfidenceFilter] = useState('all');
-  const [modifiedFilter, setModifiedFilter] = useState('all');
-
-  // Derive unique bird options from the data
-  const birdOptions = useMemo(() => {
-    const unique = [...new Set(rows.map((r) => r.identified_result))].sort();
-    return [
-      { label: 'All Species', value: 'all' },
-      ...unique.map((b) => ({ label: capitalize(b), value: b })),
-    ];
-  }, [rows]);
-
-  // Apply all active filters
-  const filteredRows = useMemo(() => {
-    return rows.filter((row) => {
-      if (birdFilter !== 'all' && row.primary_guess !== birdFilter) return false;
-
-    if (dateRange !== null) {
-        const [start, end] = dateRange;
-        if (start && row._datetime < start) return false;
-        if (end) {
-            const endOfDay = new Date(end);
-            endOfDay.setHours(23, 59, 59, 999);
-            if (row._datetime > endOfDay) return false;
-        }
-    }
-
-      if (confidenceFilter === 'high' && row.primary_guess_confidence < 0.8) return false;
-      if (confidenceFilter === 'medium' && (row.primary_guess_confidence < 0.5 || row.primary_guess_confidence >= 0.8)) return false;
-      if (confidenceFilter === 'low' && row.primary_guess_confidence >= 0.5) return false;
-
-      if (modifiedFilter === 'modified' && !row.modified_date) return false;
-      if (modifiedFilter === 'unmodified' && row.modified_date) return false;
-
-      return true;
-    });
-  }, [rows, birdFilter, dateRange, confidenceFilter, modifiedFilter]);
-
-  // Count active (non-default) filters for the badge
-  const activeFilterCount = [
-    birdFilter !== 'all',
-    dateRange !== null,
-    confidenceFilter !== 'all',
-    modifiedFilter !== 'all',
-  ].filter(Boolean).length;
+  //all filters for useFilters hook
+  const {
+    birdFilter, setBirdFilter,
+    dateRange, setDateRange,
+    confidenceFilter, setConfidenceFilter,
+    modifiedFilter, setModifiedFilter,
+    birdOptions, filteredRows, activeFilterCount, handleClearFilters,
+  } = useFilters(rows, { modifiedKey: 'modified_date' });
 
   // Reset to first row when birdbox ID changes
   useEffect(() => {
@@ -133,13 +81,6 @@ export default function BirdboxImageTable({ box, onSelectRow, imageMap }) {
   const handleRowSelect = (e) => {
     setSelectedRow(e.value);
     if (onSelectRow) onSelectRow(e.value);
-  };
-
-  const handleClearFilters = () => {
-    setBirdFilter('all');
-    setDateRange(null);
-    setConfidenceFilter('all');
-    setModifiedFilter('all');
   };
 
   // ─── Column templates ──────────────────────────────────────────────────────
@@ -233,70 +174,15 @@ export default function BirdboxImageTable({ box, onSelectRow, imageMap }) {
 
       {/* Row 2: inline filter dropdowns — visible when filterOpen */}
       {filterOpen && (
-        <div className={styles.filterRow}>
-
-          {/* Bird type */}
-          <div onClick={(e) => e.stopPropagation()}>
-            <Dropdown
-              value={birdFilter}
-              options={birdOptions}
-              onChange={(e) => setBirdFilter(e.value)}
-              placeholder="Bird type"
-              filter
-            />
-          </div>
-
-          {/* Date range */}
-          <div onClick={(e) => e.stopPropagation()}>
-            <Calendar
-              value={dateRange}
-              onChange={(e) => setDateRange(e.value ?? null)}
-              selectionMode="range"
-              readOnlyInput
-              placeholder="Date range"
-              showButtonBar
-              hideOnRangeSelection
-              appendTo="self"
-              style={{width: '220px', color: '#4b5563'}}
-              onClick={(e) => {
-                e.stopPropagation();
-                console.log("DATES:", e.value)
-            }}
-                
-            />
-          </div>
-
-          {/* Confidence score */}
-          <div onClick={(e) => e.stopPropagation()}>
-            <Dropdown
-              value={confidenceFilter}
-              options={CONFIDENCE_OPTIONS}
-              onChange={(e) => setConfidenceFilter(e.value)}
-              placeholder="Confidence"
-              style={{
-                fontSize: '1em'
-              }}
-            />
-          </div>
-
-          {/* Modified status */}
-          <div className={styles.filterChip}  onClick={(e) => e.stopPropagation()}>
-            <Dropdown
-              value={modifiedFilter}
-              options={MODIFIED_OPTIONS}
-              onChange={(e) => setModifiedFilter(e.value)}
-              placeholder="Modified"
-            />
-          </div>
-
-          {/* Clear all — only shown when filters are active */}
-          {activeFilterCount > 0 && (
-            <button className={styles.clearAllButton} onClick={handleClearFilters}>
-              Clear all
-            </button>
-          )}
-
-        </div>
+        <FilterPanel
+          birdFilter={birdFilter}         setBirdFilter={setBirdFilter}
+          dateRange={dateRange}           setDateRange={setDateRange}
+          confidenceFilter={confidenceFilter} setConfidenceFilter={setConfidenceFilter}
+          modifiedFilter={modifiedFilter} setModifiedFilter={setModifiedFilter}
+          birdOptions={birdOptions}
+          activeFilterCount={activeFilterCount}
+          handleClearFilters={handleClearFilters}
+        />
       )}
     </div>
   );
