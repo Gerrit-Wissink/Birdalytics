@@ -210,6 +210,40 @@ class RecordController {
             });
         }
     }
+
+    static async setManualBird(req, res) {
+        try {
+            const { id } = req.params;
+            const { manual_bird } = req.body;
+
+            const record = await Birdrecords.findByPk(id);
+            if (!record) {
+                return res.status(404).json({
+                    success: false,
+                    error: 'Record not found'
+                });
+            }
+
+            await Birdrecords.update({ manual_bird: manual_bird }, { where: { record_id: id } });
+
+            res.json({
+                success: true,
+                data: record
+            });
+        } catch (error) {
+            console.error('Error in setManualBird:', error);
+            if (error.name === 'SequelizeValidationError') {
+                return res.status(400).json({
+                    success: false,
+                    error: error.errors.map(e => e.message).join(', ')
+                });
+            }
+            res.status(500).json({
+                success: false,
+                error: 'Failed to update record'
+            });
+        }
+    }
 }
 
 module.exports = RecordController;

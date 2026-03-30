@@ -27,4 +27,9 @@ router.post('/', RecordController.createRecord);
 // @access  Public
 router.put('/:id', RecordController.updateRecord);
 
+// @route   PUT /api/record/manual/:id
+// @desc    Update record's manual_bird
+// @access  Public
+router.put('/manual/:id', RecordController.setManualBird);
+
 module.exports = router;
