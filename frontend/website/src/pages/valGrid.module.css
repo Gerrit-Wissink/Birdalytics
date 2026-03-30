@@ -222,6 +222,10 @@
 .cardFooter {
   padding: 10px 12px 12px;
   text-align: center;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 8px;
 }
 
 .speciesLabel {
@@ -234,4 +238,16 @@
   font-weight: 400;
   color: #9ca3af;
   font-style: italic;
+}
+
+.correctionDropdown {
+  width: 100%;
+  font-size: 0.825rem !important;
+}
+
+.dropdownLabel{
+    font-size: smaller;
+    margin-bottom: 4px;
+    margin-left: 4px;
+    text-align: left;
 }

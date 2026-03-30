@@ -102,6 +102,22 @@ export default function ValGrid({ boxesData }){
         );
 }, [birdbox_records, selectedBoxNames, boxNameById]);
 
+    // TODO: CONNECT TO SPECIES LIST IN DATABASE
+    const SPECIES_OPTIONS = [
+        { label: 'Kestrel', value: 'kestrel' },
+        { label: 'Magpie', value: 'magpie' },
+        { label: 'Pigeon', value: 'pigeon' },
+    ];
+
+    // Tracks user-selected species corrections keyed by record id
+    const [speciesCorrections, setSpeciesCorrections] = useState({});
+
+    const handleSpeciesCorrection = (recordId, newSpecies) => {
+        setSpeciesCorrections((prev) => ({ ...prev, [recordId]: newSpecies }));
+        // TODO: UPDATE IDENTIFICATION IN BACKEND
+        //should rerender the species identification on change, and be sure to set the modification status to the date
+    };
+
 //all filters for useFilters hook
     const {
         birdFilter, setBirdFilter,
@@ -199,6 +215,7 @@ export default function ValGrid({ boxesData }){
   // DATAVIEW CARD LAYOUT
     const cardTemplate = (record) => {
         console.log('IMAGE: ', record.image_url)
+        const recordId = record.image_id ?? record.record_id;
         const conf = record.primary_guess_confidence;
         const confBg = getConfidenceBg(conf);
         const confPct = formatConfidencePct(conf);
@@ -208,8 +225,11 @@ export default function ValGrid({ boxesData }){
             : `https://birdalytics.webdev.gccis.rit.edu/api/${record.image_url}`
         : null;
 
+        // Use corrected species if the user has picked one, otherwise fall back to the model's guess
+        const displaySpecies = speciesCorrections[recordId] ?? record.primary_guess;
+
         return (
-        <div className={styles.cardCol} key={record.image_id ?? record.record_id}>
+        <div className={styles.cardCol} key={recordId}>
             <div className={styles.card}>
 
             {/* Top row: camera name + confidence badge */}
@@ -221,7 +241,7 @@ export default function ValGrid({ boxesData }){
                 {confPct && (
                 <span
                     className={styles.confBadge}
-                    style={{ background: confBg !== 'transparent' ? confBg : '#e8f5e9' }}
+                    style={{ background: confBg !== 'transparent' ? confBg : '#bae098' }}
                 >
                     {confPct}
                 </span>
@@ -241,11 +261,25 @@ export default function ValGrid({ boxesData }){
                 )}
             </div>
 
-            {/* Species label */}
+            {/* Species label — reflects correction if one has been selected */}
             <div className={styles.cardFooter}>
                 <span className={styles.speciesLabel}>
-                {record.primary_guess ? capitalize(record.primary_guess) : <span className={styles.noGuess}>Unidentified</span>}
+                {displaySpecies ? capitalize(displaySpecies) : <span className={styles.noGuess}>Unidentified</span>}
                 </span>
+
+                {/* Correction dropdown — editable prop enables free-text search */}
+                <div style={{width: '100%'}}>
+                    <p className={styles.dropdownLabel}>Update Identification Result:</p>
+                </div>
+                <Dropdown
+                    value={speciesCorrections[recordId] ?? record.primary_guess ?? null}
+                    options={SPECIES_OPTIONS}
+                    onChange={(e) => handleSpeciesCorrection(recordId, e.value)}
+                    placeholder="Correct species..."
+                    editable
+                    className={styles.correctionDropdown}
+                    showClear={!!speciesCorrections[recordId]}
+                />
             </div>
 
             </div>
@@ -300,5 +334,13 @@ const PRIMEREACT_OVERRIDES = `
     .p-paginator .p-paginator-pages .p-paginator-page.p-highlight {
         background: #B8CEEF !important;
         border-radius: 6px;
+    }
+    /* Correction dropdown inside cards */
+    .p-dropdown.p-component {
+        border-radius: 8px !important;
+        font-size: 0.825rem !important;
+    }
+    .p-dropdown:not(.p-disabled):hover {
+        border-color: #9ca3af !important;
     }
 `;

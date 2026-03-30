@@ -22,13 +22,6 @@ const capitalize = (str) => {
   return str.split(' ').map((w) => w.charAt(0).toUpperCase() + w.slice(1)).join(' ');
 };
 
-const formatDateDisplay = (dateStr, timeStr) => {
-  if (!dateStr) return '—';
-  const date = new Date(`${dateStr}T${timeStr || '00:00:00'}`);
-  return date.toLocaleDateString('en-US', { month: 'short', day: 'numeric', year: 'numeric' })
-    + ' - ' + (timeStr || '00:00:00');
-};
-
 const formatModifiedDate = (dateStr) => {
   if (!dateStr) return null;
   return new Date(dateStr).toLocaleDateString('en-US', { month: 'short', day: 'numeric' });
@@ -50,9 +43,7 @@ const getConfidenceBg = (score) => {
 
 // ─── Component ───────────────────────────────────────────────────────────────
 
-export default function BirdboxImageTable({ box, onSelectRow, imageMap }) {
-  console.log('PASSED IN RECORD: ', box);
-
+export default function BirdboxImageTable({ box, onSelectRow }) {
   const rows = useMemo(() => parseImages(box), [box]);
 
   // Selection — auto-initialize to first row
@@ -94,6 +85,7 @@ export default function BirdboxImageTable({ box, onSelectRow, imageMap }) {
   };
 
   const birdTemplate = (row) => {
+    console.log(row);
     if(!row.primary_guess) {
       return <span className={styles.noBird}>None</span>;
     }
@@ -199,7 +191,7 @@ export default function BirdboxImageTable({ box, onSelectRow, imageMap }) {
         selectionMode="single"
         selection={selectedRow}
         onSelectionChange={handleRowSelect}
-        dataKey="image_id"
+        dataKey="record_id"
         globalFilter={globalFilter}
         globalFilterFields={['identified_result', 'date', 'time']}
         sortMode="single"

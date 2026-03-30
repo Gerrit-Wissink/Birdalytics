@@ -1,4 +1,3 @@
-import styles from './camInfo.module.css'
 import SearchRoundedIcon from '@mui/icons-material/SearchRounded';
 import { FiEdit } from "react-icons/fi";
 import { IoSettingsOutline } from "react-icons/io5";
@@ -8,6 +7,10 @@ import { MiniPieChart } from '../components/donut-chart';
 import ProgressBar from '../components/progress-bar';
 import BirdboxImageTable from '../components/camera-table';
 import AddCameraModal from '../components/add-camera-modal';
+import SpeciesIdentification from '../components/species-identification';
+
+import styles from './camInfo.module.css'
+
 
 export default function CamInfo() {
 
@@ -74,7 +77,6 @@ export default function CamInfo() {
 
     useEffect(() => {
         console.log('Selected camera updated:', selectedCamera);
-        setSelectedRow(null); // Reset selected row when camera changes
         const fetchImagesForBox = async () => {
             try {
                 const records = selectedCamera.birdbox_records?.[0]?.records || [];
@@ -194,24 +196,17 @@ export default function CamInfo() {
                     </div>
 
                     <div id={styles.identifyBox}>
-                        <h3 style={{margin: '5px 0px'}}>Species Identification</h3>
-                        {selectedRow && (
-                            <div>
-                                <div>
-                                    <img 
-                                        src={imageMap[selectedRow.record_id]} 
-                                        alt={selectedCamera.birdbox?.birdbox_name} 
-                                        className="camera-image"
-                                        style={{ maxWidth: '640px', maxHeight: '480px', objectFit: 'contain' }}
-                                    />
-                                </div>
-                                <div>
-                                    <strong>Species:</strong> <p>{selectedRow.primary_guess ?? 'N/A'}</p>
-                                    <strong>Confidence:</strong> <p>{Math.round(selectedRow.primary_guess_confidence * 100)}%</p>
-                                    <hr/>
-                                </div>
-                            </div>
-                        )}
+                        <SpeciesIdentification
+                            selectedRow={selectedRow}
+                            imageMap={imageMap}
+                            birdboxName={selectedCamera.birdbox?.birdbox_name}
+                            onSpeciesOverride={(species) => {
+                                // Rerender the table row with the overridden species
+                                if (selectedRow) {
+                                    setSelectedRow({ ...selectedRow, primary_guess: species });
+                                }
+                            }}
+                        />
                     </div>
                 </div>
                 <div style={{margin: '1em 0px'}}>

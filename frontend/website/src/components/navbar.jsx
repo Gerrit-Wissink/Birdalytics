@@ -51,6 +51,9 @@ export default function Navbar() {
                         <NavLink to="/reports" className={({ isActive }) => (isActive ? 'active' : '')}>
                             <span>Reports</span>
                         </NavLink>
+                        <NavLink to="/valgrid" className={({ isActive }) => (isActive ? 'active' : '')}>
+                            <span>Validation Grid</span>
+                        </NavLink>
                         <NavLink to="/upload">
                             <span id='upload'>Upload Data</span>
                         </NavLink>
@@ -90,6 +93,9 @@ export default function Navbar() {
             </NavLink>
             <NavLink to="/reports" className={({ isActive }) => (isActive ? 'active' : '')}>
                 <span>Reports</span>
+            </NavLink>
+            <NavLink to="/valgrid" className={({ isActive }) => (isActive ? 'active' : '')}>
+                <span>Validation Grid</span>
             </NavLink>
             <NavLink to="/upload">
                 <span id='upload'>Upload Data</span>
