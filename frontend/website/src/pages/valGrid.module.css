@@ -1,0 +1,253 @@
+.wrapper {
+  background: transparent;
+  font-family: inherit;
+}
+
+.header {
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+  padding-bottom: 8px;
+}
+
+.topRow {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  flex-wrap: wrap;
+}
+
+.searchAndActions {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  width: max-content;
+  gap: 8px;
+  flex-wrap: wrap;
+  flex-grow: 1;
+}
+
+.searchWrapper {
+  position: relative;
+  display: flex;
+  align-items: center;
+}
+
+.searchIcon {
+  position: absolute;
+  left: 10px;
+  font-size: 1.1rem !important;
+  color: #9ca3af;
+  pointer-events: none;
+}
+
+.searchInput {
+  padding-left: 34px !important;
+  height: 40px;
+  border-radius: 8px !important;
+  font-size: 0.9rem !important;
+  width: 220px;
+}
+
+/* Filter and Sort Buttons */
+
+.actionButton {
+  display: inline-flex;
+  align-items: center;
+  gap: 5px;
+  height: 40px;
+  padding: 0 14px;
+  border: 1.5px solid #d1d5db;
+  border-radius: 8px;
+  background: #fff;
+  color: #374151;
+  font-size: 0.875rem;
+  font-weight: 500;
+  cursor: pointer;
+  position: relative;
+  transition: background 0.15s, border-color 0.15s;
+}
+
+.actionButton:hover {
+  background: #f3f4f6;
+  border-color: #9ca3af;
+}
+
+.actionButtonActive {
+  background: #eef3ff;
+  border-color: #5b8dee;
+  color: #2563eb;
+}
+
+.badge {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  width: 18px;
+  height: 18px;
+  border-radius: 50%;
+  background: #5b8dee;
+  color: #fff;
+  font-size: 0.7rem;
+  font-weight: 700;
+  margin-left: 2px;
+}
+
+/* Filter and Sort Rows */
+
+.panelRow {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  flex-wrap: wrap;
+  padding: 10px 12px;
+  background: #f8f9fc;
+  border: 1.5px solid #e8e8e8;
+  border-radius: 10px;
+}
+
+.clearAllButton {
+  background: none;
+  border: none;
+  color: #ef4444;
+  font-size: 0.875rem;
+  font-weight: 500;
+  cursor: pointer;
+  padding: 4px 8px;
+  border-radius: 6px;
+  transition: background 0.15s;
+}
+
+.clearAllButton:hover {
+  background: #fee2e2;
+}
+
+.sortInline {
+  display: flex;
+  align-items: center;
+  gap: 6px;
+  margin-left: auto;
+}
+
+.sortLabel {
+  font-size: 0.875rem;
+  font-weight: 500;
+  color: #374151;
+  white-space: nowrap;
+  padding-right: .5em;
+}
+
+/* Card Grid Layout*/
+
+/* Each card takes up 1/4 of the row on wide screens */
+.cardCol {
+  padding: 8px;
+  box-sizing: border-box;
+}
+
+.card {
+  background: #ffffff;
+  border: 1.5px solid #e5e7eb;
+  border-radius: 12px;
+  overflow: hidden;
+  display: flex;
+  flex-direction: column;
+  gap: 0;
+  transition: box-shadow 0.18s, transform 0.18s;
+}
+
+.card:hover {
+  box-shadow: 0 4px 18px rgba(0, 0, 0, 0.10);
+  transform: translateY(-2px);
+}
+
+/* Card sections */
+
+.cardTop {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding: 10px 12px 8px;
+  gap: 8px;
+}
+
+.cameraLabel {
+  display: flex;
+  align-items: center;
+  font-size: 0.78rem;
+  font-weight: 500;
+  color: #4b5563;
+  gap: 2px;
+  overflow: hidden;
+  white-space: nowrap;
+  text-overflow: ellipsis;
+  min-width: 0;
+}
+
+.confBadge {
+  flex-shrink: 0;
+  font-size: 0.75rem;
+  font-weight: 700;
+  color: #1a1a1a;
+  padding: 2px 8px;
+  border-radius: 6px;
+  white-space: nowrap;
+}
+
+.imageWrapper {
+  aspect-ratio: 1 / 1;
+  background: #f3f4f6;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  overflow: hidden;
+  margin: 0 12px;
+  width: calc(100% - 24px);
+  border-radius: 8px;
+}
+
+.cardImage {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+  display: block;
+}
+
+.noImage {
+  color: #9ca3af;
+  font-size: 0.85rem;
+  font-style: italic;
+}
+
+.cardFooter {
+  padding: 10px 12px 12px;
+  text-align: center;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 8px;
+}
+
+.speciesLabel {
+  font-size: 0.95rem;
+  font-weight: 600;
+  color: #1a1a1a;
+}
+
+.noGuess {
+  font-weight: 400;
+  color: #9ca3af;
+  font-style: italic;
+}
+
+.correctionDropdown {
+  width: 100%;
+  font-size: 0.825rem !important;
+}
+
+.dropdownLabel{
+    font-size: smaller;
+    margin-bottom: 4px;
+    margin-left: 4px;
+    text-align: left;
+}
