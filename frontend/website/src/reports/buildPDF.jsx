@@ -1,5 +1,7 @@
 import jsPDF from 'jspdf';
 import autoTable from 'jspdf-autotable';
+import "../fonts/Lato-Regular-normal.js";
+import "../fonts/NotoSerif-Bold-normal.js";
 
 // HELPERS
 
@@ -148,6 +150,10 @@ export default async function BuildPDF(boxesData, chartImage, lineGraphImage) {
     const pageHeight = doc.internal.pageSize.getHeight();
     const margin = 14;
 
+    const now = new Date();
+    const fileName = `Birdalytics_Report_${now.getFullYear()}-${String(now.getMonth() + 1).padStart(2, '0')}-${String(now.getDate()).padStart(2, '0')}`;
+    const longDate = now.toLocaleDateString('en-US', { year: 'numeric', month: 'long', day: 'numeric' });
+
     // Rectangle header
     doc.setFillColor(0, 76, 152);
     doc.rect(0, 0, pageWidth, 20, 'F');
@@ -158,11 +164,17 @@ export default async function BuildPDF(boxesData, chartImage, lineGraphImage) {
         doc.addImage(logo, 'PNG', 4, 3, 0, 14);
     }
 
+    // Header date
+    doc.setFontSize(10);
+    doc.setFont('Lato-Regular', 'normal');
+    doc.setTextColor(255, 255, 255);
+    doc.text(longDate, pageWidth - margin, 12, { align: 'right' });
+    doc.setTextColor(0, 0, 0);
+
     let y = 30;
 
     // Title
     doc.setFontSize(16);
-    doc.addFont('NotoSerif-Bold-Normal.ttf', 'NotoSerif-Bold', 'normal');
     doc.setFont('NotoSerif-Bold', 'normal');
     doc.text("Birdbox Report", margin, y);
     y += 8;
@@ -172,7 +184,6 @@ export default async function BuildPDF(boxesData, chartImage, lineGraphImage) {
     const lineHeight = 6;
 
     doc.setFontSize(11);
-    doc.addFont('Lato-Regular.ttf', 'Lato-Regular', 'normal');
     doc.setFont('Lato-Regular', 'normal');
     birdboxes.forEach((box) => {
         doc.text(`• ${box.birdbox_name}`, 18, y);
@@ -262,7 +273,7 @@ export default async function BuildPDF(boxesData, chartImage, lineGraphImage) {
         }
     }
 
-    doc.save('report.pdf');
+    doc.save(`${fileName}.pdf`);
 }
 
 async function loadImageAsBase64(url) {
