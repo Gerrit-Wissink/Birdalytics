@@ -20,5 +20,6 @@ RUN pip install --no-cache-dir --upgrade pip && \
     pip install --no-cache-dir --extra-index-url https://download.pytorch.org/whl/cpu -r requirements.txt
 
 COPY worker.py bird_class.py db.py ./
+COPY yolov8n.pt ./
 
 CMD ["python", "worker.py"]

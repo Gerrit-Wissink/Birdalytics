@@ -9,12 +9,17 @@ docker compose -f docker-compose.yml -f docker-compose.dev.yml up --build
 Services:
 Frontend: http://localhost:5173  
 Backend API: http://localhost:8000  
-Postgres: http://localhost:5432  
+Postgres: localhost:5432  
 
 Notes:
 - Frontend runs with hot reload (Vite)
 - API requests are proxied to the backend
 - Database is accessible locally
+- Worker is not started by default
+
+To include the ML worker:
+
+docker compose -f docker-compose.yml -f docker-compose.dev.yml --profile ml up --build
 
 ---
 
@@ -32,6 +37,8 @@ Notes:
 - No Vite dev server
 - Frontend is prebuilt and served by the backend
 - API is available at /api/...
+- Worker is included by default
+- All traffic goes through port 8000
 
 ---
 
@@ -42,3 +49,12 @@ On first run, enable database sync:
 SYNC_DB: "true"
 
 Then start the stack. Once tables are created, remove this setting.
+
+---
+
+### Notes on build time
+
+- The first Docker build may take 10–20 minutes, especially due to ML dependencies
+- Subsequent runs are much faster
+- If images are already built, you can skip rebuilding:
+docker compose up
