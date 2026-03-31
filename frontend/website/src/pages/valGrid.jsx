@@ -8,6 +8,7 @@ import FilterListRoundedIcon from '@mui/icons-material/FilterListRounded';
 import BirdBoxSelect from '../components/cameraSelect'
 import useFilters from '../components/useFilters'; 
 import FilterPanel from '../components/filterPanel';
+import apiClient from '../utils/apiClient';
 
 import styles from './valGrid.module.css';
 import 'primereact/resources/themes/lara-light-blue/theme.css';
@@ -64,6 +65,10 @@ export default function ValGrid(){
 
         fetchBoxesData();
     }, []);
+
+    useEffect(() => {
+        setSelectedBoxNames(boxesData.birdboxes.map((b) => b.birdbox_name)); // Select all by default
+    }, [boxesData]);
 
     // Map box IDs to their name for easier look-up
     const boxNameById = useMemo(() => {
