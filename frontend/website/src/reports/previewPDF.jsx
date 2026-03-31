@@ -217,6 +217,8 @@ function SightingBreakdown({ records }) {
 }
 
 function PageShell({ children }) {
+    const longDate = new Date().toLocaleDateString('en-US', { year: 'numeric', month: 'long', day: 'numeric' });
+
     return (
         <div style={{ display: 'flex', justifyContent: 'center', padding: '24px', backgroundColor: '#f0f0f0', borderRadius: '4px' }}>
             <div style={{
@@ -242,6 +244,9 @@ function PageShell({ children }) {
                         alt="GLT Logo"
                         style={{ height: '50px', objectFit: 'contain' }}
                     />
+                    <span style={{ marginLeft: 'auto', color: '#ffffff', fontFamily: 'Lato, sans-serif', fontSize: '14px' }}>
+                        {longDate}
+                    </span>
                 </div>
 
                 <div style={{ padding: '6px 48px' }}>
