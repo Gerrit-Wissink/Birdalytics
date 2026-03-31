@@ -21,6 +21,8 @@
     border-radius: 10px;
     padding: 1em 2em;
     color: var(--text);
+    min-height: 300px; 
+    /* remove minwidth and make fontsize responsive in future */
 }
 
 #cameraSummary p{
@@ -185,4 +187,17 @@
 .speciesDropdown {
     border-radius: 8px !important;
     font-size: 0.875rem !important;
+}
+
+
+@media screen and (max-width: 1200px){
+    #identifyRow{
+        flex-direction: column;
+    }
+
+    .identifyImage, .identifyImagePlaceholder{
+        width: 60%;
+        margin: auto;
+        border-radius: 0px 0px 8px 8px;
+    }
 }

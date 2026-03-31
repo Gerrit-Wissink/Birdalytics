@@ -93,7 +93,7 @@ export default function Reports(){
                     }}
                     onClick={handleDownload}
                 >
-                    Download PDF
+                    Download Report
                 </button>
             </div>
 
