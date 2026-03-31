@@ -28,5 +28,4 @@ leaflet/
 *.sw?
 
 # Configs
-vite.config.js
 .env
