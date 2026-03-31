@@ -1,6 +1,9 @@
 #logo{
     max-width: 175px;
-    max-height: 8vh;
+    max-height: 56px;
+    width: auto;
+    height: auto;
+    object-fit: contain;
 }
 
 nav{
@@ -8,8 +11,9 @@ nav{
     display: flex;
     align-items: center;
     justify-content: space-between;
-    padding: 0px 2.5em;
-    height: 8vh;
+    padding: 0.5rem 2.5em;
+    height: auto;
+    min-height: 56px;
     position: sticky;
     top: 0;
     z-index: 10000;
@@ -21,7 +25,7 @@ nav{
 }
 
 .primary-nav a{
-    height: 6vh;
+    height: auto;
     align-content: center;
 }
 
@@ -49,174 +53,15 @@ nav span{
 }
 
 
-.active span:not(#upload){
+.active span{
     border-bottom: 2px solid #007CCE;
     font-weight: 600;
 }
 
-#upload{
-    background: #5a7814;
-    color: #FFF;
-    border-radius: 6px;
+#logOut{
     padding: 6px 12px;
-}
-
-#logOut {
-    color: #8AC1FF;
-    background: none;
-    border: none;
-    cursor: pointer;
-    font-family: inherit;
-    font-size: inherit;
-    padding: 0;
-    transition: all 0.2s ease-in-out;
-}
-
-#logOut:hover {
-    color: #BBDBFF;
-    text-shadow: 0 0 .9px #BBDBFF, 0 0 .9px #BBDBFF, 0 0 .9px #BBDBFF;
-}
-
-/* ***** MOBILE MENU ***** */
-.mobileMenu{
-    z-index: 1000;
-    position: sticky;
-}
-
-#burgerMenu{
-    display: flex;
-    flex-direction: column;
-    justify-content: space-between;
-    gap: 1px;
-    height: 40px;
-    min-width: 50px;
-    align-items: center;
-    cursor: pointer;
-    position: relative;
-    z-index: 1000;
-}
-
-.bar {
-    background-color: var(--background);
-    width: 50px;
-    height: 5px;
-    border-radius: 50px;
-    transition: all 0.3s ease-in-out;
-    position: absolute;
-}
-
-#bar1 {
-    top: 0;
-}
-
-#bar2 {
-    top: 50%;
-    transform: translateY(-50%);
-}
-
-#bar3 {
-    bottom: 0;
-}
-
-/* Active state: Turns into an X */
-#burgerMenu.active #bar1 {
-    transform: translateY(17.5px) rotate(45deg);
-}
-
-#burgerMenu.active #bar2 {
-    opacity: 0;
-}
-
-#burgerMenu.active #bar3 {
-    transform: translateY(-17.5px) rotate(-45deg);
-}
-
-#sideMenu{
-    width: 33%;
-    height: 100vh;
-    z-index: 999;
-    background-color: var(--blue);
-    box-shadow: -10px 0px 15px var(--pannel);
-    position: fixed; 
-    top: -150vh; /*Hidden above the screen to start*/
-    right: 0;
-    display: flex;
-    flex-direction: column;
-    gap: 30vh;
-    align-items: center;
-    padding-top: 15%;
-    transition: top 0.5s ease-in-out;
-}
-
-/* When menu is open, slide it down */
-#sideMenu.open {
-    top: 0;
-}
-
-/* When menu is closed, hide it above the screen */
-#sideMenu.closed {
-    top: -150vh;
+    border-radius: 6px;
+    background-color: #003776;
 }
 
 
-#sideText{
-    z-index: 1000;
-    display: flex;
-    flex-direction: column;
-    align-items: center;
-    gap: 2.5em;
-    min-height: 45vh;
-}
-
-#sideText a{
-    color: var(--background);
-    text-decoration: none;
-    font-size: 1.5em;
-    font-weight: 400;
-}
-
-@media screen and (min-width: 801px){
-    #mobileMenu{
-        display: none;
-    }
-
-    #sideMenu{
-        display: none;
-    }
-}
-@media screen and (max-width: 800px){
-    #hide-in-mobile{
-        display: none;
-    }
-    #logOut{
-        font-size: 1.25em;
-        font-weight: 400;
-    }
-
-
-}
-
-@media screen and (max-width: 600px){
-    #sideText a{
-        font-size: 1.2em;
-    }
-
-    .bar {
-    width: 40px;
-    height: 4px;
-    }
-
-    #sideMenu{
-        padding-top: 25%;
-    }
-}
-
-@media screen and (max-width: 450px){
-    #sideText a{
-        font-size: 1em;
-    }
-
-    #sideMenu{
-        padding-top: 35%;
-    }
-}
