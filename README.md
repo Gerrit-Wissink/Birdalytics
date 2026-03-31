@@ -58,11 +58,3 @@ Then start the stack. Once tables are created, remove this setting.
 - Subsequent runs are much faster
 - If images are already built, you can skip rebuilding:
 docker compose up
-
-## Restoring the database
-
-Make sure you have a dump file located in the projext root (more info: https://docs.google.com/document/d/1_WJIo6suu6_xlqKz8dcwCui0GHJZWAkq/edit?usp=sharing&ouid=106291627670098283687&rtpof=true&sd=true)
-After starting Docker, load the starter dataset with:
-
-```bash
-docker compose exec -T db pg_restore -U postgres -d birdalytics < backup.dump
