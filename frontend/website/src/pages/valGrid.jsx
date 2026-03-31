@@ -2,13 +2,10 @@ import React, { useEffect, useState, useMemo } from 'react';
 import { DataView } from 'primereact/dataview';
 import { InputText } from 'primereact/inputtext';
 import { Dropdown } from 'primereact/dropdown';
-import { Calendar } from 'primereact/calendar';
 import PhotoCameraOutlinedIcon from '@mui/icons-material/PhotoCameraOutlined';
 import SearchRoundedIcon from '@mui/icons-material/SearchRounded';
 import FilterListRoundedIcon from '@mui/icons-material/FilterListRounded';
 import BirdBoxSelect from '../components/cameraSelect'
-import FakeRecords from '../fake-data/birdbox_records.json'
-import FakeBoxes from '../fake-data/birdboxes.json'
 import useFilters from '../components/useFilters'; 
 import FilterPanel from '../components/filterPanel';
 
@@ -16,7 +13,28 @@ import styles from './valGrid.module.css';
 import 'primereact/resources/themes/lara-light-blue/theme.css';
 import 'primereact/resources/primereact.min.css';
 
-export default function ValGrid({ boxesData }){
+export default function ValGrid(){
+
+    const [boxesData, setBoxesData] = useState({
+        birdboxes: [],
+        birdbox_records: []
+    });
+
+    // Camera select state, default to all selected
+    const [selectedBoxNames, setSelectedBoxNames] = useState(
+        () => boxesData.birdboxes.map((b) => b.birdbox_name)
+    );
+    
+    // Search + panel visibility
+    const [globalFilter, setGlobalFilter] = useState('');
+    const [filterOpen, setFilterOpen] = useState(false);
+    
+    // Sort states
+    const [sortField, setSortField] = useState('timestamp');
+    const [sortOrder, setSortOrder] = useState(-1); // newest first by default
+
+    // Tracks user-selected species corrections keyed by record id
+    const [speciesCorrections, setSpeciesCorrections] = useState({});
 
     useEffect(() => {
         const token = localStorage.getItem('token');
@@ -25,6 +43,71 @@ export default function ValGrid({ boxesData }){
             window.location.href = '/#/login';
         }
     }, []);
+
+
+    useEffect(() => {
+        const fetchBoxesData = async () => {
+            try {
+                const response = await apiClient.get('/boxes/record');
+                console.log('Fetch boxes data response:', response);
+                if (response.status === 200) {
+                    const data = response.data.data;
+                    console.log('Boxes data:', data);
+                    setBoxesData(data);
+                } else {
+                    console.error('Failed to fetch boxes data:', response.status);
+                }
+            } catch (error) {
+                console.error('Error fetching boxes data:', error);
+            }
+        };
+
+        fetchBoxesData();
+    }, []);
+
+    // Map box IDs to their name for easier look-up
+    const boxNameById = useMemo(() => {
+        const map = {};
+        boxesData.birdboxes.forEach((b) => { map[b.birdbox_id] = b.birdbox_name; });
+        return map;
+    }, [boxesData.birdboxes]);
+    
+    const allRecords = useMemo(() => {
+        return boxesData.birdbox_records
+            .filter((boxRecord) => {
+                const name = boxNameById[boxRecord.birdbox_id];
+                return selectedBoxNames.includes(name);
+            })
+            .flatMap((boxRecord) =>
+                (boxRecord.images ?? boxRecord.records ?? []).map((rec) => ({
+                    ...rec,
+                    image_url: rec.image_url ?? rec.photo_url,
+                    primary_guess: rec.primary_guess ?? rec.identified_result,
+                    primary_guess_confidence: rec.primary_guess_confidence ?? rec.confidence_score,
+                    birdbox_id: boxRecord.birdbox_id,
+                    birdbox_name: boxNameById[boxRecord.birdbox_id] ?? '—',
+                    _datetime: rec.timestamp
+                        ? new Date(rec.timestamp)
+                        : new Date(`${rec.date}T${rec.time}`),
+                }))
+            );
+    }, [boxesData.birdbox_records, selectedBoxNames, boxNameById]);
+
+    const handleSaveChanges = async () => {
+        try {
+            let result;
+            for(const [record_id, newSpecies] of Object.entries(speciesCorrections)) {
+                if (!newSpecies || newSpecies === '') continue; // Skip if cleared
+                result = await apiClient.put(`/record/manual/${record_id}`, { manual_bird: newSpecies });
+                if (result.status !== 200) {
+                    console.error(`Failed to update record ${record_id}:`, result);
+                }
+            }
+        }catch (error) {
+            console.error('Error saving changes:', error);
+            // Optionally show an error message to the user
+        }
+    }
 
     // HELPER FUNCTIONS
     const capitalize = (str) => {
@@ -56,52 +139,6 @@ export default function ValGrid({ boxesData }){
         { label: 'Descending', value: -1 },
     ];
 
-    // const { birdboxes = [], birdbox_records = [] } = boxesData ?? {};  
-    // UNCOMMENT ABOVE AND DELETE BELOW
-        const birdboxes = FakeBoxes.birdboxes;
-        const birdbox_records = FakeRecords.birdbox_records;
-
-    // Camera sselect state, default to all selected
-    const [selectedBoxNames, setSelectedBoxNames] = useState(
-        () => birdboxes.map((b) => b.birdbox_name)
-    );
-    
-    // Search + panel visibility
-    const [globalFilter, setGlobalFilter] = useState('');
-    const [filterOpen, setFilterOpen] = useState(false);
-    
-    // Sort states
-    const [sortField, setSortField] = useState('timestamp');
-    const [sortOrder, setSortOrder] = useState(-1); // newest first by default
-
-    // Map box IDs to their name for easier look-up
-    const boxNameById = useMemo(() => {
-        const map = {};
-        birdboxes.forEach((b) => { map[b.birdbox_id] = b.birdbox_name; });
-        return map;
-    }, [birdboxes]);
-    
-    const allRecords = useMemo(() => {
-    return birdbox_records
-        .filter((boxRecord) => {
-            const name = boxNameById[boxRecord.birdbox_id];
-            return selectedBoxNames.includes(name);
-        })
-        .flatMap((boxRecord) =>
-            (boxRecord.images ?? boxRecord.records ?? []).map((rec) => ({
-                ...rec,
-                image_url: rec.image_url ?? rec.photo_url,
-                primary_guess: rec.primary_guess ?? rec.identified_result,
-                primary_guess_confidence: rec.primary_guess_confidence ?? rec.confidence_score,
-                birdbox_id: boxRecord.birdbox_id,
-                birdbox_name: boxNameById[boxRecord.birdbox_id] ?? '—',
-                _datetime: rec.timestamp
-                    ? new Date(rec.timestamp)
-                    : new Date(`${rec.date}T${rec.time}`),
-            }))
-        );
-}, [birdbox_records, selectedBoxNames, boxNameById]);
-
     // TODO: CONNECT TO SPECIES LIST IN DATABASE
     const SPECIES_OPTIONS = [
         { label: 'Kestrel', value: 'kestrel' },
@@ -109,16 +146,11 @@ export default function ValGrid({ boxesData }){
         { label: 'Pigeon', value: 'pigeon' },
     ];
 
-    // Tracks user-selected species corrections keyed by record id
-    const [speciesCorrections, setSpeciesCorrections] = useState({});
-
     const handleSpeciesCorrection = (recordId, newSpecies) => {
         setSpeciesCorrections((prev) => ({ ...prev, [recordId]: newSpecies }));
-        // TODO: UPDATE IDENTIFICATION IN BACKEND
-        //should rerender the species identification on change, and be sure to set the modification status to the date
     };
 
-//all filters for useFilters hook
+    //all filters for useFilters hook
     const {
         birdFilter, setBirdFilter,
         dateRange, setDateRange,
@@ -151,7 +183,7 @@ export default function ValGrid({ boxesData }){
       {/* Row 1: Camera selector, search,  filter/sort buttons */}
       <div className={styles.topRow}>
         <BirdBoxSelect
-          boxes={birdboxes}
+          boxes={boxesData.birdboxes}
           selectedBoxNames={selectedBoxNames}
           setSelectedBoxNames={setSelectedBoxNames}
         />

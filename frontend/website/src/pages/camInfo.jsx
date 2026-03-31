@@ -177,7 +177,9 @@ export default function CamInfo() {
                             </div>
                             <div className={styles.stackedStats}>
                                 <p>Kestrel Frequency</p>
-                                <p className='small-stat-highlight'>{(selectedCamera.birdbox_records?.[0]?.total_kestrel_identified_photos / selectedCamera.birdbox_records?.[0]?.total_photos_with_creatures) || 0}%</p>
+                                <p className='small-stat-highlight'>
+                                    {(((selectedCamera.birdbox_records?.[0]?.total_kestrel_identified_photos / selectedCamera.birdbox_records?.[0]?.total_photos_with_creatures) || 0) * 100).toFixed(2)}%
+                                </p>
                             </div>
                         </div>
 
