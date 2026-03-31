@@ -148,18 +148,27 @@ class ImageController {
                     throw new Error('Invalid file data from ' + originalname);
                 }
 
-                const isValidFormat = /^[A-Za-z]*\d{8}_\d{6}/.test(originalname);
+                let timestamp = new Date();
+                const match = originalname.match(/^[A-Za-z]*(\d{8})_(\d{6})/);
 
-                if (!isValidFormat) {
-                    console.log('ERROR: Invalid filename');
-                    throw new Error('Invalid filename ' + originalname);
+                if (match) {
+                    const [, yyyymmdd, hhmmss] = match;
+
+                    const isoLike =
+                        `${yyyymmdd.slice(0, 4)}-${yyyymmdd.slice(4, 6)}-${yyyymmdd.slice(6, 8)}T` +
+                        `${hhmmss.slice(0, 2)}:${hhmmss.slice(2, 4)}:${hhmmss.slice(4, 6)}.000`;
+
+                    const parsed = new Date(isoLike);
+
+                    if (!isNaN(parsed.getTime())) {
+                        timestamp = parsed;
+                    } else {
+                        console.warn('Invalid parsed date, falling back:', originalname);
+                    }
+                } else {
+                    console.warn('Invalid filename format, falling back:', originalname);
                 }
 
-                // Parse originalname for Date time string format
-                let date1 = originalname.replace(/[^0-9_-]/g, '').slice(2).replace('_', 'T');
-                const time1 = date1.slice(10).replace(/-/g, ':') + '.000';
-                date1 = date1.slice(0, 10);
-                const timestamp = new Date(date1 + time1);
                 console.log('Timestamp:', timestamp.toISOString());
 
                 console.log('Starting database transaction...');
