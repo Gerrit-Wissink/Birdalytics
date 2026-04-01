@@ -18,6 +18,11 @@ echo "✅ Frontend build complete!"
 echo "======================================"
 echo ""
 echo "======================================"
+echo "Copying files to backend..."
+echo "======================================"
+cp -r frontend/website/dist/* backend/static/
+echo ""
+echo "======================================"
 echo "Starting backend server..."
 echo "======================================"
 cd ../../backend
