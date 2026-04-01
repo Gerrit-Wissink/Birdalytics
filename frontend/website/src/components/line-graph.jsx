@@ -1,4 +1,5 @@
-import React from 'react'
+import React from 'react';
+import { useState, useEffect } from 'react';
 
 import {
   LineChart,
@@ -6,7 +7,47 @@ import {
   lineElementClasses,
 } from '@mui/x-charts/LineChart'
 
-const dailyData = [
+const checkDateInCurrentMonth = (date) => {
+    const now = new Date();
+    return date.getMonth() === now.getMonth() && date.getFullYear() === now.getFullYear();
+}
+
+const checkContainsKestrel = (birdname) => {
+    if (!birdname) return false;
+    const lowerName = birdname.toLowerCase();
+    return lowerName.includes('kestrel');
+}
+
+const month_day_counts = [
+  31,
+  28,
+  31,
+  30,
+  31,
+  30,
+  31,
+  31,
+  30,
+  31,
+  30,
+  31
+];
+
+const createEmptyChartData = () => {
+  const now = new Date();
+  const month = now.getMonth();
+  const year = now.getFullYear();
+  const isFebruary = month === 1;
+  const isLeapYear = (year % 4 === 0 && year % 100 !== 0) || (year % 400 === 0);
+  const daysInMonth = month_day_counts[month] + (isFebruary && isLeapYear ? 1 : 0);
+
+  return Array.fill(0, daysInMonth).map((_, index) => ({
+    date: `${month + 1}/${index + 1}`,
+    value: 0,
+  }));
+}
+
+const fake_data = [
   { date: '10/1', value: 2 },
   { date: '10/2', value: 1 },
   { date: '10/3', value: 3 },
@@ -40,20 +81,57 @@ const dailyData = [
 //   { date: '10/31', value: 5 },
 ]
 
-// Extract dates and values
-const dates = dailyData.map(item => item.date)
-const values = dailyData.map(item => item.value)
-
 const areaColor = 'var(--gradient-green)'
 
 export default function LineGraph({ boxesData }) {
+
+  const [chartData, setChartData] = useState(createEmptyChartData());
+
+  const formatData = (boxesData) => {
+    // I want to loop through all of the boxes in boxes data
+    // For each box I want to loop through all of the records
+    // For each record if the timestamp is in the current month I want to add it to an array
+    // Then I want to loop through this array and if the record has an identified kestrel, I want to add 1 to the value of that day in the chart data)
+    if (!chartData || chartData.length === 0) setChartData(createEmptyChartData());
+    const updatedChartData = [...chartData];
+    for (const box of boxesData) {
+        for (const record of box.records ?? []) {
+            if (checkDateInCurrentMonth(new Date(record.timestamp))) {
+                const day = new Date(record.timestamp).getDate();
+                if(day < 1 || day > updatedChartData.length) continue; //safety check to make sure day is within bounds of current month
+                if (checkContainsKestrel(record.primary_guess) || checkContainsKestrel(record.modified_bird)) {
+                    updatedChartData[day - 1].value += 1
+                }
+            }
+        }
+    }
+    return updatedChartData;
+  }
+  
+  
+  useEffect(() => {
+      // This is where you would fetch the data and update the chartData state
+      // For now, we'll just use some dummy data
+      setChartData(createEmptyChartData());
+      const serverData = formatData(boxesData);
+      const totalKestrels = serverData.reduce((sum, item) => sum + item.value, 0);
+      if (totalKestrels === 0) {
+        // If there are no kestrels detected, use the dummy data to make the graph look nice
+        setChartData(fake_data);
+      } else {
+        setChartData(serverData);
+      }
+
+
+  }, [boxesData]);
+
   return (
     <div className='stat-box-graph'>
       <p className='graph-header'>Kestrel Detections/Month</p>
       <LineChart
         xAxis={[
           {
-            data: dates,
+            data: chartData.map(item => item.date),
             scaleType: 'point',
             tickLabelInterval: (value, index) => index % 7 === 0, // Show label every 7 days
             height: 28,
@@ -62,7 +140,7 @@ export default function LineGraph({ boxesData }) {
         yAxis={[{ label: 'Number of Kestrels', width: 40 }]}
         series={[
           {
-            data: values,
+            data: chartData.map(item => item.value),
             label: 'Number of Kestrels',
             area: true,
             showMark: false,
@@ -107,7 +185,7 @@ export function LineGraphPicture({ boxesData }) {
       <LineChart
         xAxis={[
           {
-            data: dates,
+            data: chartData.map(item => item.date),
             scaleType: 'point',
             tickLabelInterval: (value, index) => index % 7 === 0, // Show label every 7 days
             height: 28,
@@ -116,7 +194,7 @@ export function LineGraphPicture({ boxesData }) {
         yAxis={[{ label: 'Number of Kestrels', width: 50 }]}
         series={[
           {
-            data: values,
+            data: chartData.map(item => item.value),
             label: 'Number of Kestrels',
             area: true,
             showMark: false,

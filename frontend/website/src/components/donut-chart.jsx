@@ -69,9 +69,9 @@ export default function BirdPieChart({ kestrels, otherBirds, nonBirds }) {
 
 export function BoxesPieChart({ birdboxes, photo = false }) {
   //THESE CAN ALSO BE CONSTS WHEN WE DELETE THE BELOW
-  var kestrels = birdboxes.reduce((sum, box) => sum + (box.kestrel_count ?? 0), 0);
-  var otherBirds = birdboxes.reduce((sum, box) => sum + (box.other_bird_count ?? 0), 0);
-  var nonBirds = birdboxes.reduce((sum, box) => sum + (box.non_bird_count ?? 0), 0);
+  var kestrels = birdboxes.reduce((sum, box) => sum + (box.total_kestrel_identified_photos ?? 0), 0);
+  var otherBirds = birdboxes.reduce((sum, box) => sum + (box.total_non_kestrel_identified_photos ?? 0), 0);
+  var nonBirds = birdboxes.reduce((sum, box) => sum + ((box.total_photos_with_creatures - box.total_kestrel_identified_photos - box.total_non_kestrel_identified_photos) ?? 0), 0);
 
   //DELETE THIS LATER, IT'S JUST SO MY GRAPH LOOKS PRETTY TEEHEE
   if (kestrels === 0 || otherBirds === 0 || nonBirds === 0){
