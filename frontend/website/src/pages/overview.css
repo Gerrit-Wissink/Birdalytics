@@ -101,3 +101,14 @@
     margin-bottom: 5vh;
   }
 }
+
+.overview-empty-state {
+  margin-top: 1.5rem;
+}
+
+.stat-empty-state {
+  min-height: 180px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
