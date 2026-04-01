@@ -181,14 +181,49 @@ export default function Upload() {
             )}
 
             {showConfirmModal && (
-                <UploadModal
-                    isLoading={isLoading}
-                    selectedBox={selectedBox}
-                    files_exist={files.length > 0}
-                    url_exists={!!urlValue.trim()}
-                    setShowConfirmModal={setShowConfirmModal}
-                    handleConfirmUpload={handleConfirmUpload}
-                />
+                <div className="modal-overlay" onClick={() => !isLoading && setShowConfirmModal(false)}>
+                    <div className="confirm-modal" onClick={(e) => e.stopPropagation()}>
+                        <h3>Confirm Upload</h3>
+                        <p>
+                            You are about to upload to <strong>{selectedBox}</strong>.
+                        </p>
+
+                        {files.length > 0 && (
+                            <p>
+                                <strong>Files:</strong> {fileText}
+                            </p>
+                        )}
+
+                        {urlValue.trim() && (
+                            <p>
+                                <strong>URL:</strong> {urlValue}
+                            </p>
+                        )}
+
+                        <p className="confirm-warning">
+                            Make sure this is the correct birdbox before continuing.
+                        </p>
+
+                        <div className="modal-actions">
+                            <button
+                                type="button"
+                                className="cancel-btn"
+                                onClick={() => setShowConfirmModal(false)}
+                                disabled={isLoading}
+                            >
+                                Cancel
+                            </button>
+                            <button
+                                type="button"
+                                className="import-btn"
+                                onClick={handleConfirmUpload}
+                                disabled={isLoading}
+                            >
+                                {isLoading ? 'Uploading...' : 'Confirm Upload'}
+                            </button>
+                        </div>
+                    </div>
+                </div>
             )}
 
             <section id="upload-container">
@@ -270,7 +305,6 @@ export default function Upload() {
                         </div>
                     </form>
                 </div>
-                <div id="space-to-scroll"></div>
             </section>
         </>
     );
