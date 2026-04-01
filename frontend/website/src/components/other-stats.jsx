@@ -2,7 +2,7 @@ import React from 'react'
 
 export default function ActiveBoxes({ boxesData }) {
 
-    const numBoxes = boxesData.birdboxes.length;
+    const numBoxes = boxesData.length;
 
     return (
         <>

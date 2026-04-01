@@ -21,25 +21,19 @@ function kestrelFrequency(record) {
     return toPercent(record.total_kestrel_identified_photos / record.total_photos_with_creatures);
 }
 
-function getMostActive(birdboxes, recordsMap) {
+function getMostActive(birdboxes) {
     return birdboxes.reduce((best, box) => {
-        const rate = recordsMap[box.birdbox_id]?.usage_rate ?? -Infinity;
-        const bestRate = recordsMap[best?.birdbox_id]?.usage_rate ?? -Infinity;
-        return rate > bestRate ? box : best;
+        return (box.usage_rate ?? -Infinity) > (best?.usage_rate ?? -Infinity) ? box : best;
     }, null);
 }
 
-function getLeastActive(birdboxes, recordsMap) {
-    //DELETE THIS LATER - override to test with 3rd box
-    const override = birdboxes[2] ?? null;
-    if (override) return override;
+function getLeastActive(birdboxes) {
+    // const override = birdboxes[2] ?? null;
+    // if (override) return override;
 
     return birdboxes.reduce((least, box) => {
-        const rate = recordsMap[box.birdbox_id]?.usage_rate ?? Infinity;
-        const leastRate = recordsMap[least?.birdbox_id]?.usage_rate ?? Infinity;
-        return rate < leastRate ? box : least;
+        return (box.usage_rate ?? Infinity) < (least?.usage_rate ?? Infinity) ? box : least;
     }, null);
-
 }
 
 function wrapName(name, maxLen = 20) {
@@ -81,14 +75,14 @@ function drawStatCard(doc, x, y, w, h, label, nameLines, color) {
     doc.setTextColor(0, 0, 0);
 }
 
-function drawSightingBreakdown(doc, birdbox_records, x, y, w) {
+function drawSightingBreakdown(doc, birdboxes, x, y, w) {
     var total_kestrels = 0;
     var total_non_kestrels = 0;
     var total_non_birds = 0;
-    birdbox_records.forEach(box => {
-        total_kestrels += box.total_kestrel_identified_photos;
-        total_non_kestrels += box.total_non_kestrel_identified_photos;
-        total_non_birds += (box.total_photos_with_creatures - (box.total_kestrel_identified_photos + box.total_non_kestrel_identified_photos));
+    birdboxes.forEach(box => {
+        total_kestrels += box.total_kestrel_identified_photos ?? 0;
+        total_non_kestrels += box.total_non_kestrel_identified_photos ?? 0;
+        total_non_birds += (box.total_photos_with_creatures ?? 0) - (box.total_kestrel_identified_photos ?? 0) - (box.total_non_kestrel_identified_photos ?? 0);
     });
 
     //DELETE THIS LATER IT'S JUST SO IT LOOKS PRETTY
@@ -139,9 +133,7 @@ function drawSightingBreakdown(doc, birdbox_records, x, y, w) {
 
 //BUILD PDF
 
-export default async function BuildPDF(boxesData, chartImage, lineGraphImage) {
-    const { birdboxes, birdbox_records } = boxesData;
-    const recordsMap = Object.fromEntries(birdbox_records.map((r) => [r.birdbox_id, r]));
+export default async function BuildPDF(birdboxes, chartImage, lineGraphImage) {
 
     const doc = new jsPDF();
     const pageWidth = doc.internal.pageSize.getWidth();
@@ -183,8 +175,8 @@ export default async function BuildPDF(boxesData, chartImage, lineGraphImage) {
     const listHeight = listEndY - listStartY;
 
     // Stat cards
-    const mostActive = getMostActive(birdboxes, recordsMap);
-    const leastActive = getLeastActive(birdboxes, recordsMap);
+    const mostActive = getMostActive(birdboxes);
+    const leastActive = getLeastActive(birdboxes);
 
     const mostActiveLines = wrapName(mostActive?.birdbox_name);
     const leastActiveLines = wrapName(leastActive?.birdbox_name);
@@ -208,12 +200,11 @@ export default async function BuildPDF(boxesData, chartImage, lineGraphImage) {
             fillColor: [0, 76, 152],
         },
         body: birdboxes.map((box) => {
-            const record = recordsMap[box.birdbox_id];
             return [
                 box.birdbox_name,
                 formatTimestamp(box.last_captured_image?.timestamp),
-                record ? toPercent(record.usage_rate) : "—",
-                kestrelFrequency(record),
+                toPercent(box.usage_rate),
+                kestrelFrequency(box),
                 formatTimestamp(box.last_identified_kestrel?.timestamp),
             ];
         }),
@@ -258,7 +249,7 @@ export default async function BuildPDF(boxesData, chartImage, lineGraphImage) {
             const rowCount = 3;
             const blockH = rowCount * rowH + (rowCount - 1) * rowGap;
             const breakdownY = sectionY + (chartSize - blockH) / 2;
-            drawSightingBreakdown(doc, birdbox_records, boxX, breakdownY, boxW);
+            drawSightingBreakdown(doc, birdboxes, boxX, breakdownY, boxW);
         }
     }
 

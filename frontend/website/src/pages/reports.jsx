@@ -23,33 +23,28 @@ export default function Reports(){
         }
     }, []);
 
-    const [boxesData, setBoxesData] = useState({ birdboxes: [], birdbox_records: [] });
+    const [boxesData, setBoxesData] = useState([]);
     const [selectedBoxNames, setSelectedBoxNames] = useState([]);
 
     useEffect(() => {
-    const fetchBoxesData = async () => {
-        try {
-            const response = await apiClient.get('/boxes/record');
-            if (response.status === 200) {
-                const data = response.data.data;
-                setBoxesData(data);
-                setSelectedBoxNames(data.birdboxes.map((b) => b.birdbox_name));
+        const fetchBoxesData = async () => {
+            try {
+                const response = await apiClient.get('/boxes/record');
+                if (response.status === 200) {
+                    const data = response.data.data;
+                    setBoxesData(data);
+                    setSelectedBoxNames(data.map((b) => b.birdbox_name));
+                }
+            } catch (error) {
+                console.error('Error fetching boxes data:', error);
             }
-        } catch (error) {
-            console.error('Error fetching boxes data:', error);
-        }
-    };
-    fetchBoxesData();
-}, []);
+        };
+        fetchBoxesData();
+    }, []);
 
-    const selectedBirdboxes = boxesData.birdboxes.filter(b =>
+    const selectedBirdboxes = boxesData.filter(b =>
         selectedBoxNames.includes(b.birdbox_name)
     );
-    const selectedIds = new Set(selectedBirdboxes.map(b => b.birdbox_id));
-    const selectedBoxesData = {
-        birdboxes: selectedBirdboxes,
-        birdbox_records: boxesData.birdbox_records.filter(r => selectedIds.has(r.birdbox_id)),
-    };
 
     const [value, setValue] = React.useState('PDF');
 
@@ -66,7 +61,7 @@ export default function Reports(){
         const chartImage = canvas.toDataURL('image/png');
         const lineCanvas = await html2canvas(lineGraphRef.current, { backgroundColor: '#ffffff' });
         const lineGraphImage = lineCanvas.toDataURL('image/png');
-        await BuildPDF(selectedBoxesData, chartImage, lineGraphImage);
+        await BuildPDF(selectedBirdboxes, chartImage, lineGraphImage);
     };
 
     return(
@@ -75,7 +70,7 @@ export default function Reports(){
             <h1>Reports Page</h1>
             <div style={{ display: 'flex', flexDirection: 'row', alignItems: 'center', justifyContent: 'space-between', marginBottom: '1em' }}>
                 <BirdBoxSelect
-                    boxes={boxesData.birdboxes}
+                    boxes={boxesData}
                     selectedBoxNames={selectedBoxNames}
                     setSelectedBoxNames={setSelectedBoxNames}
                 />
@@ -124,7 +119,7 @@ export default function Reports(){
             </Box>
             <TabPanel value="PDF">
                 <p style={{fontStyle: 'italic', marginTop: '0px'}}> Please note that preview is not exact.</p>
-                <PDFPreview boxesData={selectedBoxesData} />
+                <PDFPreview boxesData={selectedBirdboxes} />
             </TabPanel>
             <TabPanel value="CSV">Item Two</TabPanel>
             <TabPanel value="EXCEL">Item Three</TabPanel>
