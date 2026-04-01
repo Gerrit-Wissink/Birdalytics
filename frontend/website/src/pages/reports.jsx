@@ -12,6 +12,7 @@ import TabContext from '@mui/lab/TabContext';
 import TabPanel from '@mui/lab/TabPanel';
 import BuildPDF from '../reports/buildPDF';
 import PDFPreview from '../reports/previewPDF';
+import "./reports.css";
 
 export default function Reports() {
 
