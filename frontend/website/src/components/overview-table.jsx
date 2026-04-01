@@ -47,7 +47,7 @@ function InfoTooltip({ text }) {
   );
 }
 
-export default function BirdboxTable({ boxesData = [] }) {
+export default function BirdboxTable({ boxesData }) {
   const birdboxes = boxesData
   const colWidths = ["30%", "22%", "15%", "18%", "15%"];
 
@@ -87,6 +87,8 @@ export default function BirdboxTable({ boxesData = [] }) {
                     <td className={styles.td} data-title="Last Record">
                       {formatTimestamp(box.last_captured_image?.timestamp)}
                     </td>
+                    <td className={styles.td} data-title="Usage Rate">{toPercent(box.usage_rate)}</td>
+                    <td className={styles.td} data-title="Kestrel Frequency">{kestrelFrequency(box)}</td>
                     <td className={styles.td} data-title="Usage Rate">{toPercent(box.usage_rate)}</td>
                     <td className={styles.td} data-title="Kestrel Frequency">{kestrelFrequency(box)}</td>
                     <td className={styles.td} data-title="Last Kestrel">

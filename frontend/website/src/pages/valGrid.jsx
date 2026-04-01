@@ -63,7 +63,7 @@ export default function ValGrid(){
     }, []);
 
     useEffect(() => {
-        setSelectedBoxNames(boxesData.birdboxes.map((b) => b.birdbox_name)); // Select all by default
+        setSelectedBoxNames(boxesData.map((b) => b.birdbox_name)); // Select all by default
     }, [boxesData]);
 
     // Map box IDs to their name for easier look-up
