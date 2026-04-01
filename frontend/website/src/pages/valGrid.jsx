@@ -16,15 +16,10 @@ import 'primereact/resources/primereact.min.css';
 
 export default function ValGrid(){
 
-    const [boxesData, setBoxesData] = useState({
-        birdboxes: [],
-        birdbox_records: []
-    });
+    const [boxesData, setBoxesData] = useState([]);
 
     // Camera select state, default to all selected
-    const [selectedBoxNames, setSelectedBoxNames] = useState(
-        () => boxesData.birdboxes.map((b) => b.birdbox_name)
-    );
+    const [selectedBoxNames, setSelectedBoxNames] = useState([]);
     
     // Search + panel visibility
     const [globalFilter, setGlobalFilter] = useState('');
@@ -67,36 +62,30 @@ export default function ValGrid(){
     }, []);
 
     useEffect(() => {
-        setSelectedBoxNames(boxesData.birdboxes.map((b) => b.birdbox_name)); // Select all by default
+        setSelectedBoxNames(boxesData.map((b) => b.birdbox_name)); // Select all by default
     }, [boxesData]);
 
     // Map box IDs to their name for easier look-up
     const boxNameById = useMemo(() => {
         const map = {};
-        boxesData.birdboxes.forEach((b) => { map[b.birdbox_id] = b.birdbox_name; });
+        boxesData.forEach((b) => { map[b.birdbox_id] = b.birdbox_name; });
         return map;
-    }, [boxesData.birdboxes]);
+    }, [boxesData]);
     
     const allRecords = useMemo(() => {
-        return boxesData.birdbox_records
-            .filter((boxRecord) => {
-                const name = boxNameById[boxRecord.birdbox_id];
-                return selectedBoxNames.includes(name);
-            })
-            .flatMap((boxRecord) =>
-                (boxRecord.images ?? boxRecord.records ?? []).map((rec) => ({
+        return boxesData
+            .flatMap((box) =>
+                (box.records ?? []).map((rec) => ({
                     ...rec,
-                    image_url: rec.image_url ?? rec.photo_url,
-                    primary_guess: rec.primary_guess ?? rec.identified_result,
-                    primary_guess_confidence: rec.primary_guess_confidence ?? rec.confidence_score,
-                    birdbox_id: boxRecord.birdbox_id,
-                    birdbox_name: boxNameById[boxRecord.birdbox_id] ?? '—',
+                    birdbox_id: box.birdbox_id,
+                    birdbox_name: box.birdbox_name,
                     _datetime: rec.timestamp
                         ? new Date(rec.timestamp)
-                        : new Date(`${rec.date}T${rec.time}`),
+                        : new Date(),
                 }))
-            );
-    }, [boxesData.birdbox_records, selectedBoxNames, boxNameById]);
+            )
+            .filter((rec) => selectedBoxNames.includes(rec.birdbox_name));
+    }, [boxesData, selectedBoxNames]);
 
     const handleSaveChanges = async () => {
         try {
@@ -188,7 +177,7 @@ export default function ValGrid(){
       {/* Row 1: Camera selector, search,  filter/sort buttons */}
       <div className={styles.topRow}>
         <BirdBoxSelect
-          boxes={boxesData.birdboxes}
+          boxes={boxesData}
           selectedBoxNames={selectedBoxNames}
           setSelectedBoxNames={setSelectedBoxNames}
         />

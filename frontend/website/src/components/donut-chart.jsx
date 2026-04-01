@@ -74,7 +74,7 @@ export function BoxesPieChart({ birdboxes, photo = false }) {
   var nonBirds = birdboxes.reduce((sum, box) => sum + (box.non_bird_count ?? 0), 0);
 
   //DELETE THIS LATER, IT'S JUST SO MY GRAPH LOOKS PRETTY TEEHEE
-  if (kestrels || otherBirds || nonBirds == 0){
+  if (kestrels === 0 || otherBirds === 0 || nonBirds === 0){
     kestrels = 45;
     otherBirds = 21;
     nonBirds = 12
