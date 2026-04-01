@@ -16,7 +16,9 @@ export default function ActiveBoxes({ boxesData }) {
 
 export function MostActiveBox({ boxesData }) {
 
-    const MostActiveBox = "Gosnell Big Woods Primary"
+    const MostActiveBox = boxesData.reduce((best, box) => {
+        return (box.usage_rate ?? -Infinity) > (best?.usage_rate ?? -Infinity) ? box : best;
+    }, null)?.birdbox_name ?? '—';
 
     return (
         <>
