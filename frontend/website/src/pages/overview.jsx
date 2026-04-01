@@ -56,11 +56,18 @@ export default function Overview() {
         return (
             <section id="container">
                 <h1>Welcome back, {username}</h1>
-                <div className="empty-state overview-empty-state">
+                <div className="overview-empty-state">
                     <h2>No overview data yet</h2>
                     <p>
                         Upload images or add birdboxes to start seeing map, table, and activity data.
                     </p>
+
+                    <button
+                        className="cta-button"
+                        onClick={() => window.location.href = "/#/upload"}
+                    >
+                        Upload Data
+                    </button>
                 </div>
             </section>
         );

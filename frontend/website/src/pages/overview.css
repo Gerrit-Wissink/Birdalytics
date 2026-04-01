@@ -104,6 +104,16 @@
 
 .overview-empty-state {
   margin-top: 1.5rem;
+  padding: 2rem;
+  border: 1px dashed #d1d5db;
+  border-radius: 12px;
+  background-color: #f8f9fc;
+  max-width: 800px;
+
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  min-height: 160px;
 }
 
 .stat-empty-state {
@@ -111,4 +121,36 @@
   display: flex;
   align-items: center;
   justify-content: center;
+}
+
+#container h1 {
+  margin-bottom: 1.25rem;
+}
+
+.overview-empty-state h2 {
+  font-size: 1.4rem;
+  margin-bottom: 0.5rem;
+}
+
+.overview-empty-state p {
+  color: #6b7280;
+}
+
+.cta-button {
+  margin-top: 1rem;
+  padding: 10px 16px;
+  border-radius: 8px;
+  border: none;
+  background: #6b8e23;
+  color: white;
+  font-weight: 500;
+  cursor: pointer;
+}
+
+.cta-button:hover {
+  background: #5a7a1d;
+}
+
+.overview-empty-state button {
+  align-self: flex-start;
 }

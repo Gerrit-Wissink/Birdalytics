@@ -29,16 +29,13 @@ export default function Cameras() {
         const fetchBoxesData = async () => {
             try {
                 const response = await apiClient.get('/boxes/record');
-                console.log('Fetch boxes data response:', response);
                 if (response.status === 200) {
-                    const data = response.data.data;
-                    console.log('Boxes data:', data);
-                    setBoxesData(data); // Assuming the boxes data is in the 'data' property
-                } else {
-                    console.error('Failed to fetch boxes data:', response.status);
+                    setBoxesData(response.data.data);
                 }
             } catch (error) {
                 console.error('Error fetching boxes data:', error);
+            } finally {
+                setIsLoading(false);
             }
         }
 
@@ -74,8 +71,6 @@ export default function Cameras() {
                 setImageMap(newImageMap);
             } catch (error) {
                 console.error('Error fetching images for boxes:', error);
-            } finally {
-                setIsLoading(false);
             }
         };
 
@@ -88,24 +83,81 @@ export default function Cameras() {
     }, [boxesData]);
 
     const cameras = boxesData.birdboxes;
+    const hasActivity = boxesData.birdbox_records.some((boxRecord) => {
+        const items = boxRecord.images ?? boxRecord.records ?? [];
+        return items.length > 0;
+    });
     const hasCameras = cameras.length > 0;
+
+    console.log('boxesData', boxesData);
+    console.log(
+        'activity counts',
+        boxesData.birdbox_records.map((r) => ({
+            birdbox_id: r.birdbox_id,
+            images: (r.images ?? []).length,
+            records: (r.records ?? []).length,
+        }))
+    );
 
     const handleCancelModal = () => {
         setShowModal(false);
     };
 
+    if (isLoading) {
+        return (
+            <section id="container">
+                <h1>Cameras</h1>
+                <p>Loading...</p>
+            </section>
+        );
+    }
+
+    if (!hasCameras) {
+        return (
+            <section id="container">
+                <h1>Cameras</h1>
+
+                <div className="empty-state overview-empty-state">
+                    <h2>No cameras yet</h2>
+                    <p>Add your first birdbox to start tracking activity.</p>
+
+                    <button
+                        className="primary-button"
+                        onClick={() => setShowModal(true)}
+                    >
+                        Add Camera
+                    </button>
+                </div>
+            </section>
+        );
+    }
+
+    if (hasCameras && !hasActivity) {
+        return (
+            <section id="container">
+                <h1>Cameras</h1>
+
+                <div className="empty-state overview-empty-state">
+                    <h2>No activity yet</h2>
+                    <p>
+                        Your cameras are set up, but no images have been captured yet.
+                    </p>
+
+                    <button
+                        className="primary-button"
+                        onClick={() => window.location.href = "/#/upload"}
+                    >
+                        Upload Images
+                    </button>
+                </div>
+            </section>
+        );
+    }
+
     return (
         <>
             <section id="container">
                 <h1>Cameras</h1>
-
-                {(!isLoading && !hasCameras) && (
-                    <div className="empty-state">
-                        <h2>No cameras yet</h2>
-                        <p>Add a camera to get started.</p>
-                    </div>
-                )}
-
                 <div className="cameras-grid">
                     {cameras.map((camera) => (
                         <CameraCard
