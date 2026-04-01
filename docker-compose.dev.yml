@@ -13,7 +13,11 @@ services:
   frontend:
     environment:
       VITE_DOCKER: "true"
+      CHOKIDAR_USEPOLLING: "true"
     build: ./frontend
+    volumes:
+      - ./frontend/website:/app
+      - /app/node_modules
     depends_on:
       - backend
     ports:
