@@ -1,4 +1,4 @@
-body,html,main {
+body, main {
     margin: 0;
     padding: 0;
 }
@@ -8,13 +8,13 @@ body,html,main {
   flex-direction: column;
   justify-content: flex-start;
   align-items: center;
-  height: 92vh;
+  min-height: 100vh;
   background: var(--blue);
   padding-top: 8vh;
+  padding-bottom: 6vh;
   padding-left: 2rem;
   padding-right: 2rem;
   font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
-  overflow: hidden;
 }
 
 #login-logo {
