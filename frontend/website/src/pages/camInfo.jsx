@@ -14,18 +14,12 @@ import styles from './camInfo.module.css'
 
 export default function CamInfo() {
 
-    const [boxesData, setBoxesData] = useState({
-        birdboxes: [],
-        birdbox_records: []
-    });
+    const [boxesData, setBoxesData] = useState([]);
 
     // Tracks which birdbox_id is currently selected — null until fetch resolves
     const [selectedID, setSelectedID] = useState(null);
     const [selectedRow, setSelectedRow] = useState(null); //in order to update the Species Identification window on new select
-    const [selectedCamera, setSelectedCamera] = useState({
-        birdbox: {},
-        birdbox_records: {}
-    });
+    const [selectedCamera, setSelectedCamera] = useState(null);
 
     const [imageMap, setImageMap] = useState({});
 
@@ -43,8 +37,8 @@ export default function CamInfo() {
                     setBoxesData(data);
 
                     // Auto-select the first camera as soon as data arrives since no longer through cameras page
-                    if (data.birdboxes.length > 0) {
-                        setSelectedID(data.birdboxes[0].birdbox_id);
+                    if (data.length > 0) {
+                        setSelectedID(data[0].birdbox_id);
                     }
                 } else {
                     console.error('Failed to fetch boxes data:', response.status);
@@ -66,20 +60,19 @@ export default function CamInfo() {
     }, []);
 
     useEffect(() => {
-        if (selectedID === -1) return;
-        const selectedCam = boxesData.birdboxes.find(box => box.birdbox_id === parseInt(selectedID));
-        const selectedRecords = boxesData.birdbox_records.filter(record => record.birdbox_id === parseInt(selectedID));
-        setSelectedCamera({
-            birdboxes: selectedCam,
-            birdbox_records: selectedRecords
-        });
+        if (selectedID === null || selectedID === -1) {
+            setSelectedCamera(null);
+            return;
+        }
+        const selectedCam = boxesData.find(box => box.birdbox_id === parseInt(selectedID));
+        setSelectedCamera(selectedCam || null);
     }, [selectedID, boxesData]);
 
     useEffect(() => {
         console.log('Selected camera updated:', selectedCamera);
         const fetchImagesForBox = async () => {
             try {
-                const records = selectedCamera.birdbox_records?.[0]?.records || [];
+                const records = selectedCamera?.records || [];
                 console.log('Records found:', records.length, records);
                 
                 if (records.length === 0) {
@@ -145,7 +138,7 @@ export default function CamInfo() {
                     </span>
                 </div>
 
-                {boxesData.birdboxes.map((camera) => (
+                {boxesData.map((camera) => (
                     <div
                         className={styles.cameraItem}
                         key={camera.birdbox_id}
@@ -163,7 +156,7 @@ export default function CamInfo() {
 
             <div id={styles.cameraContent}>
                 <h1 style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', marginRight: '7.5%' }}>
-                    {selectedCamera.birdbox?.birdbox_name ?? 'Select a Camera'}
+                    {selectedCamera?.birdbox_name ?? 'Select a Camera'}
                     <IoSettingsOutline />
                 </h1>
 
@@ -173,12 +166,12 @@ export default function CamInfo() {
                         <div style={{ display: 'flex', justifyContent: 'space-between' }}>
                             <div className={styles.stackedStats}>
                                 <p>Usage Rate</p>
-                                <p className='small-stat-highlight'>{(selectedCamera.birdbox_records?.[0]?.usage_rate || 0).toFixed(2)}%</p>
+                                <p className='small-stat-highlight'>{(selectedCamera?.usage_rate || 0).toFixed(2)}%</p>
                             </div>
                             <div className={styles.stackedStats}>
                                 <p>Kestrel Frequency</p>
                                 <p className='small-stat-highlight'>
-                                    {(((selectedCamera.birdbox_records?.[0]?.total_kestrel_identified_photos / selectedCamera.birdbox_records?.[0]?.total_photos_with_creatures) || 0) * 100).toFixed(2)}%
+                                    {(((selectedCamera?.total_kestrel_identified_photos / selectedCamera?.total_photos_with_creatures) || 0) * 100).toFixed(2)}%
                                 </p>
                             </div>
                         </div>
@@ -189,9 +182,9 @@ export default function CamInfo() {
 
                         <p>Species Overview</p>
                         <MiniPieChart 
-                            kestrels={selectedCamera.birdbox_records?.[0]?.total_kestrel_identified_photos || 0}
-                            otherBirds={selectedCamera.birdbox_records?.[0]?.total_non_kestrel_identified_photos || 0} 
-                            nonBirds={selectedCamera.birdbox_records?.[0]?.total_captured_photos || 0 - (selectedCamera.birdbox_records?.[0]?.total_kestrel_identified_photos || 0) - (selectedCamera.birdbox_records?.[0]?.total_non_kestrel_identified_photos || 0)} 
+                            kestrels={selectedCamera?.total_kestrel_identified_photos || 0}
+                            otherBirds={selectedCamera?.total_non_kestrel_identified_photos || 0} 
+                            nonBirds={(selectedCamera?.total_captured_photos || 0) - (selectedCamera?.total_kestrel_identified_photos || 0) - (selectedCamera?.total_non_kestrel_identified_photos || 0)} 
                         />
 
 
@@ -201,7 +194,7 @@ export default function CamInfo() {
                         <SpeciesIdentification
                             selectedRow={selectedRow}
                             imageMap={imageMap}
-                            birdboxName={selectedCamera.birdbox?.birdbox_name}
+                            birdboxName={selectedCamera?.birdbox_name}
                             onSpeciesOverride={(species) => {
                                 // Rerender the table row with the overridden species
                                 if (selectedRow) {
@@ -213,7 +206,7 @@ export default function CamInfo() {
                 </div>
                 <div style={{margin: '1em 0px'}}>
                     <BirdboxImageTable 
-                        box={selectedCamera.birdbox_records?.[0]}
+                        box={selectedCamera}
                         onSelectRow={(row) => setSelectedRow(row)}
                         imageMap={imageMap}
                     />

@@ -9,10 +9,7 @@ import './cameras.css'
 export default function Cameras(){
     // TODO: Replace with GET request to fetch cameras from backend
     const [showModal, setShowModal] = useState(false);
-    const [boxesData, setBoxesData] = useState({
-        birdboxes: [],
-        birdbox_records: []
-    });
+    const [boxesData, setBoxesData] = useState([]);
 
     const [imageMap, setImageMap] = useState({});
 
@@ -32,7 +29,7 @@ export default function Cameras(){
                 if (response.status === 200) {
                     const data = response.data.data;
                     console.log('Boxes data:', data);
-                    setBoxesData(data); // Assuming the boxes data is in the 'data' property
+                    setBoxesData(data);
                 } else {
                     console.error('Failed to fetch boxes data:', response.status);
                 }
@@ -45,14 +42,14 @@ export default function Cameras(){
     }, []);
 
     useEffect(() => {
-        if (boxesData.birdboxes.length === 0) return;
+        if (boxesData.length === 0) return;
         
         console.log("Fetching images for birdboxes...");
         const fetchImagesForBoxes = async () => {
             try {
                 const newImageMap = {};
                 
-                for(const box of boxesData.birdboxes) {
+                for(const box of boxesData) {
                     if(!box.last_captured_image) {
                         console.log("No image to fetch for box:", box.birdbox_name);
                         continue;
@@ -84,7 +81,7 @@ export default function Cameras(){
         };
     }, [boxesData]);
 
-    const cameras = boxesData.birdboxes
+    const cameras = boxesData
 
     const handleCancelModal = () => {
         setShowModal(false);

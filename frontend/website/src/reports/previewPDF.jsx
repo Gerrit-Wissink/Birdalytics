@@ -26,22 +26,18 @@ function kestrelFrequency(record) {
     return toPercent(record.total_kestrel_identified_photos / record.total_photos_with_creatures);
 }
 
-function getMostActive(birdboxes, recordsMap) {
+function getMostActive(birdboxes) {
     return birdboxes.reduce((best, box) => {
-        const rate = recordsMap[box.birdbox_id]?.usage_rate ?? -Infinity;
-        const bestRate = recordsMap[best?.birdbox_id]?.usage_rate ?? -Infinity;
-        return rate > bestRate ? box : best;
+        return (box.usage_rate ?? -Infinity) > (best?.usage_rate ?? -Infinity) ? box : best;
     }, null);
 }
 
-function getLeastActive(birdboxes, recordsMap) {
+function getLeastActive(birdboxes) {
     const override = birdboxes[2] ?? null;
     if (override) return override;
     
     return birdboxes.reduce((least, box) => {
-        const rate = recordsMap[box.birdbox_id]?.usage_rate ?? Infinity;
-        const leastRate = recordsMap[least?.birdbox_id]?.usage_rate ?? Infinity;
-        return rate < leastRate ? box : least;
+        return (box.usage_rate ?? Infinity) < (least?.usage_rate ?? Infinity) ? box : least;
     }, null);
 }
 
@@ -68,8 +64,7 @@ function StatCard({ label, name, fillColor, strokeColor }) {
 // ---
 
 export default function PDFPreview({ boxesData, lineGraphRef }) {
-    const { birdboxes, birdbox_records } = boxesData ?? {};
-    const recordsMap = Object.fromEntries((birdbox_records ?? []).map((r) => [r.birdbox_id, r]));
+    const birdboxes = boxesData ?? [];
 
     if (!birdboxes || birdboxes.length === 0) {
         return (
@@ -79,8 +74,8 @@ export default function PDFPreview({ boxesData, lineGraphRef }) {
         );
     }
 
-    const mostActive = getMostActive(birdboxes, recordsMap);
-    const leastActive = getLeastActive(birdboxes, recordsMap);
+    const mostActive = getMostActive(birdboxes);
+    const leastActive = getLeastActive(birdboxes);
 
     const columns = ['Box Name', 'Last Record', 'Usage Rate', 'Kestrel Frequency', 'Last Kestrel'];
 
@@ -127,7 +122,6 @@ export default function PDFPreview({ boxesData, lineGraphRef }) {
                 </TableHead>
                 <TableBody>
                     {birdboxes.map((box) => {
-                        const record = recordsMap[box.birdbox_id];
                         return (
                             <TableRow key={box.birdbox_id}>
                                 <TableCell sx={{ fontSize: '12px', padding: '4px 8px' }}>{box.birdbox_name}</TableCell>
@@ -135,10 +129,10 @@ export default function PDFPreview({ boxesData, lineGraphRef }) {
                                     {formatTimestamp(box.last_captured_image?.timestamp)}
                                 </TableCell>
                                 <TableCell sx={{ fontSize: '12px', padding: '4px 8px' }}>
-                                    {record ? toPercent(record.usage_rate) : "—"}
+                                    {toPercent(box.usage_rate)}
                                 </TableCell>
                                 <TableCell sx={{ fontSize: '12px', padding: '4px 8px' }}>
-                                    {kestrelFrequency(record)}
+                                    {toPercent(box.total_kestrel_identified_photos / (box.total_photos_with_creatures || 1))}
                                 </TableCell>
                                 <TableCell sx={{ fontSize: '12px', padding: '4px 8px' }}>
                                     {formatTimestamp(box.last_identified_kestrel?.timestamp)}
@@ -160,7 +154,7 @@ export default function PDFPreview({ boxesData, lineGraphRef }) {
                 <hr style={{ border: 'none', borderTop: '2px solid var(--stroke)', margin: 'auto', width: '90%'}} />
                 <div style={{ display: 'flex', alignItems: 'center', gap: '24px', justifyContent: 'center' }}>
                     <BoxesPieChart birdboxes={birdboxes} />
-                    <SightingBreakdown records={birdbox_records} />
+                    <SightingBreakdown records={birdboxes} />
                 </div>
             </div>
         </PageShell>
@@ -172,13 +166,13 @@ function SightingBreakdown({ records }) {
     var total_non_kestrels = 0
     var total_non_birds = 0
     records.forEach( box => {
-        total_kestrels += box.total_kestrel_identified_photos
-        total_non_kestrels += box.total_non_kestrel_identified_photos
-        total_non_birds += (box.total_photos_with_creatures - (box.total_kestrel_identified_photos + box.total_non_kestrel_identified_photos))
+        total_kestrels += box.total_kestrel_identified_photos ?? 0
+        total_non_kestrels += box.total_non_kestrel_identified_photos ?? 0
+        total_non_birds += (box.total_photos_with_creatures ?? 0) - (box.total_kestrel_identified_photos ?? 0) - (box.total_non_kestrel_identified_photos ?? 0)
     })
 
     //DELETE THIS LATER IT'S JUST SO IT LOOKS PRETTY
-    if(total_kestrels || total_non_kestrels || total_non_birds == 0){
+    if(total_kestrels === 0 && total_non_kestrels === 0 && total_non_birds === 0){
         total_kestrels = 45
         total_non_kestrels = 21
         total_non_birds = 12

@@ -2,7 +2,7 @@ import React from 'react'
 import { useEffect, useRef } from 'react'
 
 const Map = ({ boxesData }) => {
-  const birdboxData = boxesData.birdboxes
+  const birdboxData = boxesData
   console.log("Loaded birdbox data:", birdboxData)
   const mapRef = useRef(null)
   const mapInstanceRef = useRef(null)
