@@ -84,14 +84,11 @@ class BoxController {
 
             const stats = boxes.map(box => calculateBoxStats(box));
 
-            const formattedData = {
-                birdboxes: [],
-                birdbox_records: []
-            };
+            const formattedData = []
 
             for (const [index, box] of boxes.entries()) {
                 const latestRecord = box.records?.[0];
-                formattedData.birdboxes.push(
+                formattedData.push(
                     {
                         birdbox_id: box.birdbox_id,
                         birdbox_name: box.name,
@@ -105,13 +102,7 @@ class BoxController {
                                 timestamp: latestRecord.timestamp
                             }
                             : null,
-                        last_identified_kestrel: stats[index]?.mostRecentKestrel ?? null
-                    }
-                );
-
-                formattedData.birdbox_records.push(
-                    {
-                        birdbox_id: box.birdbox_id,
+                        last_identified_kestrel: stats[index]?.mostRecentKestrel ?? null,
                         total_captured_photos: stats[index]?.totalRecords ?? 0,
                         total_photos_with_creatures: stats[index]?.photosWithCreatures ?? 0,
                         total_kestrel_identified_photos: stats[index]?.numKestrelIdentified ?? 0,
@@ -221,47 +212,42 @@ class BoxController {
             const latestRecord = box.records?.[0];
 
             const formattedData = {
-                birdboxes: {
-                    birdbox_id: box.birdbox_id,
-                    birdbox_name: box.name,
-                    birdbox_lat: box.latitude,
-                    birdbox_long: box.longitude,
-                    location: box.location_name ?? box.name,
-                    installation_date: box.created_at,
-                    last_captured_image: latestRecord
-                        ? {
-                            photo_url: `images/${latestRecord.image_id}`,
-                            timestamp: latestRecord.timestamp
-                        }
-                        : null,
-                    last_identified_kestrel: stats?.mostRecentKestrel ?? null
-                },
-                birdbox_records: {
-                    birdbox_id: box.birdbox_id,
-                    total_captured_photos: stats?.totalRecords ?? 0,
-                    total_photos_with_creatures: stats?.photosWithCreatures ?? 0,
-                    total_kestrel_identified_photos: stats?.numKestrelIdentified ?? 0,
-                    total_non_kestrel_identified_photos: stats?.nonKestrelIdentified ?? 0,
-                    number_active_days: stats?.numActiveDays ?? 0,
-                    usage_rate: stats?.usageRate ?? 0,
-                    modified_records: stats?.modifiedRecords ?? 0,
-                    records: [
-                        ...box.records.map(record => ({
-                            record_id: record.record_id,
-                            timestamp: record.timestamp,
-                            modified_bird: record.manual_bird,
-                            modified_date: record.updated_at,
-                            image_url: `images/${record.image_id}`,
-                            primary_guess: record.guesses && record.guesses.length > 0 ? record.guesses[0].species.species_name : null,
-                            primary_guess_confidence: record.guesses && record.guesses.length > 0 ? record.guesses[0].model_confidence : null,
-                            other_guesses: record.guesses && record.guesses.length > 1 ? record.guesses.slice(1).map(guess => ({
-                                species_id: guess.species ? guess.species.species_id : null,
-                                species_name: guess.species ? guess.species.species_name : null,
-                                model_confidence: guess.model_confidence
-                            })) : []
-                        }))
-                    ]
-                }
+                birdbox_id: box.birdbox_id,
+                birdbox_name: box.name,
+                birdbox_lat: box.latitude,
+                birdbox_long: box.longitude,
+                location: box.location_name ?? box.name,
+                installation_date: box.created_at,
+                last_captured_image: latestRecord
+                    ? {
+                        photo_url: `images/${latestRecord.image_id}`,
+                        timestamp: latestRecord.timestamp
+                    }
+                    : null,
+                last_identified_kestrel: stats?.mostRecentKestrel ?? null,
+                total_captured_photos: stats?.totalRecords ?? 0,
+                total_photos_with_creatures: stats?.photosWithCreatures ?? 0,
+                total_kestrel_identified_photos: stats?.numKestrelIdentified ?? 0,
+                total_non_kestrel_identified_photos: stats?.nonKestrelIdentified ?? 0,
+                number_active_days: stats?.numActiveDays ?? 0,
+                usage_rate: stats?.usageRate ?? 0,
+                modified_records: stats?.modifiedRecords ?? 0,
+                records: [
+                    ...box.records.map(record => ({
+                        record_id: record.record_id,
+                        timestamp: record.timestamp,
+                        modified_bird: record.manual_bird,
+                        modified_date: record.updated_at,
+                        image_url: `images/${record.image_id}`,
+                        primary_guess: record.guesses && record.guesses.length > 0 ? record.guesses[0].species.species_name : null,
+                        primary_guess_confidence: record.guesses && record.guesses.length > 0 ? record.guesses[0].model_confidence : null,
+                        other_guesses: record.guesses && record.guesses.length > 1 ? record.guesses.slice(1).map(guess => ({
+                            species_id: guess.species ? guess.species.species_id : null,
+                            species_name: guess.species ? guess.species.species_name : null,
+                            model_confidence: guess.model_confidence
+                        })) : []
+                    }))
+                ]
             };
 
             res.json({

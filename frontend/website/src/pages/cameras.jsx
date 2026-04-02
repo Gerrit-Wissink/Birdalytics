@@ -10,10 +10,7 @@ export default function Cameras() {
     // TODO: Replace with GET request to fetch cameras from backend
     const [showModal, setShowModal] = useState(false);
     const [isLoading, setIsLoading] = useState(true);
-    const [boxesData, setBoxesData] = useState({
-        birdboxes: [],
-        birdbox_records: []
-    });
+    const [boxesData, setBoxesData] = useState([]);
 
     const [imageMap, setImageMap] = useState({});
 
@@ -30,7 +27,11 @@ export default function Cameras() {
             try {
                 const response = await apiClient.get('/boxes/record');
                 if (response.status === 200) {
-                    setBoxesData(response.data.data);
+                    const data = response.data.data;
+                    console.log('Boxes data:', data);
+                    setBoxesData(data);
+                } else {
+                    console.error('Failed to fetch boxes data:', response.status);
                 }
             } catch (error) {
                 console.error('Error fetching boxes data:', error);
@@ -43,15 +44,15 @@ export default function Cameras() {
     }, []);
 
     useEffect(() => {
-        if (boxesData.birdboxes.length === 0) return;
-
+        if (boxesData.length === 0) return;
+        
         console.log("Fetching images for birdboxes...");
         const fetchImagesForBoxes = async () => {
             try {
                 const newImageMap = {};
-
-                for (const box of boxesData.birdboxes) {
-                    if (!box.last_captured_image) {
+                
+                for(const box of boxesData) {
+                    if(!box.last_captured_image) {
                         console.log("No image to fetch for box:", box.birdbox_name);
                         continue;
                     }
@@ -82,7 +83,7 @@ export default function Cameras() {
         };
     }, [boxesData]);
 
-    const cameras = boxesData.birdboxes;
+    const cameras = boxesData;
     const hasActivity = boxesData.birdbox_records.some((boxRecord) => {
         const items = boxRecord.images ?? boxRecord.records ?? [];
         return items.length > 0;

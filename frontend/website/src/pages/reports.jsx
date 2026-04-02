@@ -24,7 +24,7 @@ export default function Reports() {
         }
     }, []);
 
-    const [boxesData, setBoxesData] = useState({ birdboxes: [], birdbox_records: [] });
+    const [boxesData, setBoxesData] = useState([]);
     const [selectedBoxNames, setSelectedBoxNames] = useState([]);
 
     useEffect(() => {
@@ -34,7 +34,7 @@ export default function Reports() {
                 if (response.status === 200) {
                     const data = response.data.data;
                     setBoxesData(data);
-                    setSelectedBoxNames(data.birdboxes.map((b) => b.birdbox_name));
+                    setSelectedBoxNames(data.map((b) => b.birdbox_name));
                 }
             } catch (error) {
                 console.error('Error fetching boxes data:', error);
@@ -43,14 +43,9 @@ export default function Reports() {
         fetchBoxesData();
     }, []);
 
-    const selectedBirdboxes = boxesData.birdboxes.filter(b =>
+    const selectedBirdboxes = boxesData.filter(b =>
         selectedBoxNames.includes(b.birdbox_name)
     );
-    const selectedIds = new Set(selectedBirdboxes.map(b => b.birdbox_id));
-    const selectedBoxesData = {
-        birdboxes: selectedBirdboxes,
-        birdbox_records: boxesData.birdbox_records.filter(r => selectedIds.has(r.birdbox_id)),
-    };
 
     const [value, setValue] = React.useState('PDF');
 
@@ -67,7 +62,7 @@ export default function Reports() {
         const chartImage = canvas.toDataURL('image/png');
         const lineCanvas = await html2canvas(lineGraphRef.current, { backgroundColor: '#ffffff' });
         const lineGraphImage = lineCanvas.toDataURL('image/png');
-        await BuildPDF(selectedBoxesData, chartImage, lineGraphImage);
+        await BuildPDF(selectedBirdboxes, chartImage, lineGraphImage);
     };
 
     const hasAnyBoxes = boxesData.birdboxes.length > 0;
@@ -146,7 +141,7 @@ export default function Reports() {
                                 <p style={{ fontStyle: 'italic', marginTop: '0px' }}>
                                     Please note that preview is not exact.
                                 </p>
-                                <PDFPreview boxesData={selectedBoxesData} />
+                                <PDFPreview boxesData={selectedBirdboxes} />
                             </>
                         ) : (
                             <div className="empty-state stat-empty-state">
