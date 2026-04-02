@@ -35,8 +35,12 @@ function PieCenterLabel({ percentage, title, textColor}) {
   );
 }
 
-export default function BirdPieChart({ kestrels = 0, otherBirds = 0, nonBirds = 0 }) {
+export default function BirdPieChart({ birdboxes }) {
   const [hoveredIndex, setHoveredIndex] = useState(0);
+
+  var kestrels = birdboxes.reduce((sum, box) => sum + (box.total_kestrel_identified_photos ?? 0), 0);
+  var otherBirds = birdboxes.reduce((sum, box) => sum + (box.total_non_kestrel_identified_photos ?? 0), 0);
+  var nonBirds = birdboxes.reduce((sum, box) => sum + ((box.total_photos_with_creatures - box.total_kestrel_identified_photos - box.total_non_kestrel_identified_photos) ?? 0), 0);
 
   const data = [
     { value: kestrels ?? 0, label: 'American Kestrels', title: 'total kestrel' },
@@ -45,7 +49,7 @@ export default function BirdPieChart({ kestrels = 0, otherBirds = 0, nonBirds = 
   ];
 
   const total = data.reduce((sum, item) => sum + (item.value ?? 0), 0);
-  const percentage = total > 0 ? Math.round((data[hoveredIndex].value / total) * 100) : 0;
+  const percentage = total > 0 ? Math.round((data[hoveredIndex].value ?? 0) / total * 100) : 0;
   const currentColor = colors[hoveredIndex];
   const currentTitle = data[hoveredIndex].title;
 
