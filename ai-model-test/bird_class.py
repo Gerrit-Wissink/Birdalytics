@@ -126,6 +126,7 @@ class BirdPipeline:
         print("Running YOLO detection...")
         yolo_results = self.yolo(files, conf=yolo_conf, iou=yolo_iou, agnostic_nms=True, verbose=False)
         print("YOLO detection completed.")
+        print(f"YOLO results: {[len(getattr(r, 'boxes', [])) for r in yolo_results]} boxes detected across {len(files)} image(s)")
 
         output = []
 
@@ -219,4 +220,11 @@ class BirdPipeline:
                 })
                 
         print("All images processed.")
+        for item in output:
+            print(f"Image: {item['filename']}")
+            if item['best_guesses']:
+                for guess in item['best_guesses']:
+                    print(f"  - {guess['label']}: {guess['score']:.4f}")
+            else:
+                print("  - No guesses")
         return output
