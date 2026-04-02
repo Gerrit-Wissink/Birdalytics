@@ -1,0 +1,8 @@
+pillow
+python-dotenv
+psycopg[binary]
+typing-extensions
+ultralytics
+transformers
+torch
+torchvision

@@ -14,3 +14,8 @@ services:
       DB_PORT: 5432
     ports:
       - "8000:8000"
+
+  worker:
+    build:
+      context: ./ai-model-test
+      dockerfile: Dockerfile.prod

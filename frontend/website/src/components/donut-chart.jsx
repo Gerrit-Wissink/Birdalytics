@@ -35,17 +35,17 @@ function PieCenterLabel({ percentage, title, textColor}) {
   );
 }
 
-export default function BirdPieChart({ kestrels, otherBirds, nonBirds }) {
+export default function BirdPieChart({ kestrels = 0, otherBirds = 0, nonBirds = 0 }) {
   const [hoveredIndex, setHoveredIndex] = useState(0);
 
   const data = [
-    { value: kestrels, label: 'American Kestrels', title: 'total kestrel' },
-    { value: otherBirds, label: 'Other Birds', title: 'other bird' },
-    { value: nonBirds, label: 'Non-Birds', title: 'non-bird' },
+    { value: kestrels ?? 0, label: 'American Kestrels', title: 'total kestrel' },
+    { value: otherBirds ?? 0, label: 'Other Birds', title: 'other bird' },
+    { value: nonBirds ?? 0, label: 'Non-Birds', title: 'non-bird' },
   ];
 
-  const total = data.reduce((sum, item) => sum + item.value, 0);
-  const percentage = Math.round((data[hoveredIndex].value / total) * 100);
+  const total = data.reduce((sum, item) => sum + (item.value ?? 0), 0);
+  const percentage = total > 0 ? Math.round((data[hoveredIndex].value / total) * 100) : 0;
   const currentColor = colors[hoveredIndex];
   const currentTitle = data[hoveredIndex].title;
 
@@ -69,12 +69,12 @@ export default function BirdPieChart({ kestrels, otherBirds, nonBirds }) {
 
 export function BoxesPieChart({ birdboxes, photo = false }) {
   //THESE CAN ALSO BE CONSTS WHEN WE DELETE THE BELOW
-  var kestrels = birdboxes.reduce((sum, box) => sum + (box.kestrel_count ?? 0), 0);
-  var otherBirds = birdboxes.reduce((sum, box) => sum + (box.other_bird_count ?? 0), 0);
-  var nonBirds = birdboxes.reduce((sum, box) => sum + (box.non_bird_count ?? 0), 0);
+  var kestrels = birdboxes.reduce((sum, box) => sum + (box.total_kestrel_identified_photos ?? 0), 0);
+  var otherBirds = birdboxes.reduce((sum, box) => sum + (box.total_non_kestrel_identified_photos ?? 0), 0);
+  var nonBirds = birdboxes.reduce((sum, box) => sum + ((box.total_photos_with_creatures - box.total_kestrel_identified_photos - box.total_non_kestrel_identified_photos) ?? 0), 0);
 
   //DELETE THIS LATER, IT'S JUST SO MY GRAPH LOOKS PRETTY TEEHEE
-  if (kestrels || otherBirds || nonBirds == 0){
+  if (kestrels === 0 || otherBirds === 0 || nonBirds === 0){
     kestrels = 45;
     otherBirds = 21;
     nonBirds = 12

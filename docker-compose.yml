@@ -20,7 +20,10 @@ services:
       DB_PORT: 5432
 
   worker:
-    build: ./ai-model-test
+    build:
+      context: ./ai-model-test
+    volumes:
+      - ./ai-model-test/yolov8n.pt:/app/yolov8n.pt
     depends_on:
       - db
     environment:
