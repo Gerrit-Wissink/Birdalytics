@@ -65,8 +65,8 @@ export default function Reports() {
         await BuildPDF(selectedBirdboxes, chartImage, lineGraphImage);
     };
 
-    const hasAnyBoxes = boxesData.birdboxes.length > 0;
-    const hasAnyRecords = boxesData.birdbox_records.length > 0;
+    const hasAnyBoxes = boxesData.length > 0;
+    const hasAnyRecords = boxesData.some((box) => (box.records ?? []).length > 0);
     const hasReportData = hasAnyBoxes || hasAnyRecords;
     const hasSelectedBoxes = selectedBirdboxes.length > 0;
 
@@ -88,7 +88,7 @@ export default function Reports() {
                 <h1>Reports Page</h1>
                 <div style={{ display: 'flex', flexDirection: 'row', alignItems: 'center', justifyContent: 'space-between', marginBottom: '1em' }}>
                     <BirdBoxSelect
-                        boxes={boxesData.birdboxes}
+                        boxes={boxesData}
                         selectedBoxNames={selectedBoxNames}
                         setSelectedBoxNames={setSelectedBoxNames}
                     />

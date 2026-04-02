@@ -50,7 +50,7 @@ export default function ValGrid() {
                 if (response.status === 200) {
                     const data = response.data.data;
                     console.log('Boxes data:', data);
-                    setBoxesData(data);
+                    setBoxesData(Array.isArray(data) ? data : []);
                 } else {
                     console.error('Failed to fetch boxes data:', response.status);
                 }
@@ -174,7 +174,7 @@ export default function ValGrid() {
             {/* Row 1: Camera selector, search,  filter/sort buttons */}
             <div className={styles.topRow}>
                 <BirdBoxSelect
-                    boxes={boxesData.birdboxes}
+                    boxes={boxesData}
                     selectedBoxNames={selectedBoxNames}
                     setSelectedBoxNames={setSelectedBoxNames}
                 />
