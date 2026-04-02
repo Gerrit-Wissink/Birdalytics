@@ -178,7 +178,7 @@ export default function LineGraph({ boxesData = [] }) {
 }
 
 
-export function LineGraphPicture({ boxesData }) {
+export function LineGraphPicture({ boxesData = [] }) {
 
   const [chartData, setChartData] = useState(createEmptyChartData());
 
