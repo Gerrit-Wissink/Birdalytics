@@ -147,9 +147,7 @@ def main():
             for job in jobs:
                 try:
                     if job["event_type"] == "birdrecord.created":
-                        print("Processing job:", job['id'])
                         process_job(conn, job)
-                        print(f"Processed job {job['id']}")
                 except Exception as e:
                     print(f"Error processing job {job['id']}: {e}")
 
