@@ -354,11 +354,7 @@ export default function ValGrid(){
                     emptyMessage="No images match your filters."
                     style={{marginBottom: '5%'}}
                 />
-            {Object.keys(speciesCorrections).length > 0 &&
-                <div id={styles.saveBanner}onClick={handleSaveChanges}>
-                    Click to save all changes
-                </div>
-            }
+            <div id={styles.saveBanner}>Click to save all changes</div>
             </div>
         </section>
         </>
