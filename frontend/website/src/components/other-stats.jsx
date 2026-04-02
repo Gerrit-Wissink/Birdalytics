@@ -1,6 +1,6 @@
 import React from 'react'
 
-export default function ActiveBoxes({ boxesData }) {
+export default function ActiveBoxes({ boxesData = [] }) {
 
     const numBoxes = boxesData.length;
 
@@ -14,7 +14,7 @@ export default function ActiveBoxes({ boxesData }) {
     )
 }
 
-export function MostActiveBox({ boxesData }) {
+export function MostActiveBox({ boxesData = [] }) {
 
     const MostActiveBox = boxesData.reduce((best, box) => {
         return (box.usage_rate ?? -Infinity) > (best?.usage_rate ?? -Infinity) ? box : best;
