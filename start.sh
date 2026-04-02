@@ -20,7 +20,7 @@ echo ""
 echo "======================================"
 echo "Copying files to backend..."
 echo "======================================"
-cp -r frontend/website/dist/* backend/static/
+cp -r dist/* ../../backend/static/
 echo ""
 echo "======================================"
 echo "Starting backend server..."
