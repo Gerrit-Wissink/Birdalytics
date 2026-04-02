@@ -83,17 +83,14 @@ const fake_data = [
 
 const areaColor = 'var(--gradient-green)'
 
-export default function LineGraph({ boxesData }) {
+export default function LineGraph({ boxesData = [] }) {
 
   const [chartData, setChartData] = useState(createEmptyChartData());
 
-  const formatData = (boxesData) => {
-    // I want to loop through all of the boxes in boxes data
-    // For each box I want to loop through all of the records
-    // For each record if the timestamp is in the current month I want to add it to an array
-    // Then I want to loop through this array and if the record has an identified kestrel, I want to add 1 to the value of that day in the chart data)
-    if (!chartData || chartData.length === 0) setChartData(createEmptyChartData());
-    const updatedChartData = [...chartData];
+  const formatData = (boxesData = []) => {
+    // Create fresh chart data for the current month
+    const updatedChartData = createEmptyChartData();
+    
     for (const box of boxesData) {
         for (const record of box.records ?? []) {
             if (checkDateInCurrentMonth(new Date(record.timestamp))) {
@@ -114,7 +111,9 @@ export default function LineGraph({ boxesData }) {
       // For now, we'll just use some dummy data
       setChartData(createEmptyChartData());
       const serverData = formatData(boxesData);
-      const totalKestrels = serverData.reduce((sum, item) => sum + item.value, 0);
+      console.log("Adding total kestrels...");
+      const totalKestrels = serverData.reduce((sum, item) => sum + (item.value ?? 0), 0);
+      console.log("Kestresls sum result:", totalKestrels);
       if (totalKestrels === 0) {
         // If there are no kestrels detected, use the dummy data to make the graph look nice
         setChartData(fake_data);
@@ -179,7 +178,48 @@ export default function LineGraph({ boxesData }) {
 }
 
 
-export function LineGraphPicture({ boxesData }) {
+export function LineGraphPicture({ boxesData = [] }) {
+
+  const [chartData, setChartData] = useState(createEmptyChartData());
+
+  const formatData = (boxesData = []) => {
+    // Create fresh chart data for the current month
+    const updatedChartData = createEmptyChartData();
+    
+    for (const box of boxesData) {
+        for (const record of box.records ?? []) {
+            if (checkDateInCurrentMonth(new Date(record.timestamp))) {
+                const day = new Date(record.timestamp).getDate();
+                if(day < 1 || day > updatedChartData.length) continue; //safety check to make sure day is within bounds of current month
+                if (checkContainsKestrel(record.primary_guess) || checkContainsKestrel(record.modified_bird)) {
+                    updatedChartData[day - 1].value += 1
+                }
+            }
+        }
+    }
+    return updatedChartData;
+  }
+  
+  
+  useEffect(() => {
+      // This is where you would fetch the data and update the chartData state
+      // For now, we'll just use some dummy data
+      setChartData(createEmptyChartData());
+      const serverData = formatData(boxesData);
+      console.log("Adding total kestrels...");
+      const totalKestrels = serverData.reduce((sum, item) => sum + (item.value ?? 0), 0);
+      console.log("Kestresls sum result:", totalKestrels);
+      if (totalKestrels === 0) {
+        // If there are no kestrels detected, use the dummy data to make the graph look nice
+        setChartData(fake_data);
+      } else {
+        setChartData(serverData);
+      }
+
+
+  }, [boxesData]);
+
+
   return (
     <div className='stat-box-graph' style = {{backgroundColor: '#fff'}}>
       <LineChart
