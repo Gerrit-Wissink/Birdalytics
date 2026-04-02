@@ -115,7 +115,7 @@ export default function BirdboxImageTable({ box, onSelectRow }) {
   const viewImageTemplate = (row) => (
     <span 
       className={styles.viewImageCell}
-      onClick={() => {
+      onClick={(e) => {
         e.stopPropagation(); // Prevent row selection when clicking the icon
         const imageUrl = `https://birdalytics.webdev.gccis.rit.edu/api/${row.image_url}`;
         if (imageUrl) {
