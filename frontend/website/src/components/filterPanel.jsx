@@ -2,7 +2,7 @@ import React from 'react';
 import { Dropdown } from 'primereact/dropdown';
 import { Calendar } from 'primereact/calendar';
 import { CONFIDENCE_OPTIONS, MODIFIED_OPTIONS } from './useFilters';
-import styles from './FilterPanel.module.css';
+import styles from './filterPanel.module.css';
 
 // Renders the four filter controls and a "Clear all" button.
 //
