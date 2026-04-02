@@ -114,7 +114,7 @@ export default function LineGraph({ boxesData = [] }) {
       // For now, we'll just use some dummy data
       setChartData(createEmptyChartData());
       const serverData = formatData(boxesData);
-      const totalKestrels = serverData.reduce((sum, item) => sum + item.value, 0);
+      const totalKestrels = serverData.reduce((sum, item) => sum + (item.value ?? 0), 0);
       if (totalKestrels === 0) {
         // If there are no kestrels detected, use the dummy data to make the graph look nice
         setChartData(fake_data);
