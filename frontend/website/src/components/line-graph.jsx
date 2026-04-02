@@ -41,7 +41,7 @@ const createEmptyChartData = () => {
   const isLeapYear = (year % 4 === 0 && year % 100 !== 0) || (year % 400 === 0);
   const daysInMonth = month_day_counts[month] + (isFebruary && isLeapYear ? 1 : 0);
 
-  return Array.fill(0, daysInMonth).map((_, index) => ({
+  return new Array(daysInMonth).fill(0).map((_, index) => ({
     date: `${month + 1}/${index + 1}`,
     value: 0,
   }));
