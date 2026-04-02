@@ -89,7 +89,8 @@
   width: 75%;
   max-width: 450px;
   box-shadow: 0 8px 32px rgba(0, 0, 0, 0.1);
-  position: relative;
+  position: absolute;
+  top: 15%;
 }
 
 #upload-box h2 {
@@ -333,12 +334,12 @@ form {
 
 .confirm-modal p {
   margin: 0.5rem 0;
-  color: #555;
+  color: var(--text);
   font-size: 0.95rem;
 }
 
 .confirm-modal strong {
-  color: #1976d2;
+  color: var(--blue);
   font-weight: 600;
 }
 
@@ -353,6 +354,10 @@ form {
   justify-content: flex-end;
   gap: 0.75rem;
   margin-top: 1.25rem;
+}
+
+#space-to-scroll {
+  height: 10vh;
 }
 
 /* Animations */
@@ -377,6 +382,9 @@ form {
     padding-left: 1rem;
     padding-right: 1rem;
     padding-top: 10vh;
+    padding-bottom: 50vh;
+    overflow-y: scroll;
+    scroll-behavior: smooth;
   }
 
   #upload-logo {

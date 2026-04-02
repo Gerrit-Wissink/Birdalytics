@@ -183,3 +183,10 @@
   padding-left: 20%;
   text-align: center;
 }
+
+
+@media screen and (max-width: 890px){
+
+  /* TABLE NEEDS TO BE MOBILE FRIENDLY OR SWIPEABLE */
+  
+}

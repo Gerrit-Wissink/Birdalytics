@@ -217,6 +217,7 @@ export default function Upload() {
                                 className="import-btn"
                                 onClick={handleConfirmUpload}
                                 disabled={isLoading}
+                                style={{backgroundColor: 'var(--green)'}}
                             >
                                 {isLoading ? 'Uploading...' : 'Confirm Upload'}
                             </button>
@@ -317,6 +318,7 @@ export default function Upload() {
                         </div>
                     </form>
                 </div>
+                <div id="space-to-scroll"></div>
             </section>
         </>
     );

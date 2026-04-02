@@ -1,4 +1,6 @@
 import SearchRoundedIcon from '@mui/icons-material/SearchRounded';
+import ChevronRightRoundedIcon from '@mui/icons-material/ChevronRightRounded';
+import ChevronLeftRoundedIcon from '@mui/icons-material/ChevronLeftRounded';
 import { FiEdit } from "react-icons/fi";
 import { IoSettingsOutline } from "react-icons/io5";
 import { useState, useEffect } from 'react';
@@ -24,6 +26,7 @@ export default function CamInfo() {
     const [imageMap, setImageMap] = useState({});
 
     const [showAddCameraModal, setShowAddCameraModal] = useState(false);
+    const [sidebarOpen, setSidebarOpen] = useState(false);
     
 
     useEffect(() => {
@@ -128,12 +131,23 @@ export default function CamInfo() {
     return(
     <>
     <section id={styles.camInfoContainer}>
-            <div id={styles.cameraSidebar}>
+            <button
+                className={`${styles.sidebarToggle} ${sidebarOpen ? styles.sidebarToggleOpen : ''}`}
+                onClick={() => setSidebarOpen(prev => !prev)}
+                aria-label={sidebarOpen ? 'Close camera menu' : 'Open camera menu'}
+            >
+                {sidebarOpen ? <ChevronLeftRoundedIcon /> : <ChevronRightRoundedIcon />}
+            </button>
+
+            {sidebarOpen && (
+                <div className={styles.sidebarOverlay} onClick={() => setSidebarOpen(false)} />
+            )}
+
+            <div id={styles.cameraSidebar} className={sidebarOpen ? styles.sidebarOpen : ''}>
                 <div className={styles.titleSpan}>
                     <h2>Cameras</h2>
                     <span style={{ display: 'flex', gap: '1em', alignItems: 'center', cursor: 'pointer' }}>
-                        <SearchRoundedIcon style={{ fontSize: '1.5rem', color: 'var(--text)' }} />
-                        <FiEdit style={{ color: 'var(--text)', fontSize: '1.5rem', marginLeft: '0.5rem' }} 
+                        <FiEdit style={{ color: 'var(--text)', fontSize: '1.5rem', marginLeft: '0.5rem' }}
                             onClick={() => setShowAddCameraModal(true)} />
                     </span>
                 </div>
@@ -142,7 +156,7 @@ export default function CamInfo() {
                     <div
                         className={styles.cameraItem}
                         key={camera.birdbox_id}
-                        onClick={() => setSelectedID(camera.birdbox_id)}
+                        onClick={() => { setSelectedID(camera.birdbox_id); setSidebarOpen(false); }}
                         style={{
                             backgroundColor: camera.birdbox_id === selectedID ? '#B8CEEF' : undefined,
                             cursor: 'pointer'
@@ -163,29 +177,33 @@ export default function CamInfo() {
                 <div className={styles.sideBySide}>
                     <div id={styles.cameraSummary}>
                         <h3 style={{ margin: '5px 0px' }}>Camera Summary</h3>
-                        <div style={{ display: 'flex', justifyContent: 'space-between' }}>
+                        <div className={styles.statsRow} style={{ display: 'flex', justifyContent: 'space-between' }}>
                             <div className={styles.stackedStats}>
                                 <p>Usage Rate</p>
-                                <p className='small-stat-highlight'>{(selectedCamera?.usage_rate || 0).toFixed(2)}%</p>
+                                <p className='small-stat-highlight'>{(selectedCamera?.usage_rate || 0).toFixed(0)}%</p>
                             </div>
                             <div className={styles.stackedStats}>
                                 <p>Kestrel Frequency</p>
                                 <p className='small-stat-highlight'>
-                                    {(((selectedCamera?.total_kestrel_identified_photos / selectedCamera?.total_photos_with_creatures) || 0) * 100).toFixed(2)}%
+                                    {(((selectedCamera?.total_kestrel_identified_photos / selectedCamera?.total_photos_with_creatures) || 0) * 100).toFixed(0)}%
                                 </p>
                             </div>
                         </div>
 
-                        <p>Images Reviewed</p>
-                        <ProgressBar totalImages={100} imagesReviewed={85} />
-                        {/* TODO REPLACE WITH REFERENCES TO BOX DATA: TOTAL IMAGES WITH LOW CONFIDENCE AND TOTAL MODIFIED WITH LOW CONFIDENCE??? */}
+                        <div id={styles.progressSection}>
+                            <p>Images Reviewed</p>
+                            <ProgressBar totalImages={100} imagesReviewed={85} />
+                            {/* TODO REPLACE WITH REFERENCES TO BOX DATA: TOTAL IMAGES WITH LOW CONFIDENCE AND TOTAL MODIFIED WITH LOW CONFIDENCE??? */}
+                        </div>
 
-                        <p>Species Overview</p>
-                        <MiniPieChart 
-                            kestrels={selectedCamera?.total_kestrel_identified_photos || 0}
-                            otherBirds={selectedCamera?.total_non_kestrel_identified_photos || 0} 
-                            nonBirds={(selectedCamera?.total_captured_photos || 0) - (selectedCamera?.total_kestrel_identified_photos || 0) - (selectedCamera?.total_non_kestrel_identified_photos || 0)} 
-                        />
+                        <div className={styles.speciesOverviewGroup}>
+                            <p>Species Overview</p>
+                            <MiniPieChart
+                                kestrels={selectedCamera?.total_kestrel_identified_photos || 0}
+                                otherBirds={selectedCamera?.total_non_kestrel_identified_photos || 0}
+                                nonBirds={(selectedCamera?.total_captured_photos || 0) - (selectedCamera?.total_kestrel_identified_photos || 0) - (selectedCamera?.total_non_kestrel_identified_photos || 0)}
+                            />
+                        </div>
 
 
                     </div>
