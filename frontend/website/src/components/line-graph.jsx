@@ -83,11 +83,11 @@ const fake_data = [
 
 const areaColor = 'var(--gradient-green)'
 
-export default function LineGraph({ boxesData }) {
+export default function LineGraph({ boxesData = [] }) {
 
   const [chartData, setChartData] = useState(createEmptyChartData());
 
-  const formatData = (boxesData) => {
+  const formatData = (boxesData = []) => {
     // I want to loop through all of the boxes in boxes data
     // For each box I want to loop through all of the records
     // For each record if the timestamp is in the current month I want to add it to an array

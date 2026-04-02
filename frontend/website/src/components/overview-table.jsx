@@ -47,7 +47,7 @@ function InfoTooltip({ text }) {
   );
 }
 
-export default function BirdboxTable({ boxesData }) {
+export default function BirdboxTable({ boxesData = [] }) {
   const birdboxes = boxesData
   const colWidths = ["30%", "22%", "15%", "18%", "15%"];
 
