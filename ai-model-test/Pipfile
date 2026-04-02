@@ -4,9 +4,15 @@ verify_ssl = true
 name = "pypi"
 
 [packages]
-flask = "*"
+pillow = "*"
+python-dotenv = "*"
+psycopg = {extras = ["binary"], version = "*"}
+typing-extensions = "*"
+opencv-python-headless = "*"
+ultralytics-opencv-headless = "*"
+transformers = "*"
 
 [dev-packages]
 
 [requires]
-python_version = "3.11"
+python_version = "3.10"

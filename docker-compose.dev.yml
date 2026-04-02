@@ -1,0 +1,27 @@
+services:
+  db:
+    ports:
+      - "5432:5432"
+
+  backend:
+    environment:
+      NODE_ENV: development
+      SYNC_DB: "false"
+    ports:
+      - "8000:8000"
+
+  frontend:
+    environment:
+      VITE_DOCKER: "true"
+      CHOKIDAR_USEPOLLING: "true"
+    build: ./frontend
+    volumes:
+      - ./frontend/website:/app
+      - /app/node_modules
+    depends_on:
+      - backend
+    ports:
+      - "5173:5173"
+
+  worker:
+    profiles: ["ml"]

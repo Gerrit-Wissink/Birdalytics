@@ -35,7 +35,13 @@ const Birdguess = sequelize.define('Birdguess', {
     tableName: 'birdguesses',
     timestamps: true,
     createdAt: 'created_at',
-    updatedAt: 'updated_at'
+    updatedAt: 'updated_at',
+    indexes: [
+        {
+            unique: true,
+            fields: ['record_id', 'model', 'species_id']
+        }
+    ]
 });
 
 module.exports = Birdguess;

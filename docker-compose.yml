@@ -1,0 +1,37 @@
+services:
+  db:
+    image: postgres:16
+    environment:
+      POSTGRES_USER: postgres
+      POSTGRES_PASSWORD: student
+      POSTGRES_DB: birdalytics
+    volumes:
+      - pgdata:/var/lib/postgresql/data
+
+  backend:
+    build: ./backend
+    depends_on:
+      - db
+    environment:
+      DB_NAME: birdalytics
+      DB_USER: postgres
+      DB_PASSWORD: student
+      DB_HOST: db
+      DB_PORT: 5432
+
+  worker:
+    build:
+      context: ./ai-model-test
+    volumes:
+      - ./ai-model-test/yolov8n.pt:/app/yolov8n.pt
+    depends_on:
+      - db
+    environment:
+      DB_HOST: db
+      DB_PORT: 5432
+      DB_NAME: birdalytics
+      DB_USER: postgres
+      DB_PASSWORD: student
+
+volumes:
+  pgdata:

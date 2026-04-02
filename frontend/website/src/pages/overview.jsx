@@ -1,3 +1,4 @@
+import React from 'react'
 import Map from "../components/map.jsx";
 import BirdPieChart from "../components/donut-chart.jsx";
 import LineGraph from "../components/line-graph.jsx";
@@ -10,10 +11,7 @@ import apiClient from "../utils/apiClient.jsx";
 
 export default function Overview(){
     const user = localStorage.getItem('user');
-    const [boxesData, setBoxesData] = useState({
-        birdboxes: [],
-        birdbox_records: []
-    });
+    const [boxesData, setBoxesData] = useState([]);
 
     useEffect(() => {
         document.title = "Home - Birdalytics";
@@ -35,7 +33,7 @@ export default function Overview(){
                 if (response.status === 200) {
                     const data = response.data.data;
                     console.log('Boxes data:', data);
-                    setBoxesData(data); // Assuming the boxes data is in the 'data' property
+                    setBoxesData(data);
                 } else {
                     console.error('Failed to fetch boxes data:', response.status);
                 }
@@ -61,7 +59,7 @@ export default function Overview(){
                 
                 <div className="column-right">
                     <div>
-                        <BirdPieChart boxesData={boxesData} />
+                        <BirdPieChart kestrels={44} otherBirds={28} nonBirds={18} />
                     </div>
 
                     <div>

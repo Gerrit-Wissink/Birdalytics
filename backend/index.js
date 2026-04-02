@@ -11,8 +11,6 @@ const recordRoutes = require('./routes/recordRoutes');
 const boxRoutes = require('./routes/boxRoutes');
 const imageRoutes = require('./routes/imageRoutes');
 const speciesRoutes = require('./routes/speciesRoutes');
-//middleware route
-const authMiddleware = require('./middleware/auth');
 
 // Load environment variables
 dotenv.config();
@@ -33,25 +31,28 @@ app.use((req, res, next) => {
 
 // Optional database sync - controlled by environment variable
 // Set SYNC_DB=true in .env to enable syncing
-if (process.env.SYNC_DB === 'true') {
-    sequelize.sync({ alter: true })
-        .then(() => {
-            console.log('Database synced successfully');
-        })
-        .catch(err => {
-            console.error('Error syncing database:', err);
-        });
-} else {
-    console.log('Database sync disabled (set SYNC_DB=true in .env to enable)');
-}
+const connectWithRetry = async () => {
+    try {
+        await sequelize.authenticate();
+        console.log('Database connected');
 
-//Serve static files
-app.use(express.static(path.join(__dirname, 'static')));
+        if (process.env.SYNC_DB === 'true') {
+            await sequelize.sync({ alter: true });
+            console.log('Database synced successfully');
+        }
+
+    } catch (err) {
+        console.log('DB not ready, retrying in 3s...');
+        setTimeout(connectWithRetry, 3000);
+    }
+};
+
+connectWithRetry();
 
 // Routes
-app.get('/', (req, res) => {
-    res.json({ 
-        message: 'Birdalytics API', 
+app.get('/api', (req, res) => {
+    res.json({
+        message: 'Birdalytics API',
         version: '1.0.0',
         status: 'running'
     });
@@ -66,6 +67,22 @@ app.use('/api/record', recordRoutes);
 app.use('/api/boxes', boxRoutes);
 app.use('/api/images', imageRoutes);
 app.use('/api/species', speciesRoutes);
+app.use('/api/jobs', jobRoutes);
+
+//Serve static files
+app.use(express.static(path.join(__dirname, 'static')));
+
+app.get('/{*splat}', (req, res, next) => {
+    res.sendFile(path.join(__dirname, 'static', 'index.html'))
+})
+
+// React catch-all for non-API GET routes
+app.get('/{*splat}', (req, res, next) => {
+    if (req.path.startsWith('/api')) {
+        return next();
+    }
+    res.sendFile(path.join(__dirname, 'static', 'index.html'));
+});
 
 // 404 Handler
 app.use((req, res) => {
@@ -75,15 +92,14 @@ app.use((req, res) => {
 // Error Handler
 app.use((err, req, res, next) => {
     console.error(err.stack);
-    res.status(500).json({ 
+    res.status(500).json({
         error: 'Something went wrong!',
         message: process.env.NODE_ENV === 'development' ? err.message : undefined
     });
 });
 
 // Start server
-app.listen(PORT, () => {
+app.listen(PORT, '0.0.0.0', () => {
     console.log(`Express started on port ${PORT}`);
     console.log(`Environment: ${process.env.NODE_ENV || 'development'}`);
 });
-

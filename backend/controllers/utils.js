@@ -1,4 +1,3 @@
-
 const calculateBoxStats = (box) => {
     const totalRecords = box.records.length;
     const photosWithCreatures = box.records.filter(

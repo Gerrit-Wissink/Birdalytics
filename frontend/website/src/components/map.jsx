@@ -1,20 +1,23 @@
+import React from 'react'
 import { useEffect, useRef } from 'react'
 
-const Map = ({ boxesData }) => {
-  const birdboxData = boxesData.birdboxes
-  console.log("Loaded birdbox data:", birdboxData)
+const Map = ({ boxesData = [] }) => {
+  console.log("Loaded birdbox data:", boxesData);
   const mapRef = useRef(null)
   const mapInstanceRef = useRef(null)
 
   // Helper function: iterates over birdbox data and adds a marker for each box
   const createBirdboxMarkers = (L, map) => {
-    birdboxData.forEach((box) => {
+    if (!boxesData || boxesData.length === 0) return;
+    
+    boxesData.forEach((box) => {
       const marker = L.marker([box.birdbox_lat, box.birdbox_long])
         .addTo(map)
         .bindPopup(box.birdbox_name, { closeButton: false })
 
       marker.on('mouseover', function () { this.openPopup() })
       marker.on('mouseout', function () { this.closePopup() })
+      marker.on('click', function () { window.location.href = `/#/camInfo?selected=${box.birdbox_id}` })
     })
   }
 

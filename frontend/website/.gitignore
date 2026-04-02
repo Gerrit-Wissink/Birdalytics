@@ -26,3 +26,6 @@ leaflet/
 *.njsproj
 *.sln
 *.sw?
+
+# Configs
+.env

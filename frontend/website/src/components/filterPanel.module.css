@@ -1,0 +1,26 @@
+.panelRow {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  flex-wrap: wrap;
+  padding: 10px 12px;
+  background: #f8f9fc;
+  border: 1.5px solid #e8e8e8;
+  border-radius: 10px;
+}
+
+.clearAllButton {
+  background: none;
+  border: none;
+  color: #2563EB;
+  font-size: 0.875rem;
+  font-weight: 500;
+  cursor: pointer;
+  padding: 4px 8px;
+  border-radius: 6px;
+  transition: background 0.15s;
+}
+
+.clearAllButton:hover {
+  background: #fee2e2;
+}

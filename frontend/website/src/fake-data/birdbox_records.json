@@ -16,21 +16,21 @@
         {
           "image_id": "IMG-1-001",
           "birdbox_id": 1,
-          "photo_url": "https://placeholder.com/images/1/img_20250101_083012.jpg",
+          "photo_url": "https://www.allaboutbirds.org/guide/assets/photo/302366931-480px.jpg",
           "date": "2025-01-01",
           "time": "08:30:12",
           "identified_result": "kestrel",
           "confidence_score": 0.94,
           "other_possible_results": [
-            { "label": "sparrowhawk", "confidence_score": 0.04 },
-            { "label": "unknown bird", "confidence_score": 0.02 }
+            { "label": "merlin", "confidence_score": 0.07 },
+            { "label": "unknown bird", "confidence_score": 0.05 }
           ],
           "modified_date": null
         },
         {
           "image_id": "IMG-1-002",
           "birdbox_id": 1,
-          "photo_url": "https://placeholder.com/images/1/img_20250103_112445.jpg",
+          "photo_url": "https://hawkwatch.org/wp-content/uploads/2023/01/1-1-1024x768.png",
           "date": "2025-01-03",
           "time": "11:24:45",
           "identified_result": "kestrel",
@@ -44,21 +44,21 @@
         {
           "image_id": "IMG-1-003",
           "birdbox_id": 1,
-          "photo_url": "https://placeholder.com/images/1/img_20250105_094530.jpg",
+          "photo_url": "https://www.allaboutbirds.org/guide/assets/photo/302369161-480px.jpg",
           "date": "2025-01-05",
           "time": "09:45:30",
           "identified_result": "wood mouse",
           "confidence_score": 0.76,
           "other_possible_results": [
             { "label": "vole", "confidence_score": 0.14 },
-            { "label": "unknown mammal", "confidence_score": 0.10 }
+            { "label": "unknown mammal", "confidence_score": 0.1 }
           ],
           "modified_date": "2025-01-06"
         },
         {
           "image_id": "IMG-1-004",
           "birdbox_id": 1,
-          "photo_url": "https://placeholder.com/images/1/img_20250108_161020.jpg",
+          "photo_url": "https://www.allaboutbirds.org/guide/assets/photo/302366931-480px.jpg",
           "date": "2025-01-08",
           "time": "16:10:20",
           "identified_result": "kestrel",
@@ -100,7 +100,7 @@
         {
           "image_id": "IMG-1-007",
           "birdbox_id": 1,
-          "photo_url": "https://placeholder.com/images/1/img_20250117_150822.jpg",
+          "photo_url": "https://hawkwatch.org/wp-content/uploads/2023/01/1-1-1024x768.png",
           "date": "2025-01-17",
           "time": "15:08:22",
           "identified_result": "brown rat",
@@ -114,7 +114,7 @@
         {
           "image_id": "IMG-1-008",
           "birdbox_id": 1,
-          "photo_url": "https://placeholder.com/images/1/img_20250120_084401.jpg",
+          "photo_url": "https://www.allaboutbirds.org/guide/assets/photo/302366931-480px.jpg",
           "date": "2025-01-20",
           "time": "08:44:01",
           "identified_result": "kestrel",
@@ -128,7 +128,7 @@
         {
           "image_id": "IMG-1-009",
           "birdbox_id": 1,
-          "photo_url": "https://placeholder.com/images/1/img_20250123_131200.jpg",
+          "photo_url": "https://www.allaboutbirds.org/guide/assets/photo/302369161-480px.jpg",
           "date": "2025-01-23",
           "time": "13:12:00",
           "identified_result": "kestrel",
@@ -142,14 +142,14 @@
         {
           "image_id": "IMG-1-010",
           "birdbox_id": 1,
-          "photo_url": "https://placeholder.com/images/1/img_20250126_092715.jpg",
+          "photo_url": "https://hawkwatch.org/wp-content/uploads/2023/01/1-1-1024x768.png",
           "date": "2025-01-26",
           "time": "09:27:15",
           "identified_result": "unknown",
           "confidence_score": 0.38,
           "other_possible_results": [
             { "label": "kestrel", "confidence_score": 0.32 },
-            { "label": "hobby", "confidence_score": 0.30 }
+            { "label": "hobby", "confidence_score": 0.3 }
           ],
           "modified_date": "2025-01-27"
         },
@@ -170,7 +170,7 @@
         {
           "image_id": "IMG-1-012",
           "birdbox_id": 1,
-          "photo_url": "https://placeholder.com/images/1/img_20250201_111038.jpg",
+          "photo_url": "https://www.allaboutbirds.org/guide/assets/photo/302366931-480px.jpg",
           "date": "2025-02-01",
           "time": "11:10:38",
           "identified_result": "wood mouse",
@@ -184,7 +184,7 @@
         {
           "image_id": "IMG-1-013",
           "birdbox_id": 1,
-          "photo_url": "https://placeholder.com/images/1/img_20250204_143922.jpg",
+          "photo_url": "https://www.allaboutbirds.org/guide/assets/photo/302369161-480px.jpg",
           "date": "2025-02-04",
           "time": "14:39:22",
           "identified_result": "kestrel",
@@ -198,7 +198,7 @@
         {
           "image_id": "IMG-1-014",
           "birdbox_id": 1,
-          "photo_url": "https://placeholder.com/images/1/img_20250219_143200.jpg",
+          "photo_url": "https://hawkwatch.org/wp-content/uploads/2023/01/1-1-1024x768.png",
           "date": "2025-02-19",
           "time": "14:32:00",
           "identified_result": "kestrel",
@@ -227,7 +227,7 @@
         {
           "image_id": "IMG-2-001",
           "birdbox_id": 2,
-          "photo_url": "https://placeholder.com/images/2/img_20250102_090011.jpg",
+          "photo_url": "https://www.allaboutbirds.org/guide/assets/photo/302366931-480px.jpg",
           "date": "2025-01-02",
           "time": "09:00:11",
           "identified_result": "kestrel",
@@ -241,13 +241,13 @@
         {
           "image_id": "IMG-2-002",
           "birdbox_id": 2,
-          "photo_url": "https://placeholder.com/images/2/img_20250105_141230.jpg",
+          "photo_url": "https://www.allaboutbirds.org/guide/assets/photo/302367141-480px.jpg",
           "date": "2025-01-05",
           "time": "14:12:30",
           "identified_result": "unknown",
           "confidence_score": 0.44,
           "other_possible_results": [
-            { "label": "kestrel", "confidence_score": 0.30 },
+            { "label": "kestrel", "confidence_score": 0.3 },
             { "label": "merlin", "confidence_score": 0.26 }
           ],
           "modified_date": "2025-01-06"
@@ -255,7 +255,7 @@
         {
           "image_id": "IMG-2-003",
           "birdbox_id": 2,
-          "photo_url": "https://placeholder.com/images/2/img_20250108_163445.jpg",
+          "photo_url": "https://hawkwatch.org/wp-content/uploads/2023/01/1-1-1024x768.png",
           "date": "2025-01-08",
           "time": "16:34:45",
           "identified_result": "vole",
@@ -283,7 +283,7 @@
         {
           "image_id": "IMG-2-005",
           "birdbox_id": 2,
-          "photo_url": "https://placeholder.com/images/2/img_20250114_110033.jpg",
+          "photo_url": "https://www.allaboutbirds.org/guide/assets/photo/302369161-480px.jpg",
           "date": "2025-01-14",
           "time": "11:00:33",
           "identified_result": "kestrel",
@@ -297,7 +297,7 @@
         {
           "image_id": "IMG-2-006",
           "birdbox_id": 2,
-          "photo_url": "https://placeholder.com/images/2/img_20250117_154722.jpg",
+          "photo_url": "https://hawkwatch.org/wp-content/uploads/2023/01/1-1-1024x768.png",
           "date": "2025-01-17",
           "time": "15:47:22",
           "identified_result": "unknown",
@@ -311,7 +311,7 @@
         {
           "image_id": "IMG-2-007",
           "birdbox_id": 2,
-          "photo_url": "https://placeholder.com/images/2/img_20250120_093811.jpg",
+          "photo_url": "https://www.allaboutbirds.org/guide/assets/photo/302367141-480px.jpg",
           "date": "2025-01-20",
           "time": "09:38:11",
           "identified_result": "brown rat",
@@ -329,7 +329,7 @@
           "date": "2025-01-23",
           "time": "17:25:09",
           "identified_result": "kestrel",
-          "confidence_score": 0.90,
+          "confidence_score": 0.9,
           "other_possible_results": [
             { "label": "merlin", "confidence_score": 0.06 },
             { "label": "unknown bird", "confidence_score": 0.04 }
@@ -339,7 +339,7 @@
         {
           "image_id": "IMG-2-009",
           "birdbox_id": 2,
-          "photo_url": "https://placeholder.com/images/2/img_20250126_084330.jpg",
+          "photo_url": "https://www.allaboutbirds.org/guide/assets/photo/302366931-480px.jpg",
           "date": "2025-01-26",
           "time": "08:43:30",
           "identified_result": "kestrel",
@@ -353,7 +353,7 @@
         {
           "image_id": "IMG-2-010",
           "birdbox_id": 2,
-          "photo_url": "https://placeholder.com/images/2/img_20250129_131044.jpg",
+          "photo_url": "https://hawkwatch.org/wp-content/uploads/2023/01/1-1-1024x768.png",
           "date": "2025-01-29",
           "time": "13:10:44",
           "identified_result": "unknown",
@@ -367,7 +367,7 @@
         {
           "image_id": "IMG-2-011",
           "birdbox_id": 2,
-          "photo_url": "https://placeholder.com/images/2/img_20250201_160900.jpg",
+          "photo_url": "https://www.allaboutbirds.org/guide/assets/photo/302367141-480px.jpg",
           "date": "2025-02-01",
           "time": "16:09:00",
           "identified_result": "kestrel",
@@ -381,7 +381,7 @@
         {
           "image_id": "IMG-2-012",
           "birdbox_id": 2,
-          "photo_url": "https://placeholder.com/images/2/img_20250215_112208.jpg",
+          "photo_url": "https://www.allaboutbirds.org/guide/assets/photo/302369161-480px.jpg",
           "date": "2025-02-15",
           "time": "11:22:08",
           "identified_result": "kestrel",
@@ -402,7 +402,7 @@
           "confidence_score": 0.72,
           "other_possible_results": [
             { "label": "vole", "confidence_score": 0.18 },
-            { "label": "unknown mammal", "confidence_score": 0.10 }
+            { "label": "unknown mammal", "confidence_score": 0.1 }
           ],
           "modified_date": null
         }
@@ -415,7 +415,7 @@
       "total_kestrel_identified_photos": 67,
       "total_non_kestrel_identified_photos": 37,
       "number_active_days": 10,
-      "usage_rate": 0.40,
+      "usage_rate": 0.4,
       "modified_flagged_images": {
         "modified_count": 2,
         "total_flagged_count": 7
@@ -424,7 +424,7 @@
         {
           "image_id": "IMG-3-001",
           "birdbox_id": 3,
-          "photo_url": "https://placeholder.com/images/3/img_20250104_074512.jpg",
+          "photo_url": "https://hawkwatch.org/wp-content/uploads/2023/01/1-1-1024x768.png",
           "date": "2025-01-04",
           "time": "07:45:12",
           "identified_result": "kestrel",
@@ -438,11 +438,11 @@
         {
           "image_id": "IMG-3-002",
           "birdbox_id": 3,
-          "photo_url": "https://placeholder.com/images/3/img_20250107_130022.jpg",
+          "photo_url": "https://www.allaboutbirds.org/guide/assets/photo/302367141-480px.jpg",
           "date": "2025-01-07",
           "time": "13:00:22",
           "identified_result": "unknown",
-          "confidence_score": 0.40,
+          "confidence_score": 0.4,
           "other_possible_results": [
             { "label": "kestrel", "confidence_score": 0.33 },
             { "label": "hobby", "confidence_score": 0.27 }
@@ -452,13 +452,13 @@
         {
           "image_id": "IMG-3-003",
           "birdbox_id": 3,
-          "photo_url": "https://placeholder.com/images/3/img_20250110_091830.jpg",
+          "photo_url": "https://www.allaboutbirds.org/guide/assets/photo/302366931-480px.jpg",
           "date": "2025-01-10",
           "time": "09:18:30",
           "identified_result": "vole",
           "confidence_score": 0.84,
           "other_possible_results": [
-            { "label": "wood mouse", "confidence_score": 0.10 },
+            { "label": "wood mouse", "confidence_score": 0.1 },
             { "label": "unknown mammal", "confidence_score": 0.06 }
           ],
           "modified_date": null
@@ -480,11 +480,11 @@
         {
           "image_id": "IMG-3-005",
           "birdbox_id": 3,
-          "photo_url": "https://placeholder.com/images/3/img_20250116_084411.jpg",
+          "photo_url": "https://hawkwatch.org/wp-content/uploads/2023/01/1-1-1024x768.png",
           "date": "2025-01-16",
           "time": "08:44:11",
           "identified_result": "kestrel",
-          "confidence_score": 0.90,
+          "confidence_score": 0.9,
           "other_possible_results": [
             { "label": "sparrowhawk", "confidence_score": 0.06 },
             { "label": "peregrine", "confidence_score": 0.04 }
@@ -494,7 +494,7 @@
         {
           "image_id": "IMG-3-006",
           "birdbox_id": 3,
-          "photo_url": "https://placeholder.com/images/3/img_20250119_113355.jpg",
+          "photo_url": "https://www.allaboutbirds.org/guide/assets/photo/302369161-480px.jpg",
           "date": "2025-01-19",
           "time": "11:33:55",
           "identified_result": "brown rat",
@@ -508,7 +508,7 @@
         {
           "image_id": "IMG-3-007",
           "birdbox_id": 3,
-          "photo_url": "https://placeholder.com/images/3/img_20250122_170829.jpg",
+          "photo_url": "https://www.allaboutbirds.org/guide/assets/photo/302367141-480px.jpg",
           "date": "2025-01-22",
           "time": "17:08:29",
           "identified_result": "unknown",
@@ -536,7 +536,7 @@
         {
           "image_id": "IMG-3-009",
           "birdbox_id": 3,
-          "photo_url": "https://placeholder.com/images/3/img_20250128_142617.jpg",
+          "photo_url": "https://www.allaboutbirds.org/guide/assets/photo/302369161-480px.jpg",
           "date": "2025-01-28",
           "time": "14:26:17",
           "identified_result": "kestrel",
@@ -550,7 +550,7 @@
         {
           "image_id": "IMG-3-010",
           "birdbox_id": 3,
-          "photo_url": "https://placeholder.com/images/3/img_20250131_081122.jpg",
+          "photo_url": "https://www.allaboutbirds.org/guide/assets/photo/302366931-480px.jpg",
           "date": "2025-01-31",
           "time": "08:11:22",
           "identified_result": "kestrel",
@@ -568,7 +568,7 @@
           "date": "2025-02-03",
           "time": "15:50:39",
           "identified_result": "wood mouse",
-          "confidence_score": 0.80,
+          "confidence_score": 0.8,
           "other_possible_results": [
             { "label": "vole", "confidence_score": 0.12 },
             { "label": "unknown mammal", "confidence_score": 0.08 }
@@ -578,7 +578,7 @@
         {
           "image_id": "IMG-3-012",
           "birdbox_id": 3,
-          "photo_url": "https://placeholder.com/images/3/img_20250220_101515.jpg",
+          "photo_url": "https://www.allaboutbirds.org/guide/assets/photo/302367141-480px.jpg",
           "date": "2025-02-20",
           "time": "10:15:15",
           "identified_result": "kestrel",
@@ -611,7 +611,7 @@
           "date": "2025-01-03",
           "time": "08:55:20",
           "identified_result": "kestrel",
-          "confidence_score": 0.90,
+          "confidence_score": 0.9,
           "other_possible_results": [
             { "label": "merlin", "confidence_score": 0.06 },
             { "label": "unknown bird", "confidence_score": 0.04 }
@@ -621,7 +621,7 @@
         {
           "image_id": "IMG-4-002",
           "birdbox_id": 4,
-          "photo_url": "https://placeholder.com/images/4/img_20250106_121033.jpg",
+          "photo_url": "https://hawkwatch.org/wp-content/uploads/2023/01/1-1-1024x768.png",
           "date": "2025-01-06",
           "time": "12:10:33",
           "identified_result": "unknown",
@@ -635,7 +635,7 @@
         {
           "image_id": "IMG-4-003",
           "birdbox_id": 4,
-          "photo_url": "https://placeholder.com/images/4/img_20250109_163728.jpg",
+          "photo_url": "https://www.allaboutbirds.org/guide/assets/photo/302366931-480px.jpg",
           "date": "2025-01-09",
           "time": "16:37:28",
           "identified_result": "kestrel",
@@ -649,7 +649,7 @@
         {
           "image_id": "IMG-4-004",
           "birdbox_id": 4,
-          "photo_url": "https://placeholder.com/images/4/img_20250112_075843.jpg",
+          "photo_url": "https://www.allaboutbirds.org/guide/assets/photo/302367141-480px.jpg",
           "date": "2025-01-12",
           "time": "07:58:43",
           "identified_result": "brown rat",
@@ -663,7 +663,7 @@
         {
           "image_id": "IMG-4-005",
           "birdbox_id": 4,
-          "photo_url": "https://placeholder.com/images/4/img_20250115_102255.jpg",
+          "photo_url": "https://www.allaboutbirds.org/guide/assets/photo/302369161-480px.jpg",
           "date": "2025-01-15",
           "time": "10:22:55",
           "identified_result": "kestrel",
@@ -683,7 +683,7 @@
           "identified_result": "unknown",
           "confidence_score": 0.43,
           "other_possible_results": [
-            { "label": "kestrel", "confidence_score": 0.30 },
+            { "label": "kestrel", "confidence_score": 0.3 },
             { "label": "merlin", "confidence_score": 0.27 }
           ],
           "modified_date": "2025-01-19"
@@ -698,14 +698,14 @@
           "confidence_score": 0.75,
           "other_possible_results": [
             { "label": "wood mouse", "confidence_score": 0.15 },
-            { "label": "unknown mammal", "confidence_score": 0.10 }
+            { "label": "unknown mammal", "confidence_score": 0.1 }
           ],
           "modified_date": null
         },
         {
           "image_id": "IMG-4-008",
           "birdbox_id": 4,
-          "photo_url": "https://placeholder.com/images/4/img_20250124_174933.jpg",
+          "photo_url": "https://www.allaboutbirds.org/guide/assets/photo/302369161-480px.jpg",
           "date": "2025-01-24",
           "time": "17:49:33",
           "identified_result": "kestrel",
@@ -719,7 +719,7 @@
         {
           "image_id": "IMG-4-009",
           "birdbox_id": 4,
-          "photo_url": "https://placeholder.com/images/4/img_20250127_083117.jpg",
+          "photo_url": "https://www.allaboutbirds.org/guide/assets/photo/302367141-480px.jpg",
           "date": "2025-01-27",
           "time": "08:31:17",
           "identified_result": "kestrel",
@@ -733,7 +733,7 @@
         {
           "image_id": "IMG-4-010",
           "birdbox_id": 4,
-          "photo_url": "https://placeholder.com/images/4/img_20250130_161802.jpg",
+          "photo_url": "https://hawkwatch.org/wp-content/uploads/2023/01/1-1-1024x768.png",
           "date": "2025-01-30",
           "time": "16:18:02",
           "identified_result": "unknown",
@@ -747,7 +747,7 @@
         {
           "image_id": "IMG-4-011",
           "birdbox_id": 4,
-          "photo_url": "https://placeholder.com/images/4/img_20250202_110422.jpg",
+          "photo_url": "https://www.allaboutbirds.org/guide/assets/photo/302369161-480px.jpg",
           "date": "2025-02-02",
           "time": "11:04:22",
           "identified_result": "kestrel",
@@ -761,7 +761,7 @@
         {
           "image_id": "IMG-4-012",
           "birdbox_id": 4,
-          "photo_url": "https://placeholder.com/images/4/img_20250210_095533.jpg",
+          "photo_url": "https://www.allaboutbirds.org/guide/assets/photo/302366931-480px.jpg",
           "date": "2025-02-10",
           "time": "09:55:33",
           "identified_result": "kestrel",
@@ -775,14 +775,14 @@
         {
           "image_id": "IMG-4-013",
           "birdbox_id": 4,
-          "photo_url": "https://placeholder.com/images/4/img_20250217_134801.jpg",
+          "photo_url": "https://www.allaboutbirds.org/guide/assets/photo/302367141-480px.jpg",
           "date": "2025-02-17",
           "time": "13:48:01",
           "identified_result": "wood mouse",
           "confidence_score": 0.74,
           "other_possible_results": [
             { "label": "vole", "confidence_score": 0.16 },
-            { "label": "unknown mammal", "confidence_score": 0.10 }
+            { "label": "unknown mammal", "confidence_score": 0.1 }
           ],
           "modified_date": null
         }
@@ -804,7 +804,7 @@
         {
           "image_id": "IMG-5-001",
           "birdbox_id": 5,
-          "photo_url": "https://placeholder.com/images/5/img_20250101_071544.jpg",
+          "photo_url": "https://www.allaboutbirds.org/guide/assets/photo/302369161-480px.jpg",
           "date": "2025-01-01",
           "time": "07:15:44",
           "identified_result": "kestrel",
@@ -846,7 +846,7 @@
         {
           "image_id": "IMG-5-004",
           "birdbox_id": 5,
-          "photo_url": "https://placeholder.com/images/5/img_20250110_081200.jpg",
+          "photo_url": "https://hawkwatch.org/wp-content/uploads/2023/01/1-1-1024x768.png",
           "date": "2025-01-10",
           "time": "08:12:00",
           "identified_result": "kestrel",
@@ -860,7 +860,7 @@
         {
           "image_id": "IMG-5-005",
           "birdbox_id": 5,
-          "photo_url": "https://placeholder.com/images/5/img_20250113_160511.jpg",
+          "photo_url": "https://www.allaboutbirds.org/guide/assets/photo/302369161-480px.jpg",
           "date": "2025-01-13",
           "time": "16:05:11",
           "identified_result": "vole",
@@ -874,7 +874,7 @@
         {
           "image_id": "IMG-5-006",
           "birdbox_id": 5,
-          "photo_url": "https://placeholder.com/images/5/img_20250116_093344.jpg",
+          "photo_url": "https://www.allaboutbirds.org/guide/assets/photo/302367141-480px.jpg",
           "date": "2025-01-16",
           "time": "09:33:44",
           "identified_result": "kestrel",
@@ -888,7 +888,7 @@
         {
           "image_id": "IMG-5-007",
           "birdbox_id": 5,
-          "photo_url": "https://placeholder.com/images/5/img_20250119_175229.jpg",
+          "photo_url": "https://www.allaboutbirds.org/guide/assets/photo/302366931-480px.jpg",
           "date": "2025-01-19",
           "time": "17:52:29",
           "identified_result": "kestrel",
@@ -909,14 +909,14 @@
           "confidence_score": 0.36,
           "other_possible_results": [
             { "label": "kestrel", "confidence_score": 0.34 },
-            { "label": "sparrowhawk", "confidence_score": 0.30 }
+            { "label": "sparrowhawk", "confidence_score": 0.3 }
           ],
           "modified_date": "2025-01-23"
         },
         {
           "image_id": "IMG-5-009",
           "birdbox_id": 5,
-          "photo_url": "https://placeholder.com/images/5/img_20250125_141033.jpg",
+          "photo_url": "https://hawkwatch.org/wp-content/uploads/2023/01/1-1-1024x768.png",
           "date": "2025-01-25",
           "time": "14:10:33",
           "identified_result": "brown rat",
@@ -944,7 +944,7 @@
         {
           "image_id": "IMG-5-011",
           "birdbox_id": 5,
-          "photo_url": "https://placeholder.com/images/5/img_20250131_074122.jpg",
+          "photo_url": "https://www.allaboutbirds.org/guide/assets/photo/302369161-480px.jpg",
           "date": "2025-01-31",
           "time": "07:41:22",
           "identified_result": "kestrel",
@@ -958,7 +958,7 @@
         {
           "image_id": "IMG-5-012",
           "birdbox_id": 5,
-          "photo_url": "https://placeholder.com/images/5/img_20250203_163944.jpg",
+          "photo_url": "https://hawkwatch.org/wp-content/uploads/2023/01/1-1-1024x768.png",
           "date": "2025-02-03",
           "time": "16:39:44",
           "identified_result": "wood mouse",
@@ -972,7 +972,7 @@
         {
           "image_id": "IMG-5-013",
           "birdbox_id": 5,
-          "photo_url": "https://placeholder.com/images/5/img_20250207_090833.jpg",
+          "photo_url": "https://www.allaboutbirds.org/guide/assets/photo/302366931-480px.jpg",
           "date": "2025-02-07",
           "time": "09:08:33",
           "identified_result": "kestrel",
@@ -985,12 +985,11 @@
         },
         {
           "image_id": "IMG-5-014",
-          "birdbox_id": 5,
-          "photo_url": "https://placeholder.com/images/5/img_20250211_152700.jpg",
+          "photo_url": "https://www.allaboutbirds.org/guide/assets/photo/302367141-480px.jpgs://placeholder.com/images/5/img_20250211_152700.jpg",
           "date": "2025-02-11",
           "time": "15:27:00",
           "identified_result": "unknown",
-          "confidence_score": 0.40,
+          "confidence_score": 0.4,
           "other_possible_results": [
             { "label": "kestrel", "confidence_score": 0.31 },
             { "label": "hobby", "confidence_score": 0.29 }
@@ -1000,14 +999,14 @@
         {
           "image_id": "IMG-5-015",
           "birdbox_id": 5,
-          "photo_url": "https://placeholder.com/images/5/img_20250221_162030.jpg",
+          "photo_url": "https://www.allaboutbirds.org/guide/assets/photo/302367141-480px.jpg",
           "date": "2025-02-21",
           "time": "16:20:30",
           "identified_result": "kestrel",
           "confidence_score": 0.99,
           "other_possible_results": [
             { "label": "sparrowhawk", "confidence_score": 0.01 },
-            { "label": "unknown bird", "confidence_score": 0.00 }
+            { "label": "unknown bird", "confidence_score": 0.0 }
           ],
           "modified_date": null
         }

@@ -1,14 +1,7 @@
+import React from 'react'
 import { useState, useRef } from "react"
 import InfoOutlinedIcon from "@mui/icons-material/InfoOutlined"
 import styles from './overview-table.module.css'
-
-function formatDateTime(date, time) {
-  if (!date || !time) return "—";
-  const [y, m, d] = date.split("-");
-  const shortYear = y.slice(2);
-  const [hh, mm] = time.split(":");
-  return `${m}/${d}/${shortYear} - ${hh}:${mm}`;
-}
 
 function formatTimestamp(timestamp) {
   if (!timestamp) return "—";
@@ -54,10 +47,8 @@ function InfoTooltip({ text }) {
   );
 }
 
-export default function BirdboxTable({ boxesData }) {
-  const birdboxes = boxesData.birdboxes
-  const birdboxRecords = boxesData.birdbox_records
-  const recordsMap = Object.fromEntries(birdboxRecords.map((r) => [r.birdbox_id, r]));
+export default function BirdboxTable({ boxesData = [] }) {
+  const birdboxes = boxesData
   const colWidths = ["30%", "22%", "15%", "18%", "15%"];
 
   const colGroup = (
@@ -90,15 +81,14 @@ export default function BirdboxTable({ boxesData }) {
             {colGroup}
             <tbody>
               {birdboxes.map((box) => {
-                const record = recordsMap[box.birdbox_id];
                 return (
                   <tr key={box.birdbox_id} className={styles.row}>
                     <td className={styles.td} data-title="Box Name">{box.birdbox_name}</td>
                     <td className={styles.td} data-title="Last Record">
                       {formatTimestamp(box.last_captured_image?.timestamp)}
                     </td>
-                    <td className={styles.td} data-title="Usage Rate">{record ? toPercent(record.usage_rate) : "—"}</td>
-                    <td className={styles.td} data-title="Kestrel Frequency">{kestrelFrequency(record)}</td>
+                    <td className={styles.td} data-title="Usage Rate">{toPercent(box.usage_rate)}</td>
+                    <td className={styles.td} data-title="Kestrel Frequency">{kestrelFrequency(box)}</td>
                     <td className={styles.td} data-title="Last Kestrel">
                       {formatTimestamp(box.last_identified_kestrel?.timestamp)}
                     </td>
