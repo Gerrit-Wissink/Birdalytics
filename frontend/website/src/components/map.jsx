@@ -1,9 +1,8 @@
 import React from 'react'
 import { useEffect, useRef } from 'react'
 
-const Map = ({ boxesData }) => {
-  const birdboxData = boxesData
-  console.log("Loaded birdbox data:", birdboxData)
+const Map = ({ boxesData = [] }) => {
+  console.log("Loaded birdbox data:", boxesData);
   const mapRef = useRef(null)
   const mapInstanceRef = useRef(null)
 
