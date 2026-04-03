@@ -1,7 +1,6 @@
 import SearchRoundedIcon from '@mui/icons-material/SearchRounded';
 import ChevronRightRoundedIcon from '@mui/icons-material/ChevronRightRounded';
 import ChevronLeftRoundedIcon from '@mui/icons-material/ChevronLeftRounded';
-import { FiEdit } from "react-icons/fi";
 import { IoSettingsOutline } from "react-icons/io5";
 import { useState, useEffect, useCallback } from 'react';
 import apiClient from '../utils/apiClient';
@@ -32,7 +31,42 @@ export default function CamInfo() {
 
     const [showAddCameraModal, setShowAddCameraModal] = useState(false);
     const [sidebarOpen, setSidebarOpen] = useState(false);
+    const [windowWidth, setWindowWidth] = useState(window.innerWidth);
+
+    const MOBILE_BREAKPOINT = 1024;
+
+    // Function to navigate to next/previous record in the Species Identification view
+    const navigateRecord = (direction) => {
+        if (!selectedCamera?.records || selectedCamera.records.length === 0) return;
+        
+        const currentIndex = selectedCamera.records.findIndex(
+            r => r.record_id === selectedRow?.record_id
+        );
+        
+        let newIndex;
+        if (direction === 'next') {
+            newIndex = (currentIndex + 1) % selectedCamera.records.length;
+        } else {
+            newIndex = (currentIndex - 1 + selectedCamera.records.length) % selectedCamera.records.length;
+        }
+        
+        setSelectedRow(selectedCamera.records[newIndex]);
+    };
     
+    //Mobile swipe handlers for navigating between records in the Species Identification view
+    const handlers = useSwipeable({
+        onSwipedLeft: () => navigateRecord('next'),
+        onSwipedRight: () => navigateRecord('prev'),
+        trackMouse: true // enables mouse drag too
+    });
+    
+
+    // Handle window resize for responsive layout
+    useEffect(() => {
+        const handleResize = () => setWindowWidth(window.innerWidth);
+        window.addEventListener('resize', handleResize);
+        return () => window.removeEventListener('resize', handleResize);
+    }, []);
 
     useEffect(() => {
         const fetchBoxesData = async () => {
@@ -84,10 +118,17 @@ export default function CamInfo() {
     useEffect(() => {
         if (selectedID === null || selectedID === -1) {
             setSelectedCamera(null);
+            setSelectedRow(null);
             return;
         }
         const selectedCam = boxesData.find(box => box.birdbox_id === parseInt(selectedID));
         setSelectedCamera(selectedCam || null);
+        // Initialize selectedRow to first record when camera changes
+        if (selectedCam?.records && selectedCam.records.length > 0) {
+            setSelectedRow(selectedCam.records[0]);
+        } else {
+            setSelectedRow(null);
+        }
     }, [selectedID, boxesData]);
 
     useEffect(() => {
@@ -132,7 +173,15 @@ export default function CamInfo() {
                 }
 
                 console.log('Setting imageMap with', Object.keys(newImageMap).length, 'images');
-                if (isMounted) setImageMap(newImageMap);
+                setImageMap(prevImageMap => {
+                    // Cleanup old URLs that are no longer needed
+                    Object.entries(prevImageMap).forEach(([recordId, url]) => {
+                        if (!newImageMap[recordId]) {
+                            URL.revokeObjectURL(url);
+                        }
+                    });
+                    return newImageMap;
+                });
             } catch (error) {
                 console.error('Error in fetchImagesForBox:', error);
             }
@@ -140,17 +189,78 @@ export default function CamInfo() {
 
         fetchImagesForBox();
 
+        // Cleanup: revoke all object URLs when component unmounts
         return () => {
             isMounted = false;
         };
 
     }, [selectedCamera]);
 
+    const DESKTOP_VIEW = (
+        <>
+            <h1 style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', marginRight: '7.5%' }}>
+                {selectedCamera?.birdbox_name ?? 'Select a Camera'}
+                <IoSettingsOutline />
+            </h1>
+
+            <div className={styles.sideBySide}>
+                <CameraSummary selectedCamera={selectedCamera} />
+
+                <div id={styles.identifyBox}>
+                    <SpeciesIdentification
+                        selectedRow={selectedRow}
+                        imageMap={imageMap}
+                        birdboxName={selectedCamera?.birdbox_name}
+                        onSpeciesOverride={(species) => {
+                            // Rerender the table row with the overridden species
+                            if (selectedRow) {
+                                setSelectedRow({ ...selectedRow, primary_guess: species, primary_guess_confidence: null });
+                            }
+                        }}
+                    />
+                </div>
+            </div>
+            <div style={{margin: '1em 0px'}}>
+                <BirdboxImageTable 
+                    box={selectedCamera}
+                    onSelectRow={(row) => setSelectedRow(row)}
+                    imageMap={imageMap}
+                />
+            </div>
+        </>
+    );
+
+    const MOBILE_VIEW = (
+        <>
+            <h1 style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', marginRight: '7.5%' }}>
+                {selectedCamera?.birdbox_name ?? 'Select a Camera'}
+                <IoSettingsOutline />
+            </h1>
+
+            <div id={styles.identifyBox} {...handlers}>
+                <SpeciesIdentification
+                    selectedRow={selectedRow}
+                    imageMap={imageMap}
+                    birdboxName={selectedCamera?.birdbox_name}
+                    onSpeciesOverride={(species) => {
+                        // Rerender the table row with the overridden species
+                        if (selectedRow) {
+                            setSelectedRow({ ...selectedRow, primary_guess: species, primary_guess_confidence: null }); // Set confidence to 100% on manual override
+                        }
+                    }}
+                />
+            </div>
+
+            <h2>Box Stats</h2>
+            <CameraSummary selectedCamera={selectedCamera} />
+        </>
+    );
+
 
 
     return(
     <>
-    <section id={styles.camInfoContainer}>
+        <section id={styles.camInfoContainer}>
             <button
                 className={`${styles.sidebarToggle} ${sidebarOpen ? styles.sidebarToggleOpen : ''}`}
                 onClick={() => setSidebarOpen(prev => !prev)}
@@ -163,92 +273,17 @@ export default function CamInfo() {
                 <div className={styles.sidebarOverlay} onClick={() => setSidebarOpen(false)} />
             )}
 
-            <div id={styles.cameraSidebar} className={sidebarOpen ? styles.sidebarOpen : ''}>
-                <div className={styles.titleSpan}>
-                    <h2>Cameras</h2>
-                    <span style={{ display: 'flex', gap: '1em', alignItems: 'center', cursor: 'pointer' }}>
-                        <FiEdit style={{ color: 'var(--text)', fontSize: '1.5rem', marginLeft: '0.5rem' }}
-                            onClick={() => setShowAddCameraModal(true)} />
-                    </span>
-                </div>
-
-                {boxesData.map((camera) => (
-                    <div
-                        className={styles.cameraItem}
-                        key={camera.birdbox_id}
-                        onClick={() => { setSelectedID(camera.birdbox_id); setSidebarOpen(false); }}
-                        style={{
-                            backgroundColor: camera.birdbox_id === selectedID ? '#B8CEEF' : undefined,
-                            cursor: 'pointer'
-                        }}
-                    >
-                        <p>{camera.location}</p>
-                        <h3>{camera.birdbox_name}</h3>
-                    </div>
-                ))}
-            </div>
+            <CameraSidebar
+                boxesData={boxesData}
+                selectedID={selectedID}
+                setSelectedID={setSelectedID}
+                setShowAddCameraModal={setShowAddCameraModal}
+                setSidebarOpen={setSidebarOpen}
+                sidebarOpen={sidebarOpen}
+            />
 
             <div id={styles.cameraContent}>
-                <h1 style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', marginRight: '7.5%' }}>
-                    {selectedCamera?.birdbox_name ?? 'Select a Camera'}
-                    <IoSettingsOutline />
-                </h1>
-
-                <div className={styles.sideBySide}>
-                    <div id={styles.cameraSummary}>
-                        <h3 style={{ margin: '5px 0px' }}>Camera Summary</h3>
-                        <div className={styles.statsRow} style={{ display: 'flex', justifyContent: 'space-between' }}>
-                            <div className={styles.stackedStats}>
-                                <p>Usage Rate</p>
-                                <p className='small-stat-highlight'>{(selectedCamera?.usage_rate || 0).toFixed(0)}%</p>
-                            </div>
-                            <div className={styles.stackedStats}>
-                                <p>Kestrel Frequency</p>
-                                <p className='small-stat-highlight'>
-                                    {(((selectedCamera?.total_kestrel_identified_photos / selectedCamera?.total_photos_with_creatures) || 0) * 100).toFixed(0)}%
-                                </p>
-                            </div>
-                        </div>
-
-                        <div id={styles.progressSection}>
-                            <p>Images Reviewed</p>
-                            <ProgressBar totalImages={100} imagesReviewed={85} />
-                            {/* TODO REPLACE WITH REFERENCES TO BOX DATA: TOTAL IMAGES WITH LOW CONFIDENCE AND TOTAL MODIFIED WITH LOW CONFIDENCE??? */}
-                        </div>
-
-                        <div className={styles.speciesOverviewGroup}>
-                            <p>Species Overview</p>
-                            <MiniPieChart
-                                kestrels={selectedCamera?.total_kestrel_identified_photos || 0}
-                                otherBirds={selectedCamera?.total_non_kestrel_identified_photos || 0}
-                                nonBirds={(selectedCamera?.total_captured_photos || 0) - (selectedCamera?.total_kestrel_identified_photos || 0) - (selectedCamera?.total_non_kestrel_identified_photos || 0)}
-                            />
-                        </div>
-
-
-                    </div>
-
-                    <div id={styles.identifyBox}>
-                        <SpeciesIdentification
-                            selectedRow={selectedRow}
-                            imageMap={imageMap}
-                            birdboxName={selectedCamera?.birdbox_name}
-                            onSpeciesOverride={(species) => {
-                                // Rerender the table row with the overridden species
-                                if (selectedRow) {
-                                    setSelectedRow({ ...selectedRow, primary_guess: species });
-                                }
-                            }}
-                        />
-                    </div>
-                </div>
-                <div style={{margin: '1em 0px'}}>
-                    <BirdboxImageTable 
-                        box={selectedCamera}
-                        onSelectRow={(row) => setSelectedRow(row)}
-                        imageMap={imageMap}
-                    />
-                </div>
+                {windowWidth >= MOBILE_BREAKPOINT ? DESKTOP_VIEW : MOBILE_VIEW}
             </div>
         </section>
         {showAddCameraModal && (

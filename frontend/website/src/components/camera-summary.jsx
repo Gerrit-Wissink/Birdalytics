@@ -3,39 +3,35 @@ import styles from '../pages/camInfo.module.css';
 import ProgressBar from './progress-bar';
 import MiniPieChart from './donut-chart';
 
-// Stable empty references to prevent infinite loops
-const EMPTY_RECORDS = [];
-const EMPTY_CAMERA = {};
-
 export default function CameraSummary({ selectedCamera }) {
-    console.log('[CameraSummary] render with selectedCamera:', selectedCamera?.birdbox_id);
     return (
         <div id={styles.cameraSummary}>
             <h3 style={{ margin: '5px 0px' }}>Camera Summary</h3>
             <div className={styles.statsRow} style={{ display: 'flex', justifyContent: 'space-between' }}>
                 <div className={styles.stackedStats}>
                     <p>Usage Rate</p>
-                    <p className='small-stat-highlight'>{(selectedCamera?.usage_rate * 100 || 0).toFixed(0)}%</p>
+                    <p className='small-stat-highlight'>{(selectedCamera?.usage_rate || 0).toFixed(0)}%</p>
                 </div>
                 <div className={styles.stackedStats}>
                     <p>Kestrel Frequency</p>
                     <p className='small-stat-highlight'>
-                        {((selectedCamera?.kestrel_frequency > 0 ? 
-                            ((selectedCamera?.kestrel_frequency) * 100) : 0).toFixed(0))}%
+                        {((selectedCamera?.total_photos_with_creatures && selectedCamera?.total_photos_with_creatures > 0 ? ((selectedCamera?.total_kestrel_identified_photos / selectedCamera?.total_photos_with_creatures) * 100) : 0).toFixed(0))}%
                     </p>
                 </div>
             </div>
 
             <div id={styles.progressSection}>
                 <p>Images Reviewed</p>
-                <ProgressBar box_records={selectedCamera?.records ?? EMPTY_RECORDS} />
+                <ProgressBar box_records={selectedCamera?.records || []} />
                 {/* TODO REPLACE WITH REFERENCES TO BOX DATA: TOTAL IMAGES WITH LOW CONFIDENCE AND TOTAL MODIFIED WITH LOW CONFIDENCE??? */}
             </div>
 
             <div className={styles.speciesOverviewGroup}>
                 <p>Species Overview</p>
                 <MiniPieChart
-                    selected_camera={selectedCamera ?? EMPTY_CAMERA}
+                    kestrels={selectedCamera?.total_kestrel_identified_photos || 0}
+                    otherBirds={selectedCamera?.total_non_kestrel_identified_photos || 0}
+                    nonBirds={Math.max(0, (selectedCamera?.total_captured_photos || 0) - (selectedCamera?.total_kestrel_identified_photos || 0) - (selectedCamera?.total_non_kestrel_identified_photos || 0))}
                 />
             </div>
 

@@ -17,11 +17,8 @@ export default function ProgressBar ({ box_records }){
     };
 
     useEffect(() => {
-        console.log('[ProgressBar] effect running - box_records length:', box_records.length, 'box_records:', box_records);
-        const low_confidence_records = box_records.filter(record => 
-            record.primary_guess === undefined || record.primary_guess_confidence === undefined || record.primary_guess_confidence < 0.8);
+        const low_confidence_records = box_records.filter(record => record.primary_guess_confidence < 0.8);
         const reviewed_records_count = low_confidence_records.reduce((count, record) => count + (record.modified_bird ? 1 : 0), 0);
-        console.log('[ProgressBar] setting state - imagesReviewed:', reviewed_records_count, 'totalImages:', low_confidence_records.length);
         setImagesReviewed(reviewed_records_count);
         setTotalImages(low_confidence_records.length);
     }, [box_records]);
