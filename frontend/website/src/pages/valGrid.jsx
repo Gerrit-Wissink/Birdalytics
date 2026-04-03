@@ -313,39 +313,23 @@ export default function ValGrid() {
     console.log('SORTED RECORDS: ', sortedRecords)
     return (
         <>
-            <section id='container'>
-                <h1>Validation Grid Page</h1>
-                <div className={styles.wrapper}>
-                    <style>{PRIMEREACT_OVERRIDES}</style>
-                    <div className={styles.wrapper}>
-                        <style>{PRIMEREACT_OVERRIDES}</style>
-
-                        {sortedRecords.length === 0 ? (
-                            <div className={styles.emptyView}>
-                                {header}
-                                <div className={styles.statEmptyState}>
-                                    <h2>{allRecords.length > 0 ? 'No images match your filters' : 'No images yet'}</h2>
-                                    <p>
-                                        {allRecords.length > 0
-                                            ? 'Try adjusting filters or selecting different cameras.'
-                                            : 'Upload images to start validating AI results.'}
-                                    </p>
-                                </div>
-                            </div>
-                        ) : (
-                            <DataView
-                                value={sortedRecords}
-                                layout="grid"
-                                header={header}
-                                itemTemplate={cardTemplate}
-                                paginator
-                                rows={12}
-                                rowsPerPageOptions={[12, 24, 48]}
-                            />
-                        )}
-                    </div>
-                </div>
-            </section>
+        <section id='container'>
+            <h1>Validation Grid Page</h1>
+            <div className={styles.wrapper}>
+                <style>{PRIMEREACT_OVERRIDES}</style>
+                <DataView
+                    value={sortedRecords}
+                    layout="grid"
+                    header={header}
+                    itemTemplate={cardTemplate}
+                    rows={12}
+                    rowsPerPageOptions={[12, 24, 48]}
+                    emptyMessage="No images match your filters."
+                    style={{marginBottom: '5%'}}
+                />
+            <div id={styles.saveBanner}>Click to save all changes</div>
+            </div>
+        </section>
         </>
     )
 }

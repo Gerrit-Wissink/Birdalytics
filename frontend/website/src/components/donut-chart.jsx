@@ -140,7 +140,7 @@ export function MiniPieChart({ kestrels, otherBirds, nonBirds }) {
   const total = kestrels + otherBirds + nonBirds;
 
   return (
-    <div style={{display: 'flex', alignItems:'center', justifyContent: 'space-between', gap: '10px'}}>
+    <div style={{display: 'flex', alignItems:'center', justifyContent: 'space-between', gap: '1.5em'}}>
       <div className='stat-box' style={{padding: '0px'}}>
         <PieChart
           series={[{ data, innerRadius: 35 }]}
@@ -156,7 +156,7 @@ export function MiniPieChart({ kestrels, otherBirds, nonBirds }) {
       </div>
       <div>
         <p className='small-stat-highlight'>{kestrels}/{total}</p>
-        <p style={{marginTop:'0px'}}>Kestrels Identified</p>
+        <p style={{marginTop:'0px', marginBottom: '0px'}}>Kestrels Identified</p>
       </div>
     </div>
   );
