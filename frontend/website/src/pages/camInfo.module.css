@@ -225,10 +225,10 @@
         justify-content: center;
         position: fixed;
         left: 0;
-        top: 50%;
+        top: 25%;
         transform: translateY(-50%);
         z-index: 200;
-        background-color: var(--gray);
+        background-color: var(--blue-300);
         border: none;
         border-radius: 0 8px 8px 0;
         padding: 0.75em 0.4em;
