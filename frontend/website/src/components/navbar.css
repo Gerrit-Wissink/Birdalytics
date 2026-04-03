@@ -144,7 +144,7 @@ nav span{
     flex-direction: column;
     gap: 30vh;
     align-items: center;
-    padding-top: 15%;
+    padding-top: 20%;
     transition: top 0.5s ease-in-out;
 }
 
@@ -175,7 +175,7 @@ nav span{
     font-weight: 400;
 }
 
-@media screen and (min-width: 801px){
+@media screen and (min-width: 875px){
     #mobileMenu{
         display: none;
     }
@@ -184,7 +184,7 @@ nav span{
         display: none;
     }
 }
-@media screen and (max-width: 800px){
+@media screen and (max-width: 875px){
     #hide-in-mobile{
         display: none;
     }
@@ -213,10 +213,11 @@ nav span{
 
 @media screen and (max-width: 450px){
     #sideText a{
-        font-size: 1em;
+        font-size: 1.1em;
     }
 
     #sideMenu{
         padding-top: 35%;
+        width: 45%;
     }
 }

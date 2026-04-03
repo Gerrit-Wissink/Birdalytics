@@ -325,11 +325,12 @@ export default function ValGrid(){
                     layout="grid"
                     header={header}
                     itemTemplate={cardTemplate}
-                    paginator
                     rows={12}
                     rowsPerPageOptions={[12, 24, 48]}
                     emptyMessage="No images match your filters."
+                    style={{marginBottom: '5%'}}
                 />
+            <div id={styles.saveBanner}>Click to save all changes</div>
             </div>
         </section>
         </>
