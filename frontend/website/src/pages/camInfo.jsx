@@ -10,6 +10,7 @@ import ProgressBar from '../components/progress-bar';
 import BirdboxImageTable from '../components/camera-table';
 import AddCameraModal from '../components/add-camera-modal';
 import SpeciesIdentification from '../components/species-identification';
+import EmptyState from '../components/emptyState';
 
 import styles from './camInfo.module.css'
 
@@ -27,7 +28,7 @@ export default function CamInfo() {
 
     const [showAddCameraModal, setShowAddCameraModal] = useState(false);
     const [sidebarOpen, setSidebarOpen] = useState(false);
-    
+
 
     useEffect(() => {
         const fetchBoxesData = async () => {
@@ -77,23 +78,23 @@ export default function CamInfo() {
             try {
                 const records = selectedCamera?.records || [];
                 console.log('Records found:', records.length, records);
-                
+
                 if (records.length === 0) {
                     console.log('No records to fetch images for');
                     setImageMap({});
                     return;
                 }
-                
+
                 const newImageMap = {};
-                
-                for(const record of records) {
+
+                for (const record of records) {
                     console.log(`Processing record ${record.record_id}, image_url: ${record.image_url}`);
-                    
-                    if(!record.image_url) {
+
+                    if (!record.image_url) {
                         console.log("No image_url for record:", record.record_id);
                         continue;
                     }
-                    
+
                     try {
                         console.log(`Fetching image from: ${record.image_url}`);
                         const response = await apiClient.get(record.image_url, {
@@ -126,114 +127,162 @@ export default function CamInfo() {
 
     }, [selectedCamera]);
 
+    const hasCameras = boxesData.length > 0;
+    const hasSelectedCamera = !!selectedCamera;
+    const hasRecords = (selectedCamera?.records ?? []).length > 0;
 
+    const kestrelFreq = selectedCamera?.total_photos_with_creatures
+        ? (selectedCamera.total_kestrel_identified_photos / selectedCamera.total_photos_with_creatures) * 100
+        : 0;
 
-    return(
-    <>
-    <section id={styles.camInfoContainer}>
-            <button
-                className={`${styles.sidebarToggle} ${sidebarOpen ? styles.sidebarToggleOpen : ''}`}
-                onClick={() => setSidebarOpen(prev => !prev)}
-                aria-label={sidebarOpen ? 'Close camera menu' : 'Open camera menu'}
-            >
-                {sidebarOpen ? <ChevronLeftRoundedIcon /> : <ChevronRightRoundedIcon />}
-            </button>
+    if (!hasCameras) {
+        return (
+            <section className={styles.camInfoContainer}>
+                <EmptyState
+                    title="No cameras yet"
+                    description="Add a camera to start viewing summaries and images."
+                    actionText="Add Camera"
+                    onAction={() => setShowAddCameraModal(true)}
+                />
+            </section>
+        );
+    }
 
-            {sidebarOpen && (
-                <div className={styles.sidebarOverlay} onClick={() => setSidebarOpen(false)} />
-            )}
+    if (!hasSelectedCamera) {
+        return (
+            <section className={styles.camInfoContainer}>
+                <EmptyState
+                    title="Select a Camera"
+                    description="Choose a camera from the list to view details."
+                />
+            </section>
+        );
+    }
 
-            <div id={styles.cameraSidebar} className={sidebarOpen ? styles.sidebarOpen : ''}>
-                <div className={styles.titleSpan}>
-                    <h2>Cameras</h2>
-                    <span style={{ display: 'flex', gap: '1em', alignItems: 'center', cursor: 'pointer' }}>
-                        <FiEdit style={{ color: 'var(--text)', fontSize: '1.5rem', marginLeft: '0.5rem' }}
-                            onClick={() => setShowAddCameraModal(true)} />
-                    </span>
+    if (hasSelectedCamera && !hasRecords) {
+        return (
+            <section className={styles.camInfoContainer}>
+                <EmptyState
+                    title="No images yet"
+                    description={
+                        <>
+                            <div>This camera has not captured any images yet.</div>
+                            <div>Upload images to start seeing activity.</div>
+                        </>
+                    }
+                    actionText="Upload Images"
+                    onAction={() => (window.location.href = "/#/upload")}
+                />
+            </section>
+        );
+    }
+
+    return (
+        <>
+            <section id={styles.camInfoContainer}>
+                <button
+                    className={`${styles.sidebarToggle} ${sidebarOpen ? styles.sidebarToggleOpen : ''}`}
+                    onClick={() => setSidebarOpen(prev => !prev)}
+                    aria-label={sidebarOpen ? 'Close camera menu' : 'Open camera menu'}
+                >
+                    {sidebarOpen ? <ChevronLeftRoundedIcon /> : <ChevronRightRoundedIcon />}
+                </button>
+
+                {sidebarOpen && (
+                    <div className={styles.sidebarOverlay} onClick={() => setSidebarOpen(false)} />
+                )}
+
+                <div id={styles.cameraSidebar} className={sidebarOpen ? styles.sidebarOpen : ''}>
+                    <div className={styles.titleSpan}>
+                        <h2>Cameras</h2>
+                        <span style={{ display: 'flex', gap: '1em', alignItems: 'center', cursor: 'pointer' }}>
+                            <FiEdit style={{ color: 'var(--text)', fontSize: '1.5rem', marginLeft: '0.5rem' }}
+                                onClick={() => setShowAddCameraModal(true)} />
+                        </span>
+                    </div>
+
+                    {boxesData.map((camera) => (
+                        <div
+                            className={styles.cameraItem}
+                            key={camera.birdbox_id}
+                            onClick={() => { setSelectedID(camera.birdbox_id); setSidebarOpen(false); }}
+                            style={{
+                                backgroundColor: camera.birdbox_id === selectedID ? '#B8CEEF' : undefined,
+                                cursor: 'pointer'
+                            }}
+                        >
+                            <p>{camera.location}</p>
+                            <h3>{camera.birdbox_name}</h3>
+                        </div>
+                    ))}
                 </div>
 
-                {boxesData.map((camera) => (
-                    <div
-                        className={styles.cameraItem}
-                        key={camera.birdbox_id}
-                        onClick={() => { setSelectedID(camera.birdbox_id); setSidebarOpen(false); }}
-                        style={{
-                            backgroundColor: camera.birdbox_id === selectedID ? '#B8CEEF' : undefined,
-                            cursor: 'pointer'
-                        }}
-                    >
-                        <p>{camera.location}</p>
-                        <h3>{camera.birdbox_name}</h3>
-                    </div>
-                ))}
-            </div>
+                <div id={styles.cameraContent}>
+                    <h1 style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', marginRight: '7.5%' }}>
+                        {selectedCamera?.birdbox_name ?? 'Select a Camera'}
+                        <IoSettingsOutline />
+                    </h1>
 
-            <div id={styles.cameraContent}>
-                <h1 style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', marginRight: '7.5%' }}>
-                    {selectedCamera?.birdbox_name ?? 'Select a Camera'}
-                    <IoSettingsOutline />
-                </h1>
+                    <div className={styles.sideBySide}>
+                        <div id={styles.cameraSummary}>
+                            <h3 style={{ margin: '5px 0px' }}>Camera Summary</h3>
+                            <div className={styles.statsRow} style={{ display: 'flex', justifyContent: 'space-between' }}>
+                                <div className={styles.stackedStats}>
+                                    <p>Usage Rate</p>
+                                    <p className='small-stat-highlight'>{(selectedCamera?.usage_rate || 0).toFixed(0)}%</p>
+                                </div>
+                                <div className={styles.stackedStats}>
+                                    <p>Kestrel Frequency</p>
+                                    <p className='small-stat-highlight'>
+                                        {(kestrelFreq * 100).toFixed(0)}%
+                                    </p>
+                                </div>
+                            </div>
 
-                <div className={styles.sideBySide}>
-                    <div id={styles.cameraSummary}>
-                        <h3 style={{ margin: '5px 0px' }}>Camera Summary</h3>
-                        <div className={styles.statsRow} style={{ display: 'flex', justifyContent: 'space-between' }}>
-                            <div className={styles.stackedStats}>
-                                <p>Usage Rate</p>
-                                <p className='small-stat-highlight'>{(selectedCamera?.usage_rate || 0).toFixed(0)}%</p>
+                            <div id={styles.progressSection}>
+                                <p>Images Reviewed</p>
+                                <ProgressBar totalImages={100} imagesReviewed={85} />
+                                {/* TODO REPLACE WITH REFERENCES TO BOX DATA: TOTAL IMAGES WITH LOW CONFIDENCE AND TOTAL MODIFIED WITH LOW CONFIDENCE??? */}
                             </div>
-                            <div className={styles.stackedStats}>
-                                <p>Kestrel Frequency</p>
-                                <p className='small-stat-highlight'>
-                                    {(((selectedCamera?.total_kestrel_identified_photos / selectedCamera?.total_photos_with_creatures) || 0) * 100).toFixed(0)}%
-                                </p>
+
+                            <div className={styles.speciesOverviewGroup}>
+                                <p>Species Overview</p>
+                                <MiniPieChart
+                                    kestrels={selectedCamera?.total_kestrel_identified_photos || 0}
+                                    otherBirds={selectedCamera?.total_non_kestrel_identified_photos || 0}
+                                    nonBirds={(selectedCamera?.total_captured_photos || 0) - (selectedCamera?.total_kestrel_identified_photos || 0) - (selectedCamera?.total_non_kestrel_identified_photos || 0)}
+                                />
                             </div>
+
+
                         </div>
 
-                        <div id={styles.progressSection}>
-                            <p>Images Reviewed</p>
-                            <ProgressBar totalImages={100} imagesReviewed={85} />
-                            {/* TODO REPLACE WITH REFERENCES TO BOX DATA: TOTAL IMAGES WITH LOW CONFIDENCE AND TOTAL MODIFIED WITH LOW CONFIDENCE??? */}
-                        </div>
-
-                        <div className={styles.speciesOverviewGroup}>
-                            <p>Species Overview</p>
-                            <MiniPieChart
-                                kestrels={selectedCamera?.total_kestrel_identified_photos || 0}
-                                otherBirds={selectedCamera?.total_non_kestrel_identified_photos || 0}
-                                nonBirds={(selectedCamera?.total_captured_photos || 0) - (selectedCamera?.total_kestrel_identified_photos || 0) - (selectedCamera?.total_non_kestrel_identified_photos || 0)}
+                        <div id={styles.identifyBox}>
+                            <SpeciesIdentification
+                                selectedRow={selectedRow}
+                                imageMap={imageMap}
+                                birdboxName={selectedCamera?.birdbox_name}
+                                onSpeciesOverride={(species) => {
+                                    // Rerender the table row with the overridden species
+                                    if (selectedRow) {
+                                        setSelectedRow({ ...selectedRow, primary_guess: species });
+                                    }
+                                }}
                             />
                         </div>
-
-
                     </div>
-
-                    <div id={styles.identifyBox}>
-                        <SpeciesIdentification
-                            selectedRow={selectedRow}
+                    <div style={{ margin: '1em 0px' }}>
+                        <BirdboxImageTable
+                            box={selectedCamera}
+                            onSelectRow={(row) => setSelectedRow(row)}
                             imageMap={imageMap}
-                            birdboxName={selectedCamera?.birdbox_name}
-                            onSpeciesOverride={(species) => {
-                                // Rerender the table row with the overridden species
-                                if (selectedRow) {
-                                    setSelectedRow({ ...selectedRow, primary_guess: species });
-                                }
-                            }}
                         />
                     </div>
                 </div>
-                <div style={{margin: '1em 0px'}}>
-                    <BirdboxImageTable 
-                        box={selectedCamera}
-                        onSelectRow={(row) => setSelectedRow(row)}
-                        imageMap={imageMap}
-                    />
-                </div>
-            </div>
-        </section>
-        {showAddCameraModal && (
-            <AddCameraModal setShowModal={setShowAddCameraModal} />
-        )}
-    </>
+            </section>
+            {showAddCameraModal && (
+                <AddCameraModal setShowModal={setShowAddCameraModal} />
+            )}
+        </>
     );
 }

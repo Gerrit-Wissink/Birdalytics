@@ -5,6 +5,10 @@
     height: calc(100vh - 8vh);
 }
 
+.camInfoContainer {
+  padding: 32px 24px;
+}
+
 #cameraSidebar{
     flex: 25% 0;
     padding: 1em;
