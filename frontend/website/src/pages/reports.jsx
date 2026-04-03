@@ -12,6 +12,7 @@ import TabContext from '@mui/lab/TabContext';
 import TabPanel from '@mui/lab/TabPanel';
 import BuildPDF from '../reports/buildPDF';
 import PDFPreview from '../reports/previewPDF';
+import EmptyState from '../components/emptyState';
 import "./reports.css";
 
 export default function Reports() {
@@ -72,19 +73,22 @@ export default function Reports() {
 
     if (!hasReportData) {
         return (
-            <section id="container">
+            <section className="container">
                 <h1>Reports Page</h1>
-                <div className="empty-state">
-                    <h2>No report data yet</h2>
-                    <p>Upload images or add birdboxes before generating reports.</p>
-                </div>
+
+                <EmptyState
+                    title="No report data yet"
+                    description="Upload images or add birdboxes before generating reports."
+                    actionText="Upload Data"
+                    onAction={() => (window.location.href = "/#/upload")}
+                />
             </section>
         );
     }
 
     return (
         <>
-            <section id="container">
+            <section className="container">
                 <h1>Reports Page</h1>
                 <div style={{ display: 'flex', flexDirection: 'row', alignItems: 'center', justifyContent: 'space-between', marginBottom: '1em' }}>
                     <BirdBoxSelect

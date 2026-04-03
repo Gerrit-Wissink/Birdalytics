@@ -138,6 +138,7 @@ export default function CamInfo() {
     if (!hasCameras) {
         return (
             <section className={styles.camInfoContainer}>
+                <h1>Cameras</h1>
                 <EmptyState
                     title="No cameras yet"
                     description="Add a camera to start viewing summaries and images."
@@ -151,6 +152,7 @@ export default function CamInfo() {
     if (!hasSelectedCamera) {
         return (
             <section className={styles.camInfoContainer}>
+                <h1>Cameras</h1>
                 <EmptyState
                     title="Select a Camera"
                     description="Choose a camera from the list to view details."
@@ -162,6 +164,7 @@ export default function CamInfo() {
     if (hasSelectedCamera && !hasRecords) {
         return (
             <section className={styles.camInfoContainer}>
+                <h1>Cameras</h1>
                 <EmptyState
                     title="No images yet"
                     description={
