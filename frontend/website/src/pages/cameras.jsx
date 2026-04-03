@@ -45,14 +45,14 @@ export default function Cameras() {
 
     useEffect(() => {
         if (boxesData.length === 0) return;
-        
+
         console.log("Fetching images for birdboxes...");
+        const newImageMap = {};
         const fetchImagesForBoxes = async () => {
             try {
-                const newImageMap = {};
-                
-                for(const box of boxesData) {
-                    if(!box.last_captured_image) {
+
+                for (const box of boxesData) {
+                    if (!box.last_captured_image) {
                         console.log("No image to fetch for box:", box.birdbox_name);
                         continue;
                     }
@@ -79,24 +79,24 @@ export default function Cameras() {
 
         // Cleanup: revoke object URLs when component unmounts
         return () => {
-            Object.values(imageMap).forEach(url => URL.revokeObjectURL(url));
+            Object.values(newImageMap).forEach(url => URL.revokeObjectURL(url));
         };
     }, [boxesData]);
 
     const cameras = boxesData;
-    const hasActivity = boxesData.birdbox_records.some((boxRecord) => {
-        const items = boxRecord.images ?? boxRecord.records ?? [];
-        return items.length > 0;
-    });
     const hasCameras = cameras.length > 0;
+
+    const hasActivity = cameras.some((box) => {
+        const records = box.records ?? [];
+        return records.length > 0;
+    });
 
     console.log('boxesData', boxesData);
     console.log(
         'activity counts',
-        boxesData.birdbox_records.map((r) => ({
-            birdbox_id: r.birdbox_id,
-            images: (r.images ?? []).length,
-            records: (r.records ?? []).length,
+        boxesData.map((box) => ({
+            birdbox_id: box.birdbox_id,
+            records: (box.records ?? []).length,
         }))
     );
 
@@ -108,7 +108,9 @@ export default function Cameras() {
         return (
             <section id="container">
                 <h1>Cameras</h1>
-                <p>Loading...</p>
+                <div className="empty-state">
+                    <p>Loading cameras...</p>
+                </div>
             </section>
         );
     }
