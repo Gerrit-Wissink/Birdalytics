@@ -143,3 +143,9 @@
 .overview-empty-state p {
   color: #6b7280;
 }
+
+.loadingState {
+  margin-top: 24px;
+  color: #6c757d;
+  font-size: 1rem;
+}

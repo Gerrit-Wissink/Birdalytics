@@ -13,6 +13,7 @@ export default function Overview() {
     const username = user ? JSON.parse(user).username : "user";
     const [isLoading, setIsLoading] = useState(true);
     const [boxesData, setBoxesData] = useState([]);
+    const [overviewData, setOverviewData] = useState(null);
 
     useEffect(() => {
         document.title = "Home - Birdalytics";
@@ -29,16 +30,20 @@ export default function Overview() {
     useEffect(() => {
         const fetchBoxesData = async () => {
             try {
+                setIsLoading(true);
                 const response = await apiClient.get("/boxes/record");
                 if (response.status === 200) {
                     const data = response.data.data;
+                    setOverviewData(data);
                     console.log('Boxes data:', data);
                     setBoxesData(data);
                 } else {
                     console.error("Failed to fetch boxes data:", response.status);
+                    setOverviewData(null);
                 }
             } catch (error) {
                 console.error("Error fetching boxes data:", error);
+                setOverviewData(null);
             } finally {
                 setIsLoading(false);
             }
@@ -50,6 +55,15 @@ export default function Overview() {
     const boxes = boxesData.birdboxes ?? [];
     const records = boxesData.birdbox_records ?? [];
     const hasOverviewData = boxes.length > 0 || records.length > 0;
+
+    if (isLoading) {
+        return (
+            <section className="container">
+                <h1>Welcome back, {username}</h1>
+                <div className="loadingState">Loading overview...</div>
+            </section>
+        );
+    }
 
     if (!isLoading && !hasOverviewData) {
         return (
