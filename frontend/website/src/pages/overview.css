@@ -123,8 +123,16 @@
   justify-content: center;
 }
 
-#container h1 {
-  margin-bottom: 1.25rem;
+.container {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  padding: 32px 24px;
+  text-align: center;
+}
+
+.container h1 {
+  margin-bottom: 24px;
 }
 
 .overview-empty-state h2 {
@@ -134,23 +142,4 @@
 
 .overview-empty-state p {
   color: #6b7280;
-}
-
-.cta-button {
-  margin-top: 1rem;
-  padding: 10px 16px;
-  border-radius: 8px;
-  border: none;
-  background: #6b8e23;
-  color: white;
-  font-weight: 500;
-  cursor: pointer;
-}
-
-.cta-button:hover {
-  background: #5a7a1d;
-}
-
-.overview-empty-state button {
-  align-self: flex-start;
 }

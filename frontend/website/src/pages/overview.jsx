@@ -6,6 +6,7 @@ import BirdboxTable from "../components/overview-table.jsx";
 import "./overview.css";
 import { useEffect, useState } from "react";
 import apiClient from "../utils/apiClient.jsx";
+import EmptyState from "../components/emptyState.jsx";
 
 export default function Overview() {
     const user = localStorage.getItem("user");
@@ -52,27 +53,21 @@ export default function Overview() {
 
     if (!isLoading && !hasOverviewData) {
         return (
-            <section id="container">
+            <section className="container">
                 <h1>Welcome back, {username}</h1>
-                <div className="overview-empty-state">
-                    <h2>No overview data yet</h2>
-                    <p>
-                        Upload images or add birdboxes to start seeing map, table, and activity data.
-                    </p>
 
-                    <button
-                        className="cta-button"
-                        onClick={() => window.location.href = "/#/upload"}
-                    >
-                        Upload Data
-                    </button>
-                </div>
+                <EmptyState
+                    title="No overview data yet"
+                    description="Upload images or add birdboxes to start seeing map, table, and activity data."
+                    actionText="Upload Data"
+                    onAction={() => (window.location.href = "/#/upload")}
+                />
             </section>
         );
     }
 
     return (
-        <section id="container">
+        <section className="container">
             <h1>Welcome back, {username}</h1>
 
             <div id="overview-grid">
