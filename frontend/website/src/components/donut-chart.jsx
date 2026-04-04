@@ -35,18 +35,29 @@ function PieCenterLabel({ percentage, title, textColor}) {
   );
 }
 
-export default function BirdPieChart({ birdboxes }) {
+export default function BirdPieChart({ birdboxes = [] }) {
   const [hoveredIndex, setHoveredIndex] = useState(0);
+  const [data, setData] = useState([
+    { value: 0, label: 'American Kestrels', title: 'total kestrel' },
+    { value: 0, label: 'Other Birds', title: 'other bird' },
+    { value: 0, label: 'Non-Birds', title: 'non-bird' },
+  ]);
+
+  useEffect(() => {
+    var kestrels = birdboxes.reduce((sum, box) => sum + (box.total_kestrel_identified_photos ?? 0), 0);
+    var otherBirds = birdboxes.reduce((sum, box) => sum + (box.total_non_kestrel_identified_photos ?? 0), 0);
+    var nonBirds = birdboxes.reduce((sum, box) => sum + ((box.total_photos_with_creatures - box.total_kestrel_identified_photos - box.total_non_kestrel_identified_photos) ?? 0), 0);
+
+    setData([
+      { value: kestrels, label: 'American Kestrels', title: 'total kestrel' },
+      { value: otherBirds, label: 'Other Birds', title: 'other bird' },
+      { value: nonBirds, label: 'Non-Birds', title: 'non-bird' },
+    ]);
+  }, [birdboxes]);
 
   var kestrels = birdboxes.reduce((sum, box) => sum + (box.total_kestrel_identified_photos ?? 0), 0);
   var otherBirds = birdboxes.reduce((sum, box) => sum + (box.total_non_kestrel_identified_photos ?? 0), 0);
   var nonBirds = birdboxes.reduce((sum, box) => sum + ((box.total_photos_with_creatures - box.total_kestrel_identified_photos - box.total_non_kestrel_identified_photos) ?? 0), 0);
-
-  const data = [
-    { value: kestrels ?? 0, label: 'American Kestrels', title: 'total kestrel' },
-    { value: otherBirds ?? 0, label: 'Other Birds', title: 'other bird' },
-    { value: nonBirds ?? 0, label: 'Non-Birds', title: 'non-bird' },
-  ];
 
   const total = data.reduce((sum, item) => sum + (item.value ?? 0), 0);
   const percentage = total > 0 ? Math.round((data[hoveredIndex].value ?? 0) / total * 100) : 0;
