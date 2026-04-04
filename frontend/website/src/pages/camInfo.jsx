@@ -171,7 +171,10 @@ export default function CamInfo() {
 
         // Cleanup: revoke all object URLs when component unmounts
         return () => {
-            Object.values(imageMap).forEach(url => URL.revokeObjectURL(url));
+            setImageMap(prevImageMap => {
+                Object.values(prevImageMap).forEach(url => URL.revokeObjectURL(url));
+                return {};
+            });
         };
 
     }, [selectedCamera]);
