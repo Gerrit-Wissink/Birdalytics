@@ -115,6 +115,8 @@ export default function CamInfo() {
 
     useEffect(() => {
         console.log('Selected camera updated:', selectedCamera);
+        let isMounted = true;
+        
         const fetchImagesForBox = async () => {
             try {
                 const records = selectedCamera?.records || [];
@@ -122,7 +124,7 @@ export default function CamInfo() {
                 
                 if (records.length === 0) {
                     console.log('No records to fetch images for');
-                    setImageMap({});
+                    if (isMounted) setImageMap({});
                     return;
                 }
                 
@@ -153,15 +155,7 @@ export default function CamInfo() {
                 }
 
                 console.log('Setting imageMap with', Object.keys(newImageMap).length, 'images');
-                setImageMap(prevImageMap => {
-                    // Cleanup old URLs that are no longer needed
-                    Object.entries(prevImageMap).forEach(([recordId, url]) => {
-                        if (!newImageMap[recordId]) {
-                            URL.revokeObjectURL(url);
-                        }
-                    });
-                    return newImageMap;
-                });
+                if (isMounted) setImageMap(newImageMap);
             } catch (error) {
                 console.error('Error in fetchImagesForBox:', error);
             }
@@ -169,12 +163,8 @@ export default function CamInfo() {
 
         fetchImagesForBox();
 
-        // Cleanup: revoke all object URLs when component unmounts
         return () => {
-            setImageMap(prevImageMap => {
-                Object.values(prevImageMap).forEach(url => URL.revokeObjectURL(url));
-                return {};
-            });
+            isMounted = false;
         };
 
     }, [selectedCamera]);
