@@ -2,7 +2,7 @@ import SearchRoundedIcon from '@mui/icons-material/SearchRounded';
 import ChevronRightRoundedIcon from '@mui/icons-material/ChevronRightRounded';
 import ChevronLeftRoundedIcon from '@mui/icons-material/ChevronLeftRounded';
 import { IoSettingsOutline } from "react-icons/io5";
-import { useState, useEffect } from 'react';
+import { useState, useEffect, useCallback } from 'react';
 import apiClient from '../utils/apiClient';
 import BirdboxImageTable from '../components/camera-table';
 import AddCameraModal from '../components/add-camera-modal';
@@ -58,10 +58,15 @@ export default function CamInfo() {
     
 
     // Handle window resize for responsive layout
-    useEffect(() => {
-        const handleResize = () => setWindowWidth(window.innerWidth);
-        window.addEventListener('resize', handleResize);
-        return () => window.removeEventListener('resize', handleResize);
+    // useEffect(() => {
+    //     const handleResize = () => setWindowWidth(window.innerWidth);
+    //     window.addEventListener('resize', handleResize);
+    //     return () => window.removeEventListener('resize', handleResize);
+    // }, []);
+
+    // Memoize onSelectRow callback to prevent infinite loop in BirdboxImageTable effect
+    const handleSelectRow = useCallback((row) => {
+        setSelectedRow(row);
     }, []);
 
     useEffect(() => {
@@ -196,7 +201,7 @@ export default function CamInfo() {
             <div style={{margin: '1em 0px'}}>
                 <BirdboxImageTable 
                     box={selectedCamera}
-                    onSelectRow={(row) => setSelectedRow(row)}
+                    onSelectRow={handleSelectRow}
                     imageMap={imageMap}
                 />
             </div>
