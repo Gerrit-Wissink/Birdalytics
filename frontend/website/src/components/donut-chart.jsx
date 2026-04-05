@@ -44,20 +44,18 @@ export default function BirdPieChart({ birdboxes = [] }) {
   ]);
 
   useEffect(() => {
+    console.log('[BirdPieChart] effect running - birdboxes length:', birdboxes.length);
     var kestrels = birdboxes.reduce((sum, box) => sum + (box.total_kestrel_identified_photos ?? 0), 0);
     var otherBirds = birdboxes.reduce((sum, box) => sum + (box.total_non_kestrel_identified_photos ?? 0), 0);
     var nonBirds = birdboxes.reduce((sum, box) => sum + ((box.total_photos_with_creatures - box.total_kestrel_identified_photos - box.total_non_kestrel_identified_photos) ?? 0), 0);
+    console.log('[BirdPieChart] calling setData');
 
     setData([
       { value: kestrels, label: 'American Kestrels', title: 'total kestrel' },
       { value: otherBirds, label: 'Other Birds', title: 'other bird' },
       { value: nonBirds, label: 'Non-Birds', title: 'non-bird' },
     ]);
-  }, [birdboxes]);
-
-  var kestrels = birdboxes.reduce((sum, box) => sum + (box.total_kestrel_identified_photos ?? 0), 0);
-  var otherBirds = birdboxes.reduce((sum, box) => sum + (box.total_non_kestrel_identified_photos ?? 0), 0);
-  var nonBirds = birdboxes.reduce((sum, box) => sum + ((box.total_photos_with_creatures - box.total_kestrel_identified_photos - box.total_non_kestrel_identified_photos) ?? 0), 0);
+  }, [birdboxes.length]); // Use birdboxes.length instead of birdboxes to avoid infinite loop with empty arrays
 
   const total = data.reduce((sum, item) => sum + (item.value ?? 0), 0);
   const percentage = total > 0 ? Math.round((data[hoveredIndex].value ?? 0) / total * 100) : 0;

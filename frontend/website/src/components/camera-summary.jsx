@@ -3,7 +3,11 @@ import styles from '../pages/camInfo.module.css';
 import ProgressBar from './progress-bar';
 import MiniPieChart from './donut-chart';
 
+// Stable empty array reference to prevent infinite loops in ProgressBar effect
+const EMPTY_RECORDS = [];
+
 export default function CameraSummary({ selectedCamera }) {
+    console.log('[CameraSummary] render with selectedCamera:', selectedCamera?.birdbox_id);
     return (
         <div id={styles.cameraSummary}>
             <h3 style={{ margin: '5px 0px' }}>Camera Summary</h3>
@@ -22,7 +26,7 @@ export default function CameraSummary({ selectedCamera }) {
 
             <div id={styles.progressSection}>
                 <p>Images Reviewed</p>
-                <ProgressBar box_records={selectedCamera?.records || []} />
+                <ProgressBar box_records={selectedCamera?.records ?? EMPTY_RECORDS} />
                 {/* TODO REPLACE WITH REFERENCES TO BOX DATA: TOTAL IMAGES WITH LOW CONFIDENCE AND TOTAL MODIFIED WITH LOW CONFIDENCE??? */}
             </div>
 
