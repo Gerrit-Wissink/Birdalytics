@@ -140,6 +140,30 @@ export default function ValGrid(){
         { label: 'Pigeon', value: 'pigeon' },
     ];
 
+    const [speciesOptions, setSpeciesOptions] = useState([]);
+    useEffect(() => {
+        const fetchSpeciesOptions = async () => {
+            try {
+                // TODO: Replace with actual API call to fetch species options
+                const response = await apiClient.get('/species');
+                if(response.status === 200) {
+                    const optionsFromAPI = response.data.data.map(species => ({
+                        label: capitalize(species.species_name),
+                        value: species.species_name
+                    }));
+                    setSpeciesOptions(optionsFromAPI);
+                } else {
+                    console.error('Failed to fetch species options:', response.status);
+                    setSpeciesOptions(SPECIES_OPTIONS); // Fallback to hardcoded options
+                }
+            } catch (error) {
+                console.error('Error fetching species options:', error);
+            }
+        };
+
+        fetchSpeciesOptions();
+    }, []);
+
     const handleSpeciesCorrection = (recordId, newSpecies) => {
         setSpeciesCorrections((prev) => ({ ...prev, [recordId]: newSpecies }));
     };
@@ -299,7 +323,7 @@ export default function ValGrid(){
                 </div>
                 <Dropdown
                     value={speciesCorrections[recordId] ?? record.primary_guess ?? null}
-                    options={SPECIES_OPTIONS}
+                    options={speciesOptions}
                     onChange={(e) => handleSpeciesCorrection(recordId, e.value)}
                     placeholder="Correct species..."
                     editable
