@@ -58,11 +58,11 @@ export default function CamInfo() {
     
 
     // Handle window resize for responsive layout
-    // useEffect(() => {
-    //     const handleResize = () => setWindowWidth(window.innerWidth);
-    //     window.addEventListener('resize', handleResize);
-    //     return () => window.removeEventListener('resize', handleResize);
-    // }, []);
+    useEffect(() => {
+        const handleResize = () => setWindowWidth(window.innerWidth);
+        window.addEventListener('resize', handleResize);
+        return () => window.removeEventListener('resize', handleResize);
+    }, []);
 
     // Memoize onSelectRow callback to prevent infinite loop in BirdboxImageTable effect
     const handleSelectRow = useCallback((row) => {
