@@ -33,7 +33,7 @@ export default function CameraSummary({ selectedCamera }) {
             <div className={styles.speciesOverviewGroup}>
                 <p>Species Overview</p>
                 <MiniPieChart
-                    birdboxes={selectedCamera?.records ?? EMPTY_RECORDS}
+                    selected_camera={selectedCamera ?? EMPTY_RECORDS}
                 />
             </div>
 

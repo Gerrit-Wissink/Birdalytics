@@ -181,7 +181,14 @@ export default function SpeciesIdentification({ selectedRow, imageMap, birdboxNa
                         style={{ width: '100%' }}
                     />
                     {manualSpecies &&
-                        <button onClick={handleSaveChanges}>Save Changes</button>
+                        <div>
+                            <button onClick={handleSaveChanges} className={styles.saveButton}>
+                                Save Changes
+                            </button>
+                            <button onClick={() => { setManualSpecies(null); }} className={styles.resetButton}>
+                                Reset
+                            </button>
+                        </div>
                     }
                 </div>
         </div>
