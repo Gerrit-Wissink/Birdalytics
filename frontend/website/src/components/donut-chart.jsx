@@ -141,7 +141,7 @@ const miniSize = {
   height: 100,
 };
 
-export function MiniPieChart({ birdboxes }) {
+export function MiniPieChart({ selected_camera }) {
   const [hoveredIndex, setHoveredIndex] = useState(0);
 
   const [data, setData] = useState([
@@ -151,10 +151,10 @@ export function MiniPieChart({ birdboxes }) {
   ]);
 
   useEffect(() => {
-    console.log('[BirdPieChart] effect running - birdboxes length:', birdboxes.length);
-    var kestrels = birdboxes.reduce((sum, box) => sum + (box.total_kestrel_identified_photos ?? 0), 0);
-    var otherBirds = birdboxes.reduce((sum, box) => sum + (box.total_non_kestrel_identified_photos ?? 0), 0);
-    var nonBirds = birdboxes.reduce((sum, box) => sum + ((box.total_photos_with_creatures - box.total_kestrel_identified_photos - box.total_non_kestrel_identified_photos) ?? 0), 0);
+    console.log('[BirdPieChart] effect running - selected_camera:', selected_camera);
+    var kestrels = selected_camera?.total_kestrel_identified_photos ?? 0;
+    var otherBirds = selected_camera?.total_non_kestrel_identified_photos ?? 0;
+    var nonBirds = (selected_camera?.total_photos_with_creatures ?? 0) - kestrels - otherBirds;
     console.log('[BirdPieChart] calling setData');
 
     setData([
@@ -162,7 +162,7 @@ export function MiniPieChart({ birdboxes }) {
       { value: otherBirds, label: 'Other Birds', title: 'other bird' },
       { value: nonBirds, label: 'Non-Birds', title: 'non-bird' },
     ]);
-  }, [birdboxes.length]); // Use birdboxes.length instead of birdboxes to avoid infinite loop with empty arrays
+  }, [selected_camera]); // Use selected_camera instead of birdboxes to avoid infinite loop with empty arrays
 
   const total = data.reduce((sum, item) => sum + (item.value ?? 0), 0);
 
