@@ -1,5 +1,6 @@
 import { useState, useEffect } from 'react';
 import { Dropdown } from 'primereact/dropdown';
+import apiClient from '../utils/apiClient';
 
 import styles from '../pages/camInfo.module.css';
 import 'primereact/resources/themes/lara-light-blue/theme.css';
@@ -22,6 +23,31 @@ export default function SpeciesIdentification({ selectedRow, imageMap, birdboxNa
     const [selectedOptionIndex, setSelectedOptionIndex] = useState(0);
     // Tracks a manual species selection from the dropdown (null = nothing chosen yet)
     const [manualSpecies, setManualSpecies] = useState(null);
+
+    const [speciesOptions, setSpeciesOptions] = useState([]);
+
+    useEffect(() => {
+        const fetchSpeciesOptions = async () => {
+            try {
+                // TODO: Replace with actual API call to fetch species options
+                const response = await apiClient.get('/species');
+                if(response.status === 200) {
+                    const optionsFromAPI = response.data.data.map(species => ({
+                        label: capitalize(species.species_name),
+                        value: species.species_name
+                    }));
+                    setSpeciesOptions(optionsFromAPI);
+                } else {
+                    console.error('Failed to fetch species options:', response.status);
+                    setSpeciesOptions(SPECIES_OPTIONS); // Fallback to hardcoded options
+                }
+            } catch (error) {
+                console.error('Error fetching species options:', error);
+            }
+        };
+
+        fetchSpeciesOptions();
+    }, []);
 
     // Reset selections whenever a new row is chosen from the table
     useEffect(() => {
@@ -65,6 +91,29 @@ export default function SpeciesIdentification({ selectedRow, imageMap, birdboxNa
         // TODO: UPDATE RESULT IN BACKEND AND SET MODIFIED STATUS TO DATE
         onSpeciesOverride?.(species);
     };
+
+    const handleSaveChanges = async () => {
+        try {
+            if (!manualSpecies || manualSpecies.trim() === '') {
+                console.warn('No manual species selected to save.');
+                return;
+            }
+
+            const record_id = selectedRow.record_id;
+            const response = await apiClient.put(`/record/manual/${record_id}`, { manual_bird: manualSpecies });
+
+            if (response.status === 200) {
+                console.log('Successfully saved manual species override:', response.data);
+                // Optionally show a success message to the user
+            } else {
+                console.error('Failed to save manual species override:', response.status);
+                // Optionally show an error message to the user
+            }
+        }catch (error) {
+            console.error('Error saving changes:', error);
+            // Optionally show an error message to the user
+        }
+    }
 
     return (
         <div id={styles.identificationRow}>
@@ -123,7 +172,7 @@ export default function SpeciesIdentification({ selectedRow, imageMap, birdboxNa
                     <style>{DROPDOWN_OVERRIDES}</style>
                     <Dropdown
                         value={manualSpecies}
-                        options={SPECIES_OPTIONS}
+                        options={speciesOptions}
                         onChange={(e) => handleManualSelect(e.value)}
                         placeholder="Manual ID"
                         editable
@@ -131,6 +180,9 @@ export default function SpeciesIdentification({ selectedRow, imageMap, birdboxNa
                         className={`${styles.speciesDropdown} ${manualSpecies ? styles.speciesDropdownSelected : ''}`}
                         style={{ width: '100%' }}
                     />
+                    {manualSpecies &&
+                        <button onClick={handleSaveChanges}>Save Changes</button>
+                    }
                 </div>
         </div>
 
