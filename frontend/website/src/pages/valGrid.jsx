@@ -141,6 +141,7 @@ export default function ValGrid(){
         { label: 'Pigeon', value: 'pigeon' },
     ];
 
+    const [speciesOptions, setSpeciesOptions] = useState([]);
     useEffect(() => {
         const fetchSpeciesOptions = async () => {
             try {
@@ -322,7 +323,7 @@ export default function ValGrid(){
                     <p className={styles.dropdownLabel}>Update Identification Result:</p>
                 </div>
                 <Dropdown
-                    value={speciesCorrections[recordId] ?? record.modified_bird ?? record.primary_guess ?? null}
+                    value={speciesCorrections[recordId] ?? record.primary_guess ?? null}
                     options={speciesOptions}
                     onChange={(e) => handleSpeciesCorrection(recordId, e.value)}
                     placeholder="Correct species..."
