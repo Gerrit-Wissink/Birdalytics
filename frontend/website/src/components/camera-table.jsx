@@ -67,7 +67,7 @@ export default function BirdboxImageTable({ box, onSelectRow }) {
     const first = rows[0] ?? null;
     setSelectedRow(first);
     if (onSelectRow) onSelectRow(first);
-  }, [rows, onSelectRow]);
+  }, [box?.birdbox_id, onSelectRow]);
 
   const handleRowSelect = (e) => {
     setSelectedRow(e.value);
