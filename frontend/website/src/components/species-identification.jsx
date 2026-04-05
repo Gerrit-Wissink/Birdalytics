@@ -24,6 +24,31 @@ export default function SpeciesIdentification({ selectedRow, imageMap, birdboxNa
     // Tracks a manual species selection from the dropdown (null = nothing chosen yet)
     const [manualSpecies, setManualSpecies] = useState(null);
 
+    const [speciesOptions, setSpeciesOptions] = useState([]);
+
+    useEffect(() => {
+        const fetchSpeciesOptions = async () => {
+            try {
+                // TODO: Replace with actual API call to fetch species options
+                const response = await apiClient.get('/species');
+                if(response.status === 200) {
+                    const optionsFromAPI = response.data.data.map(species => ({
+                        label: capitalize(species.species_name),
+                        value: species.species_name
+                    }));
+                    setSpeciesOptions(optionsFromAPI);
+                } else {
+                    console.error('Failed to fetch species options:', response.status);
+                    setSpeciesOptions(SPECIES_OPTIONS); // Fallback to hardcoded options
+                }
+            } catch (error) {
+                console.error('Error fetching species options:', error);
+            }
+        };
+
+        fetchSpeciesOptions();
+    }, []);
+
     // Reset selections whenever a new row is chosen from the table
     useEffect(() => {
         setSelectedOptionIndex(0);
@@ -159,14 +184,7 @@ export default function SpeciesIdentification({ selectedRow, imageMap, birdboxNa
                         style={{ width: '100%' }}
                     />
                     {manualSpecies &&
-                        <div>
-                            <button onClick={handleSaveChanges} className={styles.saveButton}>
-                                Save Changes
-                            </button>
-                            <button onClick={() => { setManualSpecies(null); }} className={styles.resetButton}>
-                                Reset
-                            </button>
-                        </div>
+                        <button onClick={handleSaveChanges}>Save Changes</button>
                     }
                 </div>
         </div>

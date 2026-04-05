@@ -14,7 +14,7 @@ export default function CameraSummary({ selectedCamera }) {
             <div className={styles.statsRow} style={{ display: 'flex', justifyContent: 'space-between' }}>
                 <div className={styles.stackedStats}>
                     <p>Usage Rate</p>
-                    <p className='small-stat-highlight'>{(selectedCamera?.usage_rate || 0).toFixed(0)}%</p>
+                    <p className='small-stat-highlight'>{(selectedCamera?.usage_rate * 100 || 0).toFixed(0)}%</p>
                 </div>
                 <div className={styles.stackedStats}>
                     <p>Kestrel Frequency</p>
@@ -33,9 +33,7 @@ export default function CameraSummary({ selectedCamera }) {
             <div className={styles.speciesOverviewGroup}>
                 <p>Species Overview</p>
                 <MiniPieChart
-                    kestrels={selectedCamera?.total_kestrel_identified_photos || 0}
-                    otherBirds={selectedCamera?.total_non_kestrel_identified_photos || 0}
-                    nonBirds={Math.max(0, (selectedCamera?.total_captured_photos || 0) - (selectedCamera?.total_kestrel_identified_photos || 0) - (selectedCamera?.total_non_kestrel_identified_photos || 0))}
+                    birdboxes={selectedCamera?.records ?? EMPTY_RECORDS}
                 />
             </div>
 
