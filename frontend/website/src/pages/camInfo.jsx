@@ -137,7 +137,7 @@ export default function CamInfo() {
     }, [selectedID, boxesData]);
 
     useEffect(() => {
-        console.log('Selected camera updated:', selectedCamera);
+        console.log('[camInfo] imageMap effect running - selectedCamera:', selectedCamera?.birdbox_id);
         let isMounted = true;
         
         const fetchImagesForBox = async () => {
