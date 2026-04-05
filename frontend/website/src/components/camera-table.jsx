@@ -71,7 +71,7 @@ export default function BirdboxImageTable({ box, onSelectRow, speciesOptions }) 
     console.log('[BirdboxImageTable] calling setSelectedRow and onSelectRow');
     setSelectedRow(first);
     if (onSelectRow) onSelectRow(first);
-  }, [rows, onSelectRow]);
+  }, [box?.birdbox_id, onSelectRow]);
 
 
   const handleRowSelect = (e) => {
