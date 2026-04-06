@@ -132,7 +132,7 @@ export default function PDFPreview({ boxesData, lineGraphRef }) {
                                     {toPercent(box.usage_rate)}
                                 </TableCell>
                                 <TableCell sx={{ fontSize: '12px', padding: '4px 8px' }}>
-                                    {toPercent(box.total_kestrel_identified_photos / (box.total_photos_with_creatures || 1))}
+                                    {kestrelFrequency(box)}
                                 </TableCell>
                                 <TableCell sx={{ fontSize: '12px', padding: '4px 8px' }}>
                                     {formatTimestamp(box.last_identified_kestrel?.timestamp)}
