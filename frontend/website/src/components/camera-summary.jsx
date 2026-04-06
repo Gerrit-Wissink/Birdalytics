@@ -19,7 +19,8 @@ export default function CameraSummary({ selectedCamera }) {
                 <div className={styles.stackedStats}>
                     <p>Kestrel Frequency</p>
                     <p className='small-stat-highlight'>
-                        {((selectedCamera?.total_photos_with_creatures && selectedCamera?.total_photos_with_creatures > 0 ? ((selectedCamera?.total_kestrel_identified_photos / selectedCamera?.total_photos_with_creatures) * 100) : 0).toFixed(0))}%
+                        {((selectedCamera?.kestrel_frequency > 0 ? 
+                            ((selectedCamera?.kestrel_frequency) * 100) : 0).toFixed(0))}%
                     </p>
                 </div>
             </div>

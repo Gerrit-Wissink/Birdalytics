@@ -47,7 +47,7 @@ export default function BirdPieChart({ birdboxes = [] }) {
     console.log('[BirdPieChart] effect running - birdboxes length:', birdboxes.length);
     var kestrels = birdboxes.reduce((sum, box) => sum + (box.total_kestrel_identified_photos ?? 0), 0);
     var otherBirds = birdboxes.reduce((sum, box) => sum + (box.total_non_kestrel_identified_photos ?? 0), 0);
-    var nonBirds = birdboxes.reduce((sum, box) => sum + ((box.total_photos_with_creatures - box.total_kestrel_identified_photos - box.total_non_kestrel_identified_photos) ?? 0), 0);
+    var nonBirds = birdboxes.reduce((sum, box) => sum + (box.total_non_bird_photos ?? 0), 0);
     console.log('[BirdPieChart] calling setData');
 
     setData([
@@ -84,7 +84,7 @@ export function BoxesPieChart({ birdboxes, photo = false }) {
   //THESE CAN ALSO BE CONSTS WHEN WE DELETE THE BELOW
   var kestrels = birdboxes.reduce((sum, box) => sum + (box.total_kestrel_identified_photos ?? 0), 0);
   var otherBirds = birdboxes.reduce((sum, box) => sum + (box.total_non_kestrel_identified_photos ?? 0), 0);
-  var nonBirds = birdboxes.reduce((sum, box) => sum + ((box.total_photos_with_creatures - box.total_kestrel_identified_photos - box.total_non_kestrel_identified_photos) ?? 0), 0);
+  var nonBirds = birdboxes.reduce((sum, box) => sum + (box.total_non_bird_photos ?? 0), 0);
 
   //DELETE THIS LATER, IT'S JUST SO MY GRAPH LOOKS PRETTY TEEHEE
   if (kestrels === 0 || otherBirds === 0 || nonBirds === 0){
@@ -154,7 +154,8 @@ export function MiniPieChart({ selected_camera }) {
     console.log('[BirdPieChart] effect running - selected_camera:', selected_camera);
     var kestrels = selected_camera?.total_kestrel_identified_photos ?? 0;
     var otherBirds = selected_camera?.total_non_kestrel_identified_photos ?? 0;
-    var nonBirds = (selected_camera?.total_photos_with_creatures ?? 0) - kestrels - otherBirds;
+    var nonBirds = selected_camera?.total_non_bird_photos ?? 
+                   (selected_camera?.total_photos_with_creatures ?? 0) - kestrels - otherBirds;
     console.log('[BirdPieChart] calling setData');
 
     setData([
