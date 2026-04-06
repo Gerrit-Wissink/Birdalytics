@@ -14,6 +14,11 @@ export default function AddCameraModal({ setShowModal }) {
     });
     const [error, setError] = useState("");
 
+    const handleInputChange = (e) => {
+        const { name, value } = e.target;
+        setFormData(prev => ({ ...prev, [name]: value }));
+    }
+
     const handleAddCamera = (e) => {
         e.preventDefault();
         setError("");

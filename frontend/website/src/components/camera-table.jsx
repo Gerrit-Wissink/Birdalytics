@@ -64,10 +64,13 @@ export default function BirdboxImageTable({ box, onSelectRow }) {
 
   // Reset to first row when birdbox ID changes
   useEffect(() => {
+    console.log('[BirdboxImageTable] effect running - birdbox_id:', box?.birdbox_id, 'rows length:', rows.length);
     const first = rows[0] ?? null;
+    console.log('[BirdboxImageTable] calling setSelectedRow and onSelectRow');
     setSelectedRow(first);
     if (onSelectRow) onSelectRow(first);
   }, [box?.birdbox_id]);
+
 
   const handleRowSelect = (e) => {
     setSelectedRow(e.value);
@@ -115,7 +118,7 @@ export default function BirdboxImageTable({ box, onSelectRow }) {
   const viewImageTemplate = (row) => (
     <span 
       className={styles.viewImageCell}
-      onClick={() => {
+      onClick={(e) => {
         e.stopPropagation(); // Prevent row selection when clicking the icon
         const imageUrl = `https://birdalytics.webdev.gccis.rit.edu/api/${row.image_url}`;
         if (imageUrl) {
