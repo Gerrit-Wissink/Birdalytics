@@ -35,6 +35,11 @@ const calculateBoxStats = (box) => {
         return count;
     }, 0);
 
+    const kestrelFrequency = numKestrelIdentified / (photosWithCreatures || 1);
+
+    // Non-birds should be records with no guesses
+    const nonBirds = box.records.filter(record => !record.guesses || record.guesses.length === 0).length;
+
     return {
         birdbox_id: box.birdbox_id,
         totalRecords,
@@ -44,7 +49,9 @@ const calculateBoxStats = (box) => {
         numActiveDays,
         usageRate,
         modifiedRecords,
-        mostRecentKestrel
+        nonBirds,
+        mostRecentKestrel,
+        kestrelFrequency
     };
 };
 

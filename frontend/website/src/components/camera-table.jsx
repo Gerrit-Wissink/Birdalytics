@@ -32,6 +32,8 @@ const parseImages = (box) => {
   return box.records.map((record) => ({
     ...record,
     _datetime: new Date(`${record.timestamp}`),
+    _identified_result: record.modified_bird ?? record.primary_guess ?? 'None',
+    _confidence: record.modified_bird ? 1 : record.primary_guess_confidence ?? 0,
   }));
 };
 
@@ -43,7 +45,7 @@ const getConfidenceBg = (score) => {
 
 // ─── Component ───────────────────────────────────────────────────────────────
 
-export default function BirdboxImageTable({ box, onSelectRow }) {
+export default function BirdboxImageTable({ box, onSelectRow, speciesOptions }) {
   const rows = useMemo(() => parseImages(box), [box]);
 
   // Selection — auto-initialize to first row
@@ -64,10 +66,13 @@ export default function BirdboxImageTable({ box, onSelectRow }) {
 
   // Reset to first row when birdbox ID changes
   useEffect(() => {
+    console.log('[BirdboxImageTable] effect running - birdbox_id:', box?.birdbox_id, 'rows length:', rows.length);
     const first = rows[0] ?? null;
+    console.log('[BirdboxImageTable] calling setSelectedRow and onSelectRow');
     setSelectedRow(first);
     if (onSelectRow) onSelectRow(first);
   }, [box?.birdbox_id]);
+
 
   const handleRowSelect = (e) => {
     setSelectedRow(e.value);
@@ -86,20 +91,40 @@ export default function BirdboxImageTable({ box, onSelectRow }) {
 
   const birdTemplate = (row) => {
     console.log(row);
-    if(!row.primary_guess) {
+
+    // Priority: modified_bird > primary_guess > "None"
+    if(row.modified_bird && row.modified_bird.includes('kestrel')) {
+      return <span className={styles.kestrelBadge}>{capitalize(row.modified_bird)}</span>;
+    }
+    if(row.modified_bird) {
+      return <span className={styles.birdPlain}>{capitalize(row.modified_bird)}</span>;
+    }
+
+    if(!row.primary_guess && !row.modified_bird) {
       return <span className={styles.noBird}>None</span>;
     }
+
     if (row.primary_guess.includes('kestrel')) {
       return <span className={styles.kestrelBadge}>{capitalize(row.primary_guess)}</span>;
     }
+
     return <span className={styles.birdPlain}>{capitalize(row.primary_guess)}</span>;
   };
 
   const confidenceTemplate = (row) => {
-    if(!row.primary_guess_confidence) {
+    if(!row.primary_guess_confidence && !row.modified_bird) {
       return <span className={styles.noConfidence}>—</span>;
     }
-    const pctNum = parseFloat(row.primary_guess_confidence);
+
+    let pctNum;
+    if (row.modified_bird) {
+      pctNum = 1;
+    } else if (row.primary_guess_confidence !== undefined && row.primary_guess_confidence !== null) {
+      pctNum = parseFloat(row.primary_guess_confidence);
+    } else {
+      pctNum = 0;
+    }
+
     const pct = Math.round(pctNum * 100);
     const bg = getConfidenceBg(pctNum);
     return (
@@ -115,7 +140,7 @@ export default function BirdboxImageTable({ box, onSelectRow }) {
   const viewImageTemplate = (row) => (
     <span 
       className={styles.viewImageCell}
-      onClick={() => {
+      onClick={(e) => {
         e.stopPropagation(); // Prevent row selection when clicking the icon
         const imageUrl = `https://birdalytics.webdev.gccis.rit.edu/api/${row.image_url}`;
         if (imageUrl) {
@@ -172,7 +197,7 @@ export default function BirdboxImageTable({ box, onSelectRow }) {
           dateRange={dateRange}           setDateRange={setDateRange}
           confidenceFilter={confidenceFilter} setConfidenceFilter={setConfidenceFilter}
           modifiedFilter={modifiedFilter} setModifiedFilter={setModifiedFilter}
-          birdOptions={birdOptions}
+          birdOptions={speciesOptions ?? birdOptions}
           activeFilterCount={activeFilterCount}
           handleClearFilters={handleClearFilters}
         />
@@ -229,11 +254,47 @@ export default function BirdboxImageTable({ box, onSelectRow }) {
           paginator: { style: { background: 'transparent', border: 'none', paddingTop: '14px' } },
         }}
       >
-        <Column field="date" header="Date - Time" sortable sortField="_datetime" body={dateTimeTemplate} style={{ minWidth: '210px' }} />
-        <Column field="identified_result" header="Identified Result" sortable body={birdTemplate} style={{ minWidth: '160px' }} />
-        <Column field="confidence_score" header="Confidence" sortable body={confidenceTemplate} style={{ minWidth: '120px' }} headerStyle={{ textAlign: 'center' }} />
-        <Column header="View Image" body={viewImageTemplate} style={{ minWidth: '110px' }} headerStyle={{ textAlign: 'center' }} />
-        <Column field="modified_date" header="Modified" body={modifiedTemplate} style={{ minWidth: '100px' }} headerStyle={{ textAlign: 'center' }} />
+        <Column 
+          field="date" 
+          header="Date - Time" 
+          sortable 
+          sortField="_datetime" 
+          body={dateTimeTemplate} 
+          style={{ minWidth: '210px' }} 
+        />
+
+        <Column 
+          field="identified_result" 
+          header="Identified Result" 
+          sortable 
+          sortField="_identified_result"
+          body={birdTemplate} 
+          style={{ minWidth: '160px' }} 
+        />
+
+        <Column 
+          field="confidence_score" 
+          header="Confidence" 
+          sortable 
+          sortField="_confidence"
+          body={confidenceTemplate} 
+          style={{ minWidth: '120px' }} 
+          headerStyle={{ textAlign: 'center' }} 
+        />
+
+        <Column 
+          header="View Image" 
+          body={viewImageTemplate} 
+          style={{ minWidth: '110px' }} 
+          headerStyle={{ textAlign: 'center' }} 
+        />
+        <Column 
+          field="modified_date" 
+          header="Modified" 
+          body={modifiedTemplate} 
+          style={{ minWidth: '100px' }} 
+          headerStyle={{ textAlign: 'center' }} 
+        />
       </DataTable>
     </div>
   );

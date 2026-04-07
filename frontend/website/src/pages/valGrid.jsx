@@ -31,6 +31,7 @@ export default function ValGrid(){
 
     // Tracks user-selected species corrections keyed by record id
     const [speciesCorrections, setSpeciesCorrections] = useState({});
+    const [speciesOptions, setSpeciesOptions] = useState([]);
 
     useEffect(() => {
         const token = localStorage.getItem('token');
@@ -140,6 +141,29 @@ export default function ValGrid(){
         { label: 'Pigeon', value: 'pigeon' },
     ];
 
+    useEffect(() => {
+        const fetchSpeciesOptions = async () => {
+            try {
+                // TODO: Replace with actual API call to fetch species options
+                const response = await apiClient.get('/species');
+                if(response.status === 200) {
+                    const optionsFromAPI = response.data.data.map(species => ({
+                        label: capitalize(species.species_name),
+                        value: species.species_name
+                    }));
+                    setSpeciesOptions(optionsFromAPI);
+                } else {
+                    console.error('Failed to fetch species options:', response.status);
+                    setSpeciesOptions(SPECIES_OPTIONS); // Fallback to hardcoded options
+                }
+            } catch (error) {
+                console.error('Error fetching species options:', error);
+            }
+        };
+
+        fetchSpeciesOptions();
+    }, []);
+
     const handleSpeciesCorrection = (recordId, newSpecies) => {
         setSpeciesCorrections((prev) => ({ ...prev, [recordId]: newSpecies }));
     };
@@ -161,8 +185,8 @@ export default function ValGrid(){
         aVal = a._datetime;
         bVal = b._datetime;
       } else {
-        aVal = a.primary_guess_confidence !== null ? parseFloat(a.primary_guess_confidence) : -1;
-        bVal = b.primary_guess_confidence !== null ? parseFloat(b.primary_guess_confidence) : -1;
+        aVal = a.modified_bird ? 1 : a.primary_guess_confidence !== null ? parseFloat(a.primary_guess_confidence) : -1;
+        bVal = b.modified_bird ? 1 : b.primary_guess_confidence !== null ? parseFloat(b.primary_guess_confidence) : -1;
       }
       if (aVal < bVal) return -1 * sortOrder;
       if (aVal > bVal) return 1 * sortOrder;
@@ -229,7 +253,7 @@ export default function ValGrid(){
             dateRange={dateRange}           setDateRange={setDateRange}
             confidenceFilter={confidenceFilter} setConfidenceFilter={setConfidenceFilter}
             modifiedFilter={modifiedFilter} setModifiedFilter={setModifiedFilter}
-            birdOptions={birdOptions}
+            birdOptions={speciesOptions ?? birdOptions}
             activeFilterCount={activeFilterCount}
             handleClearFilters={handleClearFilters}
         />
@@ -242,7 +266,7 @@ export default function ValGrid(){
     const cardTemplate = (record) => {
         console.log('IMAGE: ', record.image_url)
         const recordId = record.image_id ?? record.record_id;
-        const conf = record.primary_guess_confidence;
+        const conf = record.modified_bird ? 1 : record.primary_guess_confidence;
         const confBg = getConfidenceBg(conf);
         const confPct = formatConfidencePct(conf);
         const imageUrl = record.image_url
@@ -252,7 +276,7 @@ export default function ValGrid(){
         : null;
 
         // Use corrected species if the user has picked one, otherwise fall back to the model's guess
-        const displaySpecies = speciesCorrections[recordId] ?? record.primary_guess;
+        const displaySpecies = speciesCorrections[recordId] ?? record.modified_bird ?? record.primary_guess;
 
         return (
         <div className={styles.cardCol} key={recordId}>
@@ -279,7 +303,7 @@ export default function ValGrid(){
                 {imageUrl ? (
                 <img
                     src={imageUrl}
-                    alt={record.primary_guess ?? 'Unknown  image'}
+                    alt={record.modified_bird ?? record.primary_guess ?? 'Unknown  image'}
                     className={styles.cardImage}
                 />
                 ) : (
@@ -298,8 +322,8 @@ export default function ValGrid(){
                     <p className={styles.dropdownLabel}>Update Identification Result:</p>
                 </div>
                 <Dropdown
-                    value={speciesCorrections[recordId] ?? record.primary_guess ?? null}
-                    options={SPECIES_OPTIONS}
+                    value={speciesCorrections[recordId] ?? record.modified_bird ?? record.primary_guess ?? null}
+                    options={speciesOptions}
                     onChange={(e) => handleSpeciesCorrection(recordId, e.value)}
                     placeholder="Correct species..."
                     editable
@@ -325,11 +349,16 @@ export default function ValGrid(){
                     layout="grid"
                     header={header}
                     itemTemplate={cardTemplate}
-                    paginator
                     rows={12}
                     rowsPerPageOptions={[12, 24, 48]}
                     emptyMessage="No images match your filters."
+                    style={{marginBottom: '5%'}}
                 />
+            {Object.keys(speciesCorrections).length > 0 &&
+                <div id={styles.saveBanner}onClick={handleSaveChanges}>
+                    Click to save all changes
+                </div>
+            }
             </div>
         </section>
         </>
