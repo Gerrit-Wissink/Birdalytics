@@ -48,12 +48,13 @@ export default function ProgressBar ({ box_records }){
         )}
 
         <div
+            className="progressBarTrack"
             style={{ position: "relative", width: "100%", height: "6px", borderRadius: "3px", backgroundColor: "#757575", cursor: "pointer" }}
             onMouseEnter={() => setHovered(true)}
             onMouseLeave={() => setHovered(false)}
             onMouseMove={handleMouseMove}
         >
-            <div style={{
+            <div className="progressBarFill" style={{
             position: "absolute",
             top: 0,
             left: 0,
