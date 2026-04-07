@@ -143,7 +143,6 @@ const miniSize = {
 
 export function MiniPieChart({ selected_camera }) {
   const [hoveredIndex, setHoveredIndex] = useState(0);
-
   const [data, setData] = useState([
     { value: 0, label: 'American Kestrels', title: 'total kestrel' },
     { value: 0, label: 'Other Birds', title: 'other bird' },
@@ -166,25 +165,23 @@ export function MiniPieChart({ selected_camera }) {
   }, [selected_camera?.birdbox_id]); // Track birdbox_id instead of object reference to ensure effect runs when camera changes
 
   const total = data.reduce((sum, item) => sum + (item.value ?? 0), 0);
+  const kestrels = data[0].value; // Derive from state so it's always in scope
 
   return (
-    <div style={{display: 'flex', alignItems:'center', justifyContent: 'space-between', gap: '1.5em'}}>
-      <div className='stat-box' style={{padding: '0px'}}>
+    <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', gap: '1.5em' }}>
+      <div className='stat-box'>
         <PieChart
           series={[{ data, innerRadius: 35 }]}
           colors={colors}
           hideLegend
-          {...miniSize}
+          {...miniSize} // Use miniSize, not size
           slotProps={{ legend: { hidden: true } }}
-          onItemClick={(event, d) => {
-            setHoveredIndex(d.dataIndex);
-          }}
-        >
-        </PieChart>
+          onItemClick={(event, d) => setHoveredIndex(d.dataIndex)}
+        />
       </div>
       <div>
         <p className='small-stat-highlight'>{kestrels}/{total}</p>
-        <p style={{marginTop:'0px', marginBottom: '0px'}}>Kestrels Identified</p>
+        <p style={{ marginTop: '0px', marginBottom: '0px' }}>Kestrels Identified</p>
       </div>
     </div>
   );

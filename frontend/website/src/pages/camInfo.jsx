@@ -1,6 +1,6 @@
 import ChevronRightRoundedIcon from '@mui/icons-material/ChevronRightRounded';
 import ChevronLeftRoundedIcon from '@mui/icons-material/ChevronLeftRounded';
-import { IoSettingsOutline } from "react-icons/io5";
+import { FiEdit } from 'react-icons/fi';
 import { useState, useEffect, useCallback } from 'react';
 import apiClient from '../utils/apiClient';
 import BirdboxImageTable from '../components/camera-table';
@@ -217,7 +217,7 @@ export default function CamInfo() {
         <>
             <h1 style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', marginRight: '7.5%' }}>
                 {selectedCamera?.birdbox_name ?? 'Select a Camera'}
-                <IoSettingsOutline />
+                <FiEdit style={{ fontSize: '1.75rem', marginLeft: '0.5rem' }} />
             </h1>
 
             <div className={styles.sideBySide}>
@@ -257,7 +257,7 @@ export default function CamInfo() {
         <>
             <h1 style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', marginRight: '7.5%' }}>
                 {selectedCamera?.birdbox_name ?? 'Select a Camera'}
-                <IoSettingsOutline />
+                <FiEdit style={{ fontSize: '1.5rem', marginLeft: '0.5rem' }}/>
             </h1>
 
             <div id={styles.identifyBox} {...handlers}>
