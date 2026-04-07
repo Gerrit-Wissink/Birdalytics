@@ -92,13 +92,17 @@ export default function CamInfo() {
                     console.log('Boxes data:', data);
                     setBoxesData(data);
 
-                    // Check for query parameter first
-                    const selected = new URLSearchParams(window.location.search).get('selected');
+                    // Check for query parameter first (from hash-based routing)
+                    // In hash routing, query params are in the hash: #/path?param=value
+                    const hashParts = window.location.hash.split('?');
+                    const queryString = hashParts.length > 1 ? hashParts[1] : '';
+                    const selected = new URLSearchParams(queryString).get('selected');
                     if (selected) {
                         console.log('Selecting camera from URL param:', selected);
                         setSelectedID(selected);
                     } else if (data.length > 0) {
                         // Only auto-select first camera if no query param
+                        console.log('No URL param, selecting first camera by default:', data[0].birdbox_id);
                         setSelectedID(data[0].birdbox_id);
                     }
                 } else {

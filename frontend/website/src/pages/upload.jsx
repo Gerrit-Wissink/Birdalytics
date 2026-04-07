@@ -256,19 +256,6 @@ export default function Upload() {
                             />
                         </div>
 
-                        <div className="divider">OR</div>
-
-                        <div className="url-section">
-                            <label htmlFor="url-input">Import from URL</label>
-                            <input
-                                type="text"
-                                id="url-input"
-                                placeholder="Add file URL"
-                                value={urlValue}
-                                onChange={(e) => setUrlValue(e.target.value)}
-                            />
-                        </div>
-
                         <div className="button-group">
                             <button type="button" className="cancel-btn" onClick={handleReset}>
                                 Reset
