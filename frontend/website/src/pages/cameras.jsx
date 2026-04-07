@@ -86,11 +86,6 @@ export default function Cameras() {
     const cameras = boxesData;
     const hasCameras = cameras.length > 0;
 
-    const hasActivity = cameras.some((box) => {
-        const records = box.records ?? [];
-        return records.length > 0;
-    });
-
     console.log('boxesData', boxesData);
     console.log(
         'activity counts',
@@ -119,40 +114,12 @@ export default function Cameras() {
         return (
             <section id="container">
                 <h1>Cameras</h1>
-
-                <div className="empty-state overview-empty-state">
-                    <h2>No cameras yet</h2>
-                    <p>Add your first birdbox to start tracking activity.</p>
-
-                    <button
-                        className="primary-button"
-                        onClick={() => setShowModal(true)}
-                    >
-                        Add Camera
-                    </button>
-                </div>
-            </section>
-        );
-    }
-
-    if (hasCameras && !hasActivity) {
-        return (
-            <section id="container">
-                <h1>Cameras</h1>
-
-                <div className="empty-state overview-empty-state">
-                    <h2>No activity yet</h2>
-                    <p>
-                        Your cameras are set up, but no images have been captured yet.
-                    </p>
-
-                    <button
-                        className="primary-button"
-                        onClick={() => window.location.href = "/#/upload"}
-                    >
-                        Upload Images
-                    </button>
-                </div>
+                <EmptyState
+                    title="No cameras yet"
+                    description="Add your first birdbox to start tracking activity."
+                    actionText="Add Camera"
+                    onAction={() => setShowModal(true)}
+                />
             </section>
         );
     }
@@ -192,5 +159,5 @@ export default function Cameras() {
                 <AddCameraModal handleCancelModal={handleCancelModal} />
             )}
         </>
-    )
+    );
 }
