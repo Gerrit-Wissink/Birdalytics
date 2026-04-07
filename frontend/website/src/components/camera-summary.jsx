@@ -3,8 +3,9 @@ import styles from '../pages/camInfo.module.css';
 import ProgressBar from './progress-bar';
 import MiniPieChart from './donut-chart';
 
-// Stable empty array reference to prevent infinite loops in ProgressBar effect
+// Stable empty references to prevent infinite loops
 const EMPTY_RECORDS = [];
+const EMPTY_CAMERA = {};
 
 export default function CameraSummary({ selectedCamera }) {
     console.log('[CameraSummary] render with selectedCamera:', selectedCamera?.birdbox_id);
@@ -34,7 +35,7 @@ export default function CameraSummary({ selectedCamera }) {
             <div className={styles.speciesOverviewGroup}>
                 <p>Species Overview</p>
                 <MiniPieChart
-                    selected_camera={selectedCamera ?? EMPTY_RECORDS}
+                    selected_camera={selectedCamera ?? EMPTY_CAMERA}
                 />
             </div>
 
