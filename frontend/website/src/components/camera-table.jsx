@@ -32,6 +32,8 @@ const parseImages = (box) => {
   return box.records.map((record) => ({
     ...record,
     _datetime: new Date(`${record.timestamp}`),
+    _identified_result: record.modified_bird ?? record.primary_guess ?? 'None',
+    _confidence: record.modified_bird ? 1 : record.primary_guess_confidence ?? 0,
   }));
 };
 
@@ -252,11 +254,47 @@ export default function BirdboxImageTable({ box, onSelectRow, speciesOptions }) 
           paginator: { style: { background: 'transparent', border: 'none', paddingTop: '14px' } },
         }}
       >
-        <Column field="date" header="Date - Time" sortable sortField="_datetime" body={dateTimeTemplate} style={{ minWidth: '210px' }} />
-        <Column field="identified_result" header="Identified Result" sortable body={birdTemplate} style={{ minWidth: '160px' }} />
-        <Column field="confidence_score" header="Confidence" sortable body={confidenceTemplate} style={{ minWidth: '120px' }} headerStyle={{ textAlign: 'center' }} />
-        <Column header="View Image" body={viewImageTemplate} style={{ minWidth: '110px' }} headerStyle={{ textAlign: 'center' }} />
-        <Column field="modified_date" header="Modified" body={modifiedTemplate} style={{ minWidth: '100px' }} headerStyle={{ textAlign: 'center' }} />
+        <Column 
+          field="date" 
+          header="Date - Time" 
+          sortable 
+          sortField="_datetime" 
+          body={dateTimeTemplate} 
+          style={{ minWidth: '210px' }} 
+        />
+
+        <Column 
+          field="identified_result" 
+          header="Identified Result" 
+          sortable 
+          sortField="_identified_result"
+          body={birdTemplate} 
+          style={{ minWidth: '160px' }} 
+        />
+
+        <Column 
+          field="confidence_score" 
+          header="Confidence" 
+          sortable 
+          sortField="_confidence"
+          body={confidenceTemplate} 
+          style={{ minWidth: '120px' }} 
+          headerStyle={{ textAlign: 'center' }} 
+        />
+
+        <Column 
+          header="View Image" 
+          body={viewImageTemplate} 
+          style={{ minWidth: '110px' }} 
+          headerStyle={{ textAlign: 'center' }} 
+        />
+        <Column 
+          field="modified_date" 
+          header="Modified" 
+          body={modifiedTemplate} 
+          style={{ minWidth: '100px' }} 
+          headerStyle={{ textAlign: 'center' }} 
+        />
       </DataTable>
     </div>
   );
