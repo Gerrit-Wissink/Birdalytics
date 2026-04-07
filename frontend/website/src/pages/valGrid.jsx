@@ -83,6 +83,7 @@ export default function ValGrid(){
                     _datetime: rec.timestamp
                         ? new Date(rec.timestamp)
                         : new Date(),
+                    _confidence: rec.modified_bird ? 1 : rec.primary_guess_confidence ?? 0
                 }))
             )
             .filter((rec) => selectedBoxNames.includes(rec.birdbox_name));
@@ -266,7 +267,7 @@ export default function ValGrid(){
     const cardTemplate = (record) => {
         console.log('IMAGE: ', record.image_url)
         const recordId = record.image_id ?? record.record_id;
-        const conf = record.modified_bird ? 1 : record.primary_guess_confidence;
+        const conf = record._confidence; // Use pre-computed _confidence field
         const confBg = getConfidenceBg(conf);
         const confPct = formatConfidencePct(conf);
         const imageUrl = record.image_url
