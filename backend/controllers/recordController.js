@@ -4,6 +4,7 @@ const Birdboxes = require('../models/Birdboxes');
 const Birdguess = require('../models/Birdguess');
 const SpeciesDictionary = require('../models/SpeciesDictionary');
 const converter = require('json-2-csv');
+const { formatManualBird } = require('./utils');
 
 class RecordController {
     // Get all Birdrecords
@@ -217,6 +218,7 @@ class RecordController {
             const { manual_bird } = req.body;
 
             const record = await Birdrecords.findByPk(id);
+
             if (!record) {
                 return res.status(404).json({
                     success: false,
@@ -224,7 +226,16 @@ class RecordController {
                 });
             }
 
-            await Birdrecords.update({ manual_bird: manual_bird }, { where: { record_id: id } });
+            const formatted_bird = formatManualBird(manual_bird);
+
+            const species = await SpeciesDictionary.findOne({ where: { species_name: formatted_bird } });
+
+            if (!species) {
+                const newSpecies = await SpeciesDictionary.create({ species_name: formatted_bird });
+                console.log('Created new species:', newSpecies.species_name, 'with ID:', newSpecies.species_id);
+            }
+
+            await Birdrecords.update({ manual_bird: formatted_bird }, { where: { record_id: id } });
 
             res.json({
                 success: true,
