@@ -37,7 +37,7 @@ def stop_hotspot():
 
 # turn_on_wifi() controls the status of the LAN hotspot on the Raspberry Pi.
 # If the hotspot is NOT currently running, then the hotspot will be enabled, along with a timer that runs for the time specified by timer_duration.
-# Additionally, a file labeled "Doorbell" will be made with a timestamp to denote a separation between data retrieval sessions.
+# Additionally, a file labeled "Doorbell" with a timestamp will be made in the Pictures directory to denote a separation between data retrieval sessions.
 # If the hotspot is already currently running, then the timer will be reset.
 def turn_on_wifi(channel):
 	print("Doorbell pressed. Starting hotspot...")
@@ -46,7 +46,7 @@ def turn_on_wifi(channel):
 	if not hotspot_running:
 		subprocess.run(['sudo', 'bash', start_script])
 		timestamp = time.strftime('%Y-%m-%d_%H-%M-%S')
-		filename = 'Doorbell_' + timestamp
+		filename = '/home/Birdalytics/Pictures/Doorbell_' + timestamp
 		subprocess.run(['sudo', 'touch', filename])
 		hotspot_running = True
 	else:
