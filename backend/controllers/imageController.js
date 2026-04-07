@@ -149,17 +149,13 @@ class ImageController {
                 }
 
                 let timestamp = new Date();
-                const match = originalname.match(/^[A-Za-z]*(\d{8})_(\d{6})/);
+                const match = originalname.match(/^[A-Za-z]*_(\d{4})-(\d{2})-(\d{2})_(\d{2})-(\d{2})-(\d{2})/);
 
                 if (match) {
-                    const [, yyyymmdd, hhmmss] = match;
-
-                    const isoLike =
-                        `${yyyymmdd.slice(0, 4)}-${yyyymmdd.slice(4, 6)}-${yyyymmdd.slice(6, 8)}T` +
-                        `${hhmmss.slice(0, 2)}:${hhmmss.slice(2, 4)}:${hhmmss.slice(4, 6)}.000`;
-
+                    const [, yyyy, mm, dd, hh, mn, ss] = match;
+                    const isoLike = `${yyyy}-${mm}-${dd}T${hh}:${mn}:${ss}.000`;
                     const parsed = new Date(isoLike);
-
+                    
                     if (!isNaN(parsed.getTime())) {
                         timestamp = parsed;
                     } else {
@@ -175,6 +171,29 @@ class ImageController {
                 transaction = await sequelize.transaction();
                 console.log('Transaction started successfully');
 
+                console.log('Looking up Birdbox with name:', boxName);
+                const birdbox = await Birdboxes.findOne({ where: { name: boxName }, transaction });
+
+                if (!birdbox) {
+                    console.log('ERROR: Birdbox not found');
+                    throw new Error('Birdbox not found: ' + boxName);
+                }
+                console.log('Birdbox found with ID:', birdbox.birdbox_id);
+
+                //Check if a record already exists for this timestamp and birdbox
+                const existingRecord = await Birdrecords.findOne({
+                    where: {
+                        birdbox_id: birdbox.birdbox_id,
+                        timestamp
+                    },
+                    transaction
+                });
+
+                if (existingRecord) {
+                    console.log('ERROR: Record already exists for this timestamp and birdbox, skipping file:', originalname);
+                    continue;
+                }
+
                 console.log('Creating Image record...');
                 const imgRes = await Image.create({
                     image: buffer,
@@ -187,15 +206,6 @@ class ImageController {
                     console.log('ERROR: Failed to create image record');
                     throw new Error('Failed to create image record for ' + originalname);
                 }
-
-                console.log('Looking up Birdbox with name:', boxName);
-                const birdbox = await Birdboxes.findOne({ where: { name: boxName }, transaction });
-
-                if (!birdbox) {
-                    console.log('ERROR: Birdbox not found');
-                    throw new Error('Birdbox not found: ' + boxName);
-                }
-                console.log('Birdbox found with ID:', birdbox.birdbox_id);
 
                 console.log('Creating Birdrecord...');
                 const recordRes = await Birdrecords.create({
