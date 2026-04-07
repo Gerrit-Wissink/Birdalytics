@@ -31,6 +31,7 @@ export default function ValGrid(){
 
     // Tracks user-selected species corrections keyed by record id
     const [speciesCorrections, setSpeciesCorrections] = useState({});
+    const [speciesOptions, setSpeciesOptions] = useState([]);
 
     useEffect(() => {
         const token = localStorage.getItem('token');
@@ -140,7 +141,6 @@ export default function ValGrid(){
         { label: 'Pigeon', value: 'pigeon' },
     ];
 
-    const [speciesOptions, setSpeciesOptions] = useState([]);
     useEffect(() => {
         const fetchSpeciesOptions = async () => {
             try {
@@ -253,7 +253,7 @@ export default function ValGrid(){
             dateRange={dateRange}           setDateRange={setDateRange}
             confidenceFilter={confidenceFilter} setConfidenceFilter={setConfidenceFilter}
             modifiedFilter={modifiedFilter} setModifiedFilter={setModifiedFilter}
-            birdOptions={birdOptions}
+            birdOptions={speciesOptions ?? birdOptions}
             activeFilterCount={activeFilterCount}
             handleClearFilters={handleClearFilters}
         />

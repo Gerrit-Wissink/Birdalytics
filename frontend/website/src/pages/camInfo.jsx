@@ -13,6 +13,10 @@ import { useSwipeable } from 'react-swipeable';
 
 import styles from './camInfo.module.css'
 
+const capitalize = (str) => {
+    if (!str) return '';
+    return str.split(' ').map((w) => w.charAt(0).toUpperCase() + w.slice(1)).join(' ');
+};
 
 export default function CamInfo() {
 
@@ -28,6 +32,8 @@ export default function CamInfo() {
     const [showAddCameraModal, setShowAddCameraModal] = useState(false);
     const [sidebarOpen, setSidebarOpen] = useState(false);
     const [windowWidth, setWindowWidth] = useState(window.innerWidth);
+
+    const [speciesOptions, setSpeciesOptions] = useState([]);
 
     const MOBILE_BREAKPOINT = 1024;
 
@@ -87,8 +93,13 @@ export default function CamInfo() {
                     console.log('Boxes data:', data);
                     setBoxesData(data);
 
-                    // Auto-select the first camera as soon as data arrives since no longer through cameras page
-                    if (data.length > 0) {
+                    // Check for query parameter first
+                    const selected = new URLSearchParams(window.location.search).get('selected');
+                    if (selected) {
+                        console.log('Selecting camera from URL param:', selected);
+                        setSelectedID(selected);
+                    } else if (data.length > 0) {
+                        // Only auto-select first camera if no query param
                         setSelectedID(data[0].birdbox_id);
                     }
                 } else {
@@ -101,13 +112,27 @@ export default function CamInfo() {
 
         fetchBoxesData();
     }, []);
-    //selectedImageRow.current?.identified_result or whatever you're trying to access should work
 
     useEffect(() => {
-        const selected = new URLSearchParams(window.location.search).get('selected');
-        if (selected) {
-            setSelectedID(selected);
-        }
+        const fetchSpeciesOptions = async () => {
+            try {
+                // TODO: Replace with actual API call to fetch species options
+                const response = await apiClient.get('/species');
+                if(response.status === 200) {
+                    const optionsFromAPI = response.data.data.map(species => ({
+                        label: capitalize(species.species_name),
+                        value: species.species_name
+                    }));
+                    setSpeciesOptions(optionsFromAPI);
+                } else {
+                    console.error('Failed to fetch species options:', response.status);
+                }
+            } catch (error) {
+                console.error('Error fetching species options:', error);
+            }
+        };
+
+        fetchSpeciesOptions();
     }, []);
 
     useEffect(() => {
@@ -203,6 +228,7 @@ export default function CamInfo() {
                                 setSelectedRow({ ...selectedRow, primary_guess: species, primary_guess_confidence: null });
                             }
                         }}
+                        speciesOptions={speciesOptions}
                     />
                 </div>
             </div>
@@ -234,6 +260,7 @@ export default function CamInfo() {
                             setSelectedRow({ ...selectedRow, primary_guess: species, primary_guess_confidence: null }); // Set confidence to 100% on manual override
                         }
                     }}
+                    speciesOptions={speciesOptions}
                 />
             </div>
 

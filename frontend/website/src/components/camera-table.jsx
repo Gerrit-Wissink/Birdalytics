@@ -43,7 +43,7 @@ const getConfidenceBg = (score) => {
 
 // ─── Component ───────────────────────────────────────────────────────────────
 
-export default function BirdboxImageTable({ box, onSelectRow }) {
+export default function BirdboxImageTable({ box, onSelectRow, speciesOptions }) {
   const rows = useMemo(() => parseImages(box), [box]);
 
   // Selection — auto-initialize to first row
@@ -122,7 +122,7 @@ export default function BirdboxImageTable({ box, onSelectRow }) {
     } else {
       pctNum = 0;
     }
-    
+
     const pct = Math.round(pctNum * 100);
     const bg = getConfidenceBg(pctNum);
     return (
@@ -195,7 +195,7 @@ export default function BirdboxImageTable({ box, onSelectRow }) {
           dateRange={dateRange}           setDateRange={setDateRange}
           confidenceFilter={confidenceFilter} setConfidenceFilter={setConfidenceFilter}
           modifiedFilter={modifiedFilter} setModifiedFilter={setModifiedFilter}
-          birdOptions={birdOptions}
+          birdOptions={speciesOptions ?? birdOptions}
           activeFilterCount={activeFilterCount}
           handleClearFilters={handleClearFilters}
         />
