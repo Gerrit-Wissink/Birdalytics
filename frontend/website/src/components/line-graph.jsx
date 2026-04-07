@@ -96,7 +96,7 @@ export default function LineGraph({ boxesData = [] }) {
             if (checkDateInCurrentMonth(new Date(record.timestamp))) {
                 const day = new Date(record.timestamp).getDate();
                 if(day < 1 || day > updatedChartData.length) continue; //safety check to make sure day is within bounds of current month
-                if (checkContainsKestrel(record.primary_guess) || checkContainsKestrel(record.modified_bird)) {
+                if (checkContainsKestrel(record.modified_bird ?? record.primary_guess)) {
                     updatedChartData[day - 1].value += 1
                 }
             }
@@ -191,7 +191,7 @@ export function LineGraphPicture({ boxesData = [] }) {
             if (checkDateInCurrentMonth(new Date(record.timestamp))) {
                 const day = new Date(record.timestamp).getDate();
                 if(day < 1 || day > updatedChartData.length) continue; //safety check to make sure day is within bounds of current month
-                if (checkContainsKestrel(record.primary_guess) || checkContainsKestrel(record.modified_bird)) {
+                if (checkContainsKestrel(record.modified_bird ?? record.primary_guess)) {
                     updatedChartData[day - 1].value += 1
                 }
             }

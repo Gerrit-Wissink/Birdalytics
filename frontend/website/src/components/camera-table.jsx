@@ -43,7 +43,7 @@ const getConfidenceBg = (score) => {
 
 // ─── Component ───────────────────────────────────────────────────────────────
 
-export default function BirdboxImageTable({ box, onSelectRow }) {
+export default function BirdboxImageTable({ box, onSelectRow, speciesOptions }) {
   const rows = useMemo(() => parseImages(box), [box]);
 
   // Selection — auto-initialize to first row
@@ -89,20 +89,40 @@ export default function BirdboxImageTable({ box, onSelectRow }) {
 
   const birdTemplate = (row) => {
     console.log(row);
-    if(!row.primary_guess) {
+
+    // Priority: modified_bird > primary_guess > "None"
+    if(row.modified_bird && row.modified_bird.includes('kestrel')) {
+      return <span className={styles.kestrelBadge}>{capitalize(row.modified_bird)}</span>;
+    }
+    if(row.modified_bird) {
+      return <span className={styles.birdPlain}>{capitalize(row.modified_bird)}</span>;
+    }
+
+    if(!row.primary_guess && !row.modified_bird) {
       return <span className={styles.noBird}>None</span>;
     }
+
     if (row.primary_guess.includes('kestrel')) {
       return <span className={styles.kestrelBadge}>{capitalize(row.primary_guess)}</span>;
     }
+
     return <span className={styles.birdPlain}>{capitalize(row.primary_guess)}</span>;
   };
 
   const confidenceTemplate = (row) => {
-    if(!row.primary_guess_confidence) {
+    if(!row.primary_guess_confidence && !row.modified_bird) {
       return <span className={styles.noConfidence}>—</span>;
     }
-    const pctNum = parseFloat(row.primary_guess_confidence);
+
+    let pctNum;
+    if (row.modified_bird) {
+      pctNum = 1;
+    } else if (row.primary_guess_confidence !== undefined && row.primary_guess_confidence !== null) {
+      pctNum = parseFloat(row.primary_guess_confidence);
+    } else {
+      pctNum = 0;
+    }
+
     const pct = Math.round(pctNum * 100);
     const bg = getConfidenceBg(pctNum);
     return (
@@ -175,7 +195,7 @@ export default function BirdboxImageTable({ box, onSelectRow }) {
           dateRange={dateRange}           setDateRange={setDateRange}
           confidenceFilter={confidenceFilter} setConfidenceFilter={setConfidenceFilter}
           modifiedFilter={modifiedFilter} setModifiedFilter={setModifiedFilter}
-          birdOptions={birdOptions}
+          birdOptions={speciesOptions ?? birdOptions}
           activeFilterCount={activeFilterCount}
           handleClearFilters={handleClearFilters}
         />

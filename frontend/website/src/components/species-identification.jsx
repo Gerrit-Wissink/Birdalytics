@@ -18,36 +18,11 @@ const capitalize = (str) => {
     return str.split(' ').map((w) => w.charAt(0).toUpperCase() + w.slice(1)).join(' ');
 };
 
-export default function SpeciesIdentification({ selectedRow, imageMap, birdboxName, onSpeciesOverride }) {
+export default function SpeciesIdentification({ selectedRow, imageMap, birdboxName, onSpeciesOverride, speciesOptions = SPECIES_OPTIONS }) {
     // Tracks which option row is currently selected (index: 0 = primary, 1 = other[0], 2 = other[1])
     const [selectedOptionIndex, setSelectedOptionIndex] = useState(0);
     // Tracks a manual species selection from the dropdown (null = nothing chosen yet)
     const [manualSpecies, setManualSpecies] = useState(null);
-
-    const [speciesOptions, setSpeciesOptions] = useState([]);
-
-    useEffect(() => {
-        const fetchSpeciesOptions = async () => {
-            try {
-                // TODO: Replace with actual API call to fetch species options
-                const response = await apiClient.get('/species');
-                if(response.status === 200) {
-                    const optionsFromAPI = response.data.data.map(species => ({
-                        label: capitalize(species.species_name),
-                        value: species.species_name
-                    }));
-                    setSpeciesOptions(optionsFromAPI);
-                } else {
-                    console.error('Failed to fetch species options:', response.status);
-                    setSpeciesOptions(SPECIES_OPTIONS); // Fallback to hardcoded options
-                }
-            } catch (error) {
-                console.error('Error fetching species options:', error);
-            }
-        };
-
-        fetchSpeciesOptions();
-    }, []);
 
     // Reset selections whenever a new row is chosen from the table
     useEffect(() => {
@@ -59,7 +34,8 @@ export default function SpeciesIdentification({ selectedRow, imageMap, birdboxNa
         return <p style={{ color: 'var(--text-muted, #888)', marginTop: '1em' }}>Select a row to view details.</p>;
     }
 
-    const primaryConf = selectedRow.primary_guess_confidence != null
+    const primaryConf = selectedRow.modified_bird ? 100 
+        : selectedRow.primary_guess_confidence != null
         ? Math.round(selectedRow.primary_guess_confidence * 100)
         : null;
 
@@ -71,11 +47,13 @@ export default function SpeciesIdentification({ selectedRow, imageMap, birdboxNa
     // Build option rows: primary first, then up to 2 other guesses
     // other_guesses are plain strings with no associated confidence score
     const options = [
-        selectedRow.primary_guess
+            selectedRow.modified_bird 
+            ? { species: selectedRow.modified_bird, confidence: 100 }
+            : selectedRow.primary_guess
             ? { species: selectedRow.primary_guess, confidence: primaryConf }
             : null,
-        otherGuesses[0] ? { species: otherGuesses[0], confidence: null } : null,
-        otherGuesses[1] ? { species: otherGuesses[1], confidence: null } : null,
+        // otherGuesses[0] ? { species: otherGuesses[0], confidence: null } : null,
+        // otherGuesses[1] ? { species: otherGuesses[1], confidence: null } : null,
     ].filter(Boolean);
 
     const handleOptionClick = (index) => {
