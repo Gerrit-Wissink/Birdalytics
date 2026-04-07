@@ -253,6 +253,13 @@
   color: #bbb;
 }
 
+.open-map-button{
+  border-radius: 12px;
+  padding: .7em 1em;
+  border: 1px solid var(--stroke);
+  color: var(--text)
+}
+
 .modal-buttons {
   display: flex;
   gap: 1rem;

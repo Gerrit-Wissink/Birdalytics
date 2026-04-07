@@ -3,8 +3,6 @@ import { DataTable } from 'primereact/datatable';
 import { Column } from 'primereact/column';
 import { InputText } from 'primereact/inputtext';
 import { Button } from 'primereact/button';
-import { Dropdown } from 'primereact/dropdown';
-import { Calendar } from 'primereact/calendar';
 import PhotoOutlinedIcon from '@mui/icons-material/PhotoOutlined';
 import SearchRoundedIcon from '@mui/icons-material/SearchRounded';
 import FilterListRoundedIcon from '@mui/icons-material/FilterListRounded';
@@ -77,6 +75,18 @@ export default function BirdboxImageTable({ box, onSelectRow, speciesOptions }) 
     if (onSelectRow) onSelectRow(e.value);
   };
 
+  const [zoomedImage, setZoomedImage] = useState(null);
+
+  const handleZoom = (src) => {
+      setZoomedImage(src);
+      document.body.style.overflow = 'hidden';
+  };
+
+  const closeZoom = () => {
+      setZoomedImage(null); // Reset image
+      document.body.style.overflow = 'auto';
+  };
+
   // ─── Column templates ──────────────────────────────────────────────────────
 
   const dateTimeTemplate = (row) => {
@@ -141,13 +151,13 @@ export default function BirdboxImageTable({ box, onSelectRow, speciesOptions }) 
       onClick={(e) => {
         e.stopPropagation(); // Prevent row selection when clicking the icon
         const imageUrl = `https://birdalytics.webdev.gccis.rit.edu/api/${row.image_url}`;
-        if (imageUrl) {
-          window.open(imageUrl, '_blank');
-        }
+        handleZoom(imageUrl);
       }}
       style={{ cursor: 'pointer' }}
     >
-      <PhotoOutlinedIcon style={{ fontSize: '1.7rem' }} />
+      <PhotoOutlinedIcon 
+      style={{ fontSize: '1.7rem' }}
+      />
     </span>
   );
 
@@ -206,6 +216,7 @@ export default function BirdboxImageTable({ box, onSelectRow, speciesOptions }) 
   // ─── Render ────────────────────────────────────────────────────────────────
 
   return (
+    <>
     <div className={styles.tableWrapper}>
       <style>{PRIMEREACT_OVERRIDES}</style>
 
@@ -259,6 +270,12 @@ export default function BirdboxImageTable({ box, onSelectRow, speciesOptions }) 
         <Column field="modified_date" header="Modified" body={modifiedTemplate} style={{ minWidth: '100px' }} headerStyle={{ textAlign: 'center' }} />
       </DataTable>
     </div>
+    {zoomedImage && (
+        <div className="overlay" onClick={closeZoom}>
+            <img src={zoomedImage} alt="Zoomed Design" className="zoomed-img" />
+        </div>
+    )}
+    </>
   );
 }
 

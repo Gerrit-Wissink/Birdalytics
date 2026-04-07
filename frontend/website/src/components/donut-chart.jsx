@@ -143,48 +143,44 @@ const miniSize = {
 
 export function MiniPieChart({ selected_camera }) {
   const [hoveredIndex, setHoveredIndex] = useState(0);
-
   const [data, setData] = useState([
     { value: 0, label: 'American Kestrels', title: 'total kestrel' },
     { value: 0, label: 'Other Birds', title: 'other bird' },
     { value: 0, label: 'Non-Birds', title: 'non-bird' },
   ]);
 
-  useEffect(() => {
-    console.log('[BirdPieChart] effect running - selected_camera:', selected_camera);
-    var kestrels = selected_camera?.total_kestrel_identified_photos ?? 0;
-    var otherBirds = selected_camera?.total_non_kestrel_identified_photos ?? 0;
-    var nonBirds = selected_camera?.total_non_bird_photos ?? 
-                   (selected_camera?.total_photos_with_creatures ?? 0) - kestrels - otherBirds;
-    console.log('[BirdPieChart] calling setData');
+ useEffect(() => {
+    if (!selected_camera?.birdbox_id) return;
+
+    const kestrels = selected_camera.total_kestrel_identified_photos ?? 0;
+    const otherBirds = selected_camera.total_non_kestrel_identified_photos ?? 0;
+    const nonBirds = selected_camera.total_non_bird_photos ?? 0;
 
     setData([
       { value: kestrels, label: 'American Kestrels', title: 'total kestrel' },
       { value: otherBirds, label: 'Other Birds', title: 'other bird' },
       { value: nonBirds, label: 'Non-Birds', title: 'non-bird' },
     ]);
-  }, [selected_camera]); // Use selected_camera instead of birdboxes to avoid infinite loop with empty arrays
+  }, [selected_camera?.birdbox_id]); // Only re-run when the selected camera actually changes
 
   const total = data.reduce((sum, item) => sum + (item.value ?? 0), 0);
+  const kestrels = data[0].value; // Derive from state so it's always in scope
 
   return (
-    <div style={{display: 'flex', alignItems:'center', justifyContent: 'space-between', gap: '1.5em'}}>
-      <div className='stat-box' style={{padding: '0px'}}>
+    <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', gap: '1.5em' }}>
+      <div className='stat-box'>
         <PieChart
           series={[{ data, innerRadius: 35 }]}
           colors={colors}
           hideLegend
-          {...miniSize}
+          {...miniSize} // Use miniSize, not size
           slotProps={{ legend: { hidden: true } }}
-          onItemClick={(event, d) => {
-            setHoveredIndex(d.dataIndex);
-          }}
-        >
-        </PieChart>
+          onItemClick={(event, d) => setHoveredIndex(d.dataIndex)}
+        />
       </div>
       <div>
         <p className='small-stat-highlight'>{kestrels}/{total}</p>
-        <p style={{marginTop:'0px', marginBottom: '0px'}}>Kestrels Identified</p>
+        <p style={{ marginTop: '0px', marginBottom: '0px' }}>Kestrels Identified</p>
       </div>
     </div>
   );

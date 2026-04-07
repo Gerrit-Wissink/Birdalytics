@@ -16,6 +16,18 @@ import 'primereact/resources/primereact.min.css';
 
 export default function ValGrid(){
 
+    const [zoomedImage, setZoomedImage] = useState(null);
+
+    const handleZoom = (src) => {
+        setZoomedImage(src);
+        document.body.style.overflow = 'hidden';
+    };
+
+    const closeZoom = () => {
+        setZoomedImage(null); // Reset image
+        document.body.style.overflow = 'auto';
+    };
+
     const [boxesData, setBoxesData] = useState([]);
 
     // Camera select state, default to all selected
@@ -305,6 +317,7 @@ export default function ValGrid(){
                     src={imageUrl}
                     alt={record.modified_bird ?? record.primary_guess ?? 'Unknown  image'}
                     className={styles.cardImage}
+                    onClick={() => handleZoom(imageUrl)}
                 />
                 ) : (
                 <div className={styles.noImage}>No image</div>
@@ -361,6 +374,12 @@ export default function ValGrid(){
             }
             </div>
         </section>
+
+        {zoomedImage && (
+        <div className="overlay" onClick={closeZoom}>
+            <img src={zoomedImage} alt="Zoomed Design" className="zoomed-img" />
+        </div>
+        )}
         </>
     )
 }
@@ -381,7 +400,7 @@ const PRIMEREACT_OVERRIDES = `
     }
     @media (max-width: 1200px) { .p-dataview-content > div > div { width: 33.333%; } }
     @media (max-width: 800px)  { .p-dataview-content > div > div { width: 50%; } }
-    @media (max-width: 480px)  { .p-dataview-content > div > div { width: 100%; } }
+    @media (max-width: 550px)  { .p-dataview-content > div > div { width: 100%; } }
     .p-dropdown:not(.p-disabled).p-focus {
         border-color: #5b8dee !important;
         box-shadow: 0 0 0 2px #d0e0ff !important;

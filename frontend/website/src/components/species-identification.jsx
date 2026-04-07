@@ -160,10 +160,10 @@ export default function SpeciesIdentification({ selectedRow, imageMap, birdboxNa
                     />
                     {manualSpecies &&
                         <div>
-                            <button onClick={handleSaveChanges} className={styles.saveButton}>
+                            <button onClick={handleSaveChanges} className={styles.saveButton} style={{ marginRight: '1em', padding: '.75em 1em', fontSize: '0.875rem', fontWeight: 500}}>
                                 Save Changes
                             </button>
-                            <button onClick={() => { setManualSpecies(null); }} className={styles.resetButton}>
+                            <button onClick={() => { setManualSpecies(null); }} className={styles.resetButton} style={{ padding: '.75em 1em', fontSize: '0.875rem', fontWeight: 500}}>
                                 Reset
                             </button>
                         </div>
