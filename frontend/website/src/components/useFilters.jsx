@@ -28,7 +28,7 @@ export default function useFilters(rows, { modifiedKey = 'modified_date' } = {})
   // Get unique species options from the current set of data
   const birdOptions = useMemo(() => {
     const unique = [
-      ...new Set(rows.map((r) => r.primary_guess ?? r.identified_result).filter(Boolean)),
+      ...new Set(rows.map((r) => r.primary_guess).filter(Boolean)),
     ].sort();
     return [
       { label: 'All Species', value: 'all' },
@@ -39,7 +39,7 @@ export default function useFilters(rows, { modifiedKey = 'modified_date' } = {})
   // Apply all active filters
   const filteredRows = useMemo(() => {
     return rows.filter((row) => {
-      const species = row.primary_guess ?? row.identified_result;
+      const species = row.modified_bird ?? row.primary_guess;
 
       // Species
       if (birdFilter !== 'all' && species !== birdFilter) return false;
@@ -56,7 +56,8 @@ export default function useFilters(rows, { modifiedKey = 'modified_date' } = {})
       }
 
       // Confidence
-      const conf = row.primary_guess_confidence != null
+      const conf = row.modified_bird ? 1 // Treat modified rows as 100% confidence
+        : row.primary_guess_confidence != null
         ? parseFloat(row.primary_guess_confidence)
         : null;
       if (confidenceFilter === 'high'   && (conf === null || conf < 0.8))                   return false;

@@ -59,7 +59,8 @@ export default function SpeciesIdentification({ selectedRow, imageMap, birdboxNa
         return <p style={{ color: 'var(--text-muted, #888)', marginTop: '1em' }}>Select a row to view details.</p>;
     }
 
-    const primaryConf = selectedRow.primary_guess_confidence != null
+    const primaryConf = selectedRow.modified_bird ? 100 
+        : selectedRow.primary_guess_confidence != null
         ? Math.round(selectedRow.primary_guess_confidence * 100)
         : null;
 
@@ -71,11 +72,13 @@ export default function SpeciesIdentification({ selectedRow, imageMap, birdboxNa
     // Build option rows: primary first, then up to 2 other guesses
     // other_guesses are plain strings with no associated confidence score
     const options = [
-        selectedRow.primary_guess
+            selectedRow.modified_bird 
+            ? { species: selectedRow.modified_bird, confidence: 100 }
+            : selectedRow.primary_guess
             ? { species: selectedRow.primary_guess, confidence: primaryConf }
             : null,
-        otherGuesses[0] ? { species: otherGuesses[0], confidence: null } : null,
-        otherGuesses[1] ? { species: otherGuesses[1], confidence: null } : null,
+        // otherGuesses[0] ? { species: otherGuesses[0], confidence: null } : null,
+        // otherGuesses[1] ? { species: otherGuesses[1], confidence: null } : null,
     ].filter(Boolean);
 
     const handleOptionClick = (index) => {
