@@ -52,9 +52,7 @@ export default function Overview() {
         fetchBoxesData();
     }, []);
 
-    const boxes = boxesData.birdboxes ?? [];
-    const records = boxesData.birdbox_records ?? [];
-    const hasOverviewData = boxes.length > 0 || records.length > 0;
+    const hasOverviewData = boxesData.length > 0;
 
     if (isLoading) {
         return (
@@ -94,7 +92,7 @@ export default function Overview() {
 
                 <div className="column-right">
                     <div>
-                        {records.length > 0 ? (
+                        {boxesData.length > 0 ? (
                             <BirdPieChart kestrels={44} otherBirds={28} nonBirds={18} />
                         ) : (
                             <div className="empty-state stat-empty-state">
