@@ -1,5 +1,6 @@
 import { useState, useEffect } from 'react';
 import apiClient from '../utils/apiClient';
+import UploadModal from '../components/upload-modal';
 import './upload.css'
 
 const DEFAULT_BOX_OPTION = '-- Please Select a Location';
@@ -180,50 +181,14 @@ export default function Upload() {
             )}
 
             {showConfirmModal && (
-                <div className="modal-overlay" onClick={() => !isLoading && setShowConfirmModal(false)}>
-                    <div className="confirm-modal" onClick={(e) => e.stopPropagation()}>
-                        <h3>Confirm Upload</h3>
-                        <p>
-                            You are about to upload to <strong>{selectedBox}</strong>.
-                        </p>
-
-                        {files.length > 0 && (
-                            <p>
-                                <strong>Files:</strong> {fileText}
-                            </p>
-                        )}
-
-                        {urlValue.trim() && (
-                            <p>
-                                <strong>URL:</strong> {urlValue}
-                            </p>
-                        )}
-
-                        <p className="confirm-warning">
-                            Make sure this is the correct birdbox before continuing.
-                        </p>
-
-                        <div className="modal-actions">
-                            <button
-                                type="button"
-                                className="cancel-btn"
-                                onClick={() => setShowConfirmModal(false)}
-                                disabled={isLoading}
-                            >
-                                Cancel
-                            </button>
-                            <button
-                                type="button"
-                                className="import-btn"
-                                onClick={handleConfirmUpload}
-                                disabled={isLoading}
-                                style={{backgroundColor: 'var(--green)'}}
-                            >
-                                {isLoading ? 'Uploading...' : 'Confirm Upload'}
-                            </button>
-                        </div>
-                    </div>
-                </div>
+                <UploadModal
+                    isLoading={isLoading}
+                    selectedBox={selectedBox}
+                    files_exist={files.length > 0}
+                    url_exists={!!urlValue.trim()}
+                    setShowConfirmModal={setShowConfirmModal}
+                    handleConfirmUpload={handleConfirmUpload}
+                />
             )}
 
             <section id="upload-container">
@@ -288,19 +253,6 @@ export default function Upload() {
                                 accept=".jpg,.jpeg"
                                 onChange={handleFileChange}
                                 multiple
-                            />
-                        </div>
-
-                        <div className="divider">OR</div>
-
-                        <div className="url-section">
-                            <label htmlFor="url-input">Import from URL</label>
-                            <input
-                                type="text"
-                                id="url-input"
-                                placeholder="Add file URL"
-                                value={urlValue}
-                                onChange={(e) => setUrlValue(e.target.value)}
                             />
                         </div>
 

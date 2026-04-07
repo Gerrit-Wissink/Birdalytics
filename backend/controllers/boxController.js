@@ -107,8 +107,10 @@ class BoxController {
                         total_photos_with_creatures: stats[index]?.photosWithCreatures ?? 0,
                         total_kestrel_identified_photos: stats[index]?.numKestrelIdentified ?? 0,
                         total_non_kestrel_identified_photos: stats[index]?.nonKestrelIdentified ?? 0,
+                        total_non_bird_photos: stats[index]?.nonBirds ?? 0,
                         number_active_days: stats[index]?.numActiveDays ?? 0,
                         usage_rate: stats[index]?.usageRate ?? 0,
+                        kestrel_frequency: stats[index]?.kestrelFrequency ?? 0,
                         modified_records: stats[index]?.modifiedRecords ?? 0,
                         records: [
                             ...box.records.map(record => ({

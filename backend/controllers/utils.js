@@ -35,6 +35,11 @@ const calculateBoxStats = (box) => {
         return count;
     }, 0);
 
+    const kestrelFrequency = numKestrelIdentified / (photosWithCreatures || 1);
+
+    // Non-birds should be records with no guesses
+    const nonBirds = box.records.filter(record => !record.guesses || record.guesses.length === 0).length;
+
     return {
         birdbox_id: box.birdbox_id,
         totalRecords,
@@ -44,8 +49,22 @@ const calculateBoxStats = (box) => {
         numActiveDays,
         usageRate,
         modifiedRecords,
-        mostRecentKestrel
+        nonBirds,
+        mostRecentKestrel,
+        kestrelFrequency
     };
 };
 
-module.exports = { calculateBoxStats };
+const formatManualBird = (manualBird) => {
+    if (manualBird === null) {
+        return 'None';
+    }
+    // I want to trim whitespace, capitalize the first letter, and lowercase the rest
+    const trimmed = manualBird.trim();
+    if (trimmed.length === 0) {
+        return 'None';
+    }
+    return trimmed.charAt(0).toUpperCase() + trimmed.slice(1).toLowerCase();
+};
+
+module.exports = { calculateBoxStats, formatManualBird };

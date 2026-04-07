@@ -92,13 +92,7 @@ export default function Overview() {
 
                 <div className="column-right">
                     <div>
-                        {boxesData.length > 0 ? (
-                            <BirdPieChart kestrels={44} otherBirds={28} nonBirds={18} />
-                        ) : (
-                            <div className="empty-state stat-empty-state">
-                                <p>No species data yet</p>
-                            </div>
-                        )}
+                        <BirdPieChart birdboxes={boxesData} />
                     </div>
 
                     <div>
