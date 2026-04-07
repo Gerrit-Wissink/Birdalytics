@@ -36,6 +36,23 @@ export default function Navbar() {
         return () => document.removeEventListener("click", handleClickOutside);
     }, [isOpen]);
 
+    const nav_links = (
+        <>
+            <NavLink to="/cameras" className={({ isActive }) => (isActive ? 'active' : '')}>
+                <span>Cameras</span>
+            </NavLink>
+            <NavLink to="/reports" className={({ isActive }) => (isActive ? 'active' : '')}>
+                <span>Reports</span>
+            </NavLink>
+            <NavLink to="/valgrid" className={({ isActive }) => (isActive ? 'active' : '')}>
+                <span>Validation Grid</span>
+            </NavLink>
+            <NavLink to="/upload">
+                <span id='upload'>Upload Data</span>
+            </NavLink>
+        </>
+    )
+
 
     return (
         <>
@@ -45,18 +62,7 @@ export default function Navbar() {
                 </Link>
                 <div className="nav-links">
                     <div className="primary-nav">
-                        <NavLink to="/caminfo" className={({ isActive }) => (isActive ? 'active' : '')}>
-                            <span>Cameras</span>
-                        </NavLink>
-                        <NavLink to="/reports" className={({ isActive }) => (isActive ? 'active' : '')}>
-                            <span>Reports</span>
-                        </NavLink>
-                        <NavLink to="/valgrid" className={({ isActive }) => (isActive ? 'active' : '')}>
-                            <span>Validation Grid</span>
-                        </NavLink>
-                        <NavLink to="/upload">
-                            <span id='upload'>Upload Data</span>
-                        </NavLink>
+                        {nav_links}
                     </div>
                     <button onClick={handleLogout} id='logOut'>
                         Log Out
@@ -88,18 +94,7 @@ export default function Navbar() {
 
         <div id = 'sideMenu' className={isOpen ? "open" : "closed"}>
             <div id = 'sideText'>
-            <NavLink to="/caminfo" className={({ isActive }) => (isActive ? 'active' : '')}>
-                <span>Cameras</span>
-            </NavLink>
-            <NavLink to="/reports" className={({ isActive }) => (isActive ? 'active' : '')}>
-                <span>Reports</span>
-            </NavLink>
-            <NavLink to="/valgrid" className={({ isActive }) => (isActive ? 'active' : '')}>
-                <span>Validation Grid</span>
-            </NavLink>
-            <NavLink to="/upload">
-                <span id='upload'>Upload Data</span>
-            </NavLink>
+                {nav_links}
             </div>
             <div>
                 <button onClick={handleLogout} id='logOut'>
