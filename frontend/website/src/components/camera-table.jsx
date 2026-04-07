@@ -125,7 +125,7 @@ export default function BirdboxImageTable({ box, onSelectRow, speciesOptions }) 
     } else {
       pctNum = 0;
     }
-    
+
     const pct = Math.round(pctNum * 100);
     const bg = getConfidenceBg(pctNum);
     return (

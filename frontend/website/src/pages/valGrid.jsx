@@ -141,7 +141,6 @@ export default function ValGrid(){
         { label: 'Pigeon', value: 'pigeon' },
     ];
 
-    const [speciesOptions, setSpeciesOptions] = useState([]);
     useEffect(() => {
         const fetchSpeciesOptions = async () => {
             try {

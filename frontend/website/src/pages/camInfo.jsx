@@ -33,6 +33,8 @@ export default function CamInfo() {
     const [sidebarOpen, setSidebarOpen] = useState(false);
     const [windowWidth, setWindowWidth] = useState(window.innerWidth);
 
+    const [speciesOptions, setSpeciesOptions] = useState([]);
+
     const MOBILE_BREAKPOINT = 1024;
 
     // Function to navigate to next/previous record in the Species Identification view
@@ -91,8 +93,13 @@ export default function CamInfo() {
                     console.log('Boxes data:', data);
                     setBoxesData(data);
 
-                    // Auto-select the first camera as soon as data arrives since no longer through cameras page
-                    if (data.length > 0) {
+                    // Check for query parameter first
+                    const selected = new URLSearchParams(window.location.search).get('selected');
+                    if (selected) {
+                        console.log('Selecting camera from URL param:', selected);
+                        setSelectedID(selected);
+                    } else if (data.length > 0) {
+                        // Only auto-select first camera if no query param
                         setSelectedID(data[0].birdbox_id);
                     }
                 } else {
@@ -221,6 +228,7 @@ export default function CamInfo() {
                                 setSelectedRow({ ...selectedRow, primary_guess: species, primary_guess_confidence: null });
                             }
                         }}
+                        speciesOptions={speciesOptions}
                     />
                 </div>
             </div>
@@ -252,6 +260,7 @@ export default function CamInfo() {
                             setSelectedRow({ ...selectedRow, primary_guess: species, primary_guess_confidence: null }); // Set confidence to 100% on manual override
                         }
                     }}
+                    speciesOptions={speciesOptions}
                 />
             </div>
 
