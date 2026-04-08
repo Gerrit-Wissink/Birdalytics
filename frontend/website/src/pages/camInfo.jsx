@@ -28,6 +28,8 @@ export default function CamInfo() {
     const [imageMap, setImageMap] = useState({});
 
     const [showAddCameraModal, setShowAddCameraModal] = useState(false);
+    const [showEditCameraModal, setShowEditCameraModal] = useState(false);
+
     const [sidebarOpen, setSidebarOpen] = useState(false);
     const [windowWidth, setWindowWidth] = useState(window.innerWidth);
 
@@ -344,6 +346,12 @@ export default function CamInfo() {
             </section>
             {showAddCameraModal && (
                 <AddCameraModal setShowModal={setShowAddCameraModal} />
+            )}
+            {showEditCameraModal && selectedCamera && (
+                <AddCameraModal
+                    setShowModal={setShowEditCameraModal}
+                    selectedCamera={selectedCamera}
+                />
             )}
         </>
     );

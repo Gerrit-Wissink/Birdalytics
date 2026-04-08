@@ -23,13 +23,14 @@ function PinDropper({ onPin }) {
   return null;
 }
 
-export default function AddCameraModal({ setShowModal }) {
+export default function AddCameraModal({ setShowModal, selectedCamera = null }) {
   const [formData, setFormData] = useState({
-    cameraName: '',
-    location: '',
-    latitude: '',
-    longitude: '',
+    cameraName: selectedCamera ? selectedCamera.birdbox_name : '',
+    location: selectedCamera ? selectedCamera.location : '',
+    latitude: selectedCamera ? selectedCamera.birdbox_lat : '',
+    longitude: selectedCamera ? selectedCamera.birdbox_long : '',
   });
+
   const [error, setError] = useState('');
   const [showMap, setShowMap] = useState(false);
   const [userLocation, setUserLocation] = useState([39.0997, -76.8483]); // fallback: US center
@@ -93,6 +94,34 @@ export default function AddCameraModal({ setShowModal }) {
     }
   };
 
+  const handleUpdateCamera = async (e) => {
+    e.preventDefault();
+    setError('');
+    try {
+      if (
+        !formData.cameraName?.trim() ||
+        !formData.location?.trim() ||
+        !formData.latitude?.trim() ||
+        !formData.longitude?.trim()
+      ) {
+        setError('All fields are required');
+        return;
+      }
+
+      const result = await apiClient.put(`/boxes/${selectedCamera.birdbox_id}`, formData);
+
+      if (result.status === 200) {
+        setShowModal(false);
+        setFormData({ cameraName: '', location: '', latitude: '', longitude: '' });
+      } else {
+        setError('Failed to update camera. Please try again.');
+      }
+    } catch (err) {
+      console.error('Error updating camera:', err);
+      setError('Failed to update camera. Please try again.');
+    }
+  };
+
   const handleCancelModal = () => {
     setShowModal(false);
     setFormData({ cameraName: '', location: '', latitude: '', longitude: '' });
@@ -106,7 +135,11 @@ export default function AddCameraModal({ setShowModal }) {
           <button className="modal-close" onClick={handleCancelModal}>✕</button>
         </div>
 
-        <form onSubmit={handleAddCamera}>
+        <form onSubmit={
+          selectedCamera ? 
+          handleUpdateCamera :
+          handleAddCamera
+        }>
           <div className="form-group">
             <label htmlFor="cameraName">Camera Name <span className="required">*</span></label>
             <input
