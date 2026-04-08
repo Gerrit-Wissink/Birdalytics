@@ -3,11 +3,11 @@ export default function CSVPreview({ rows }) {
     const headers = ["Date - Time", "Box Name", "Species", "Confidence", "Image URL", "Modified Date"];
 
     const colorLine = (line) => {
-        const COLORS = ['red', 'orange', 'yellow', 'green', 'blue', 'purple'];
+        const COLORS = ['red', '#d97706', '#b8860b', 'green', 'blue', 'purple'];
         const components = line.split(',');
         const newLine = components.map((comp, idx) => {
             const color = COLORS[idx % COLORS.length];
-            return <span key={idx} style={{ color }}>{comp}</span>;
+            return <span><span key={idx} style={{ color }}>{comp}</span>, </span>;
         });
         return newLine;
     };
