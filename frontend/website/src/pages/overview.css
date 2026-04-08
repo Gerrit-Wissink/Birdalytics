@@ -129,6 +129,8 @@
   align-items: center;
   padding: 32px 24px;
   text-align: center;
+  min-height: 100vh;
+  overflow-y: auto;
 }
 
 .container h1 {

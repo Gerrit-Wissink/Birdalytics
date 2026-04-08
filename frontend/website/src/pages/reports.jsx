@@ -12,6 +12,8 @@ import TabContext from '@mui/lab/TabContext';
 import TabPanel from '@mui/lab/TabPanel';
 import BuildPDF from '../reports/buildPDF';
 import PDFPreview from '../reports/previewPDF';
+import CSVPreview from '../reports/previewCSV';
+import ExcelPreview from '../reports/previewExcel';
 import EmptyState from '../components/emptyState';
 import "./reports.css";
 import * as XLSX from "xlsx";
@@ -49,18 +51,29 @@ export default function Reports() {
         selectedBoxNames.includes(b.birdbox_name)
     );
 
-    const [value, setValue] = React.useState('PDF');
+    const [selectedTab, setSelectedTab] = React.useState('PDF');
 
     const handleChange = (event, newValue) => {
-        setValue(newValue);
+        setSelectedTab(newValue);
     };
+
+    const dateToFileString = (date) => {
+        // Format date as YYYY-MM-DD for filename
+        const year = date.getFullYear();
+        const month = String(date.getMonth() + 1).padStart(2, '0');
+        const day = String(date.getDate()).padStart(2, '0');
+        return `${year}-${month}-${day}`;
+    }
 
     const prepareDataForCSVAndExcel = (birdboxes) => {
         const data = [];
         for (const box of birdboxes) {
             for (const record of box.records) {
+                const date = new Date(record.timestamp);
+                const dateStr = date.toLocaleDateString('en-US', { month: 'short', day: 'numeric', year: 'numeric' }).replace(', ', ' ');
+                const timeStr = date.toLocaleTimeString('en-US', { hour: '2-digit', minute: '2-digit' });
                 const formatted_record = {
-                    date: new Date(record.timestamp).toLocaleString(),
+                    date: `${dateStr} - ${timeStr}`,
                     box_name: box.birdbox_name,
                     species: record.modified_bird ?? record.primary_guess ?? 'Unknown',
                     confidence: record.modified_bird ? 'Manual' : record.primary_guess_confidence ? `${(record.primary_guess_confidence * 100).toFixed(0)}%` : 'N/A',
@@ -78,12 +91,22 @@ export default function Reports() {
         const headers = ["Date - Time", "Box Name", "Species", "Confidence", "Image URL", "Modified Date"];
         const rows = prepareDataForCSVAndExcel(data);
 
-        const csvContent = [headers, ...rows].map((r) => r.join(",")).join("\n");
+        // Convert objects to arrays in the order of headers
+        const rowArrays = rows.map((row) => [
+            row.date,
+            row.box_name,
+            row.species,
+            row.confidence,
+            row.image_url,
+            row.modified_date
+        ]);
+
+        const csvContent = [headers, ...rowArrays].map((r) => r.join(",")).join("\n");
         const blob = new Blob([csvContent], { type: "text/csv" });
         const url = URL.createObjectURL(blob);
         const a = document.createElement("a");
         a.href = url;
-        a.download = "birdalytics-report.csv";
+        a.download = `birdalytics-report-${dateToFileString(new Date())}.csv`;
         a.click();
         URL.revokeObjectURL(url);
     }
@@ -95,27 +118,30 @@ export default function Reports() {
         const worksheet = XLSX.utils.json_to_sheet(preparedData);
         const workbook = XLSX.utils.book_new();
         XLSX.utils.book_append_sheet(workbook, worksheet, "Bird Records");
-        XLSX.writeFile(workbook, "birdalytics-report.xlsx");
+        XLSX.writeFile(workbook, `birdalytics-report-${dateToFileString(new Date())}.xlsx`);
     }
-
-    const handleDownloadCSV = async () => {
-        exportCSV(selectedBirdboxes);
-    };
-    const handleDownloadExcel = async () => {
-        exportExcel(selectedBirdboxes);
-    };
 
     // Ref for the hidden pie chart used by html2canvas
     const chartRef = useRef(null);
     const lineGraphRef = useRef(null);
 
-    const handleDownload = async () => {
+    const exportPDF = async () => {
         const canvas = await html2canvas(chartRef.current, { backgroundColor: null });
         const chartImage = canvas.toDataURL('image/png');
         const lineCanvas = await html2canvas(lineGraphRef.current, { backgroundColor: '#ffffff' });
         const lineGraphImage = lineCanvas.toDataURL('image/png');
         await BuildPDF(selectedBirdboxes, chartImage, lineGraphImage);
     };
+
+    const handleDownload = () => {
+        if (selectedTab === 'PDF') {
+            exportPDF();
+        } else if (selectedTab === 'CSV') {
+            exportCSV(selectedBirdboxes);
+        } else if (selectedTab === 'EXCEL') {
+            exportExcel(selectedBirdboxes);
+        }
+    }
 
     const hasAnyBoxes = boxesData.length > 0;
     const hasAnyRecords = boxesData.some((box) => (box.records ?? []).length > 0);
@@ -136,6 +162,13 @@ export default function Reports() {
             </section>
         );
     }
+
+    const EMPTY_TAB_CONTENT = (
+        <div className="empty-state stat-empty-state">
+            <h2>No cameras selected</h2>
+            <p>Select one or more cameras to preview and download a report.</p>
+        </div>
+    );
 
     return (
         <>
@@ -165,11 +198,11 @@ export default function Reports() {
                     </button>
                 </div>
 
-                <TabContext value={value}>
+                <TabContext value={selectedTab}>
                     <Box sx={{ width: '100%', marginTop: '1em', borderBottom: 1, borderColor: 'divider' }}>
                         <Tabs
-                            value={value}
-                            onChange={handleChange}
+                            value={selectedTab}
+                            onChange={(event, newValue) => setSelectedTab(newValue)}
                             indicatorColor="primary"
                             textColor="primary"
                             sx={{
@@ -199,20 +232,33 @@ export default function Reports() {
                                 <PDFPreview boxesData={selectedBirdboxes} />
                             </>
                         ) : (
-                            <div className="empty-state stat-empty-state">
-                                <h2>No cameras selected</h2>
-                                <p>Select one or more cameras to preview and download a report.</p>
-                            </div>
+                            EMPTY_TAB_CONTENT
                         )}
                     </TabPanel>
                     <TabPanel value="CSV">
-                <h2>Export to CSV</h2>
-                    <button onClick={handleDownloadCSV}>Download CSV File</button>
-                </TabPanel>
-                <TabPanel value="EXCEL">
-                    <h2>Export to Excel</h2>
-                    <button onClick={handleDownloadExcel}>Download Excel File</button>
-                </TabPanel>
+                        {hasSelectedBoxes ? (
+                            <>
+                                <p style={{ fontStyle: 'italic', marginTop: '0px' }}>
+                                    Please note that preview is not exact.
+                                </p>
+                                <CSVPreview rows={prepareDataForCSVAndExcel(selectedBirdboxes)} />
+                            </>
+                        ) : (
+                            EMPTY_TAB_CONTENT
+                        )}
+                    </TabPanel>
+                    <TabPanel value="EXCEL">
+                        {hasSelectedBoxes ? (
+                            <>
+                                <p style={{ fontStyle: 'italic', marginTop: '0px' }}>
+                                    Please note that preview is not exact.
+                                </p>
+                                <ExcelPreview rows={prepareDataForCSVAndExcel(selectedBirdboxes)} />
+                            </>
+                        ) : (
+                            EMPTY_TAB_CONTENT
+                        )}
+                    </TabPanel>
                 </TabContext>
             </section>
 

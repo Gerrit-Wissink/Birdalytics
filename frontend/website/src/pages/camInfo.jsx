@@ -28,6 +28,8 @@ export default function CamInfo() {
     const [imageMap, setImageMap] = useState({});
 
     const [showAddCameraModal, setShowAddCameraModal] = useState(false);
+    const [showEditCameraModal, setShowEditCameraModal] = useState(false);
+
     const [sidebarOpen, setSidebarOpen] = useState(false);
     const [windowWidth, setWindowWidth] = useState(window.innerWidth);
 
@@ -217,7 +219,7 @@ export default function CamInfo() {
         <>
             <h1 style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', marginRight: '7.5%' }}>
                 {selectedCamera?.birdbox_name ?? 'Select a Camera'}
-                <FiEdit style={{ fontSize: '1.75rem', marginLeft: '0.5rem' }} />
+                <FiEdit style={{ fontSize: '1.75rem', marginLeft: '0.5rem', cursor: 'pointer' }} onClick={() => setShowEditCameraModal(true)} />
             </h1>
 
             <div className={styles.sideBySide}>
@@ -257,7 +259,7 @@ export default function CamInfo() {
         <>
             <h1 style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', marginRight: '7.5%' }}>
                 {selectedCamera?.birdbox_name ?? 'Select a Camera'}
-                <FiEdit style={{ fontSize: '1.5rem', marginLeft: '0.5rem' }}/>
+                <FiEdit style={{ fontSize: '1.5rem', marginLeft: '0.5rem', cursor: 'pointer' }} onClick={() => setShowEditCameraModal(true)} />
             </h1>
 
             <div id={styles.identifyBox} {...handlers}>
@@ -344,6 +346,12 @@ export default function CamInfo() {
             </section>
             {showAddCameraModal && (
                 <AddCameraModal setShowModal={setShowAddCameraModal} />
+            )}
+            {showEditCameraModal && selectedCamera && (
+                <AddCameraModal
+                    setShowModal={setShowEditCameraModal}
+                    selectedCamera={selectedCamera}
+                />
             )}
         </>
     );
