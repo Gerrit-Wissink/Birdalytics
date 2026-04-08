@@ -1,4 +1,5 @@
 const sequelize = require('../config/database');
+const { Op } = require('sequelize');
 const { Birdguess, Birdboxes, Birdrecords, Image, SpeciesDictionary } = require('../models');
 const { calculateBoxStats } = require('./utils');
 
@@ -291,6 +292,7 @@ class BoxController {
 
             // Validation
             if (!name || !location || !latitude || !longitude) {
+                console.log('Validation failed: Missing required fields');
                 return res.status(400).json({
                     success: false,
                     error: 'Please provide name, location, and coordinates for the box'
@@ -303,6 +305,7 @@ class BoxController {
                 where: { name: name }
             });
             if (existingBox) {
+                console.log('Box with this name already exists:', name);
                 return res.status(400).json({
                     success: false,
                     error: 'Box with this name already exists'
@@ -339,6 +342,7 @@ class BoxController {
 
             const box = await Birdboxes.findByPk(id);
             if (!box) {
+                console.log('Box not found with id:', id);
                 return res.status(404).json({
                     success: false,
                     error: 'Box not found'
@@ -350,10 +354,12 @@ class BoxController {
                 attributes: ['birdbox_id'],
                 where: {
                     name: name,
-                    birdbox_id: { [sequelize.Op.not]: id }
+                    birdbox_id: { [Op.not]: id }
                 }
             });
+
             if (existingBox) {
+                console.log('Another box with this name already exists:', name);
                 return res.status(400).json({
                     success: false,
                     error: 'Box with this name already exists'
