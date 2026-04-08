@@ -55,12 +55,23 @@ export default function Reports() {
         setValue(newValue);
     };
 
+    const dateToFileString = (date) => {
+        // Format date as YYYY-MM-DD for filename
+        const year = date.getFullYear();
+        const month = String(date.getMonth() + 1).padStart(2, '0');
+        const day = String(date.getDate()).padStart(2, '0');
+        return `${year}-${month}-${day}`;
+    }
+
     const prepareDataForCSVAndExcel = (birdboxes) => {
         const data = [];
         for (const box of birdboxes) {
             for (const record of box.records) {
+                const date = new Date(record.timestamp);
+                const dateStr = date.toLocaleDateString('en-US', { month: 'short', day: 'numeric', year: 'numeric' });
+                const timeStr = date.toLocaleTimeString('en-US', { hour: '2-digit', minute: '2-digit' });
                 const formatted_record = {
-                    date: new Date(record.timestamp).toLocaleString(),
+                    date: `${dateStr} - ${timeStr}`,
                     box_name: box.birdbox_name,
                     species: record.modified_bird ?? record.primary_guess ?? 'Unknown',
                     confidence: record.modified_bird ? 'Manual' : record.primary_guess_confidence ? `${(record.primary_guess_confidence * 100).toFixed(0)}%` : 'N/A',
@@ -93,7 +104,7 @@ export default function Reports() {
         const url = URL.createObjectURL(blob);
         const a = document.createElement("a");
         a.href = url;
-        a.download = "birdalytics-report.csv";
+        a.download = `birdalytics-report-${dateToFileString(new Date())}.csv`;
         a.click();
         URL.revokeObjectURL(url);
     }
@@ -105,7 +116,7 @@ export default function Reports() {
         const worksheet = XLSX.utils.json_to_sheet(preparedData);
         const workbook = XLSX.utils.book_new();
         XLSX.utils.book_append_sheet(workbook, worksheet, "Bird Records");
-        XLSX.writeFile(workbook, "birdalytics-report.xlsx");
+        XLSX.writeFile(workbook, `birdalytics-report-${dateToFileString(new Date())}.xlsx`);
     }
 
     const handleDownloadCSV = async () => {
