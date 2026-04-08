@@ -1,4 +1,5 @@
 const sequelize = require('../config/database');
+const { Op } = require('sequelize');
 const { Birdguess, Birdboxes, Birdrecords, Image, SpeciesDictionary } = require('../models');
 const { calculateBoxStats } = require('./utils');
 
@@ -287,29 +288,31 @@ class BoxController {
     // Create new box
     static async createBox(req, res) {
         try {
-            const { name, location, latitude, longitude, field_notes } = req.body;
+            const { cameraName, location, latitude, longitude } = req.body;
 
             // Validation
-            if (!name || !location || !latitude || !longitude) {
+            if (!cameraName || !location || !latitude || !longitude) {
+                console.log('Validation failed: Missing required fields');
                 return res.status(400).json({
                     success: false,
-                    error: 'Please provide name, location, and coordinates for the box'
+                    error: 'Please provide camera name, location, and coordinates for the box'
                 });
             }
 
             // Check if box already exists
             const existingBox = await Birdboxes.findOne({
                 attributes: ['birdbox_id'],
-                where: { name: name }
+                where: { name: cameraName }
             });
             if (existingBox) {
+                console.log('Box with this name already exists:', cameraName);
                 return res.status(400).json({
                     success: false,
                     error: 'Box with this name already exists'
                 });
             }
 
-            const newBox = await Birdboxes.create({ name, latitude, longitude, field_notes });
+            const newBox = await Birdboxes.create({ name: cameraName, latitude, longitude, location_name: location });
 
             res.status(201).json({
                 success: true,
@@ -335,10 +338,11 @@ class BoxController {
     static async updateBox(req, res) {
         try {
             const { id } = req.params;
-            const { name, latitude, longitude, field_notes } = req.body;
+            const { cameraName, location, latitude, longitude } = req.body;
 
             const box = await Birdboxes.findByPk(id);
             if (!box) {
+                console.log('Box not found with id:', id);
                 return res.status(404).json({
                     success: false,
                     error: 'Box not found'
@@ -349,18 +353,20 @@ class BoxController {
             const existingBox = await Birdboxes.findOne({
                 attributes: ['birdbox_id'],
                 where: {
-                    name: name,
-                    birdbox_id: { [sequelize.Op.not]: id }
+                    name: cameraName,
+                    birdbox_id: { [Op.not]: id }
                 }
             });
+
             if (existingBox) {
+                console.log('Another box with this name already exists:', cameraName);
                 return res.status(400).json({
                     success: false,
                     error: 'Box with this name already exists'
                 });
             }
 
-            await box.update({ name, latitude, longitude, field_notes });
+            await box.update({ name: cameraName, location_name: location, latitude: latitude, longitude: longitude});
 
             res.json({
                 success: true,

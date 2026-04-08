@@ -1,7 +1,17 @@
 // CSVPreview.jsx
 export default function CSVPreview({ rows }) {
     const headers = ["Date - Time", "Box Name", "Species", "Confidence", "Image URL", "Modified Date"];
-    
+
+    const colorLine = (line) => {
+        const COLORS = ['red', '#d97706', '#b8860b', 'green', 'blue', 'purple'];
+        const components = line.split(',');
+        const newLine = components.map((comp, idx) => {
+            const color = COLORS[idx % COLORS.length];
+            return <span><span key={idx} style={{ color }}>{comp}</span>, </span>;
+        });
+        return newLine;
+    };
+
     return (
         <div style={{ 
             fontFamily: 'monospace', 
@@ -16,7 +26,7 @@ export default function CSVPreview({ rows }) {
         }}>
             {[headers, ...rows.map(r => [r.date, r.box_name, r.species, r.confidence, r.image_url, r.modified_date])].map((line, idx) => (
                 <div key={idx} style={{ padding: '4px 0', fontSize: '12px' }}>
-                    {line.join(",")}
+                    {colorLine(line.join(','))}
                 </div>
             ))}
         </div>
