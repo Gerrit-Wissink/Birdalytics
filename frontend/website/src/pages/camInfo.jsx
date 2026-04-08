@@ -75,6 +75,36 @@ export default function CamInfo() {
         setSelectedRowId(selectedCamera.records[newIndex].record_id);
     };
 
+    const fetchBoxesData = async () => {
+        try {
+            const response = await apiClient.get('/boxes/record');
+            console.log('Fetch boxes data response:', response);
+            if (response.status === 200) {
+                const data = response.data.data;
+                console.log('Boxes data:', data);
+                setBoxesData(data);
+
+                // Check for query parameter first (from hash-based routing)
+                // In hash routing, query params are in the hash: #/path?param=value
+                const hashParts = window.location.hash.split('?');
+                const queryString = hashParts.length > 1 ? hashParts[1] : '';
+                const selected = new URLSearchParams(queryString).get('selected');
+                if (selected) {
+                    console.log('Selecting camera from URL param:', selected);
+                    setSelectedID(parseInt(selected, 10)); // Convert to number for consistent type
+                } else if (data.length > 0) {
+                    // Only auto-select first camera if no query param
+                    console.log('No URL param, selecting first camera by default:', data[0].birdbox_id);
+                    setSelectedID(data[0].birdbox_id);
+                }
+            } else {
+                console.error('Failed to fetch boxes data:', response.status);
+            }
+        } catch (error) {
+            console.error('Error fetching boxes data:', error);
+        }
+    };
+
     //Mobile swipe handlers for navigating between records in the Species Identification view
     const handlers = useSwipeable({
         onSwipedLeft: () => navigateRecord('next'),
@@ -104,36 +134,7 @@ export default function CamInfo() {
     }, []);
 
     useEffect(() => {
-        const fetchBoxesData = async () => {
-            try {
-                const response = await apiClient.get('/boxes/record');
-                console.log('Fetch boxes data response:', response);
-                if (response.status === 200) {
-                    const data = response.data.data;
-                    console.log('Boxes data:', data);
-                    setBoxesData(data);
-
-                    // Check for query parameter first (from hash-based routing)
-                    // In hash routing, query params are in the hash: #/path?param=value
-                    const hashParts = window.location.hash.split('?');
-                    const queryString = hashParts.length > 1 ? hashParts[1] : '';
-                    const selected = new URLSearchParams(queryString).get('selected');
-                    if (selected) {
-                        console.log('Selecting camera from URL param:', selected);
-                        setSelectedID(parseInt(selected, 10)); // Convert to number for consistent type
-                    } else if (data.length > 0) {
-                        // Only auto-select first camera if no query param
-                        console.log('No URL param, selecting first camera by default:', data[0].birdbox_id);
-                        setSelectedID(data[0].birdbox_id);
-                    }
-                } else {
-                    console.error('Failed to fetch boxes data:', response.status);
-                }
-            } catch (error) {
-                console.error('Error fetching boxes data:', error);
-            }
-        };
-
+        // Function declared above
         fetchBoxesData();
     }, []);
 
@@ -345,11 +346,12 @@ export default function CamInfo() {
                 </div>
             </section>
             {showAddCameraModal && (
-                <AddCameraModal setShowModal={setShowAddCameraModal} />
+                <AddCameraModal setShowModal={setShowAddCameraModal} fetchBoxes={fetchBoxesData} />
             )}
             {showEditCameraModal && selectedCamera && (
                 <AddCameraModal
                     setShowModal={setShowEditCameraModal}
+                    fetchBoxes={fetchBoxesData}
                     selectedCamera={selectedCamera}
                 />
             )}

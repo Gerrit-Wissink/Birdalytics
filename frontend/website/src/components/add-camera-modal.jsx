@@ -23,7 +23,7 @@ function PinDropper({ onPin }) {
   return null;
 }
 
-export default function AddCameraModal({ setShowModal, selectedCamera = null }) {
+export default function AddCameraModal({ setShowModal, fetchBoxes, selectedCamera = null }) {
   const [formData, setFormData] = useState({
     cameraName: selectedCamera ? selectedCamera.birdbox_name : '',
     location: selectedCamera ? selectedCamera.location : '',
@@ -85,6 +85,7 @@ export default function AddCameraModal({ setShowModal, selectedCamera = null }) 
       if (result.status === 201) {
         setShowModal(false);
         setFormData({ cameraName: '', location: '', latitude: '', longitude: '' });
+        fetchBoxes(); // Refresh the camera list
       } else {
         setError('Failed to add camera. Please try again.');
       }
@@ -113,6 +114,7 @@ export default function AddCameraModal({ setShowModal, selectedCamera = null }) 
       if (result.status === 200) {
         setShowModal(false);
         setFormData({ cameraName: '', location: '', latitude: '', longitude: '' });
+        fetchBoxes(); // Refresh the camera list
       } else {
         setError('Failed to update camera. Please try again.');
       }
