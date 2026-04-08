@@ -68,7 +68,7 @@ export default function Reports() {
         for (const box of birdboxes) {
             for (const record of box.records) {
                 const date = new Date(record.timestamp);
-                const dateStr = date.toLocaleDateString('en-US', { month: 'short', day: 'numeric', year: 'numeric' });
+                const dateStr = date.toLocaleDateString('en-US', { month: 'short', day: 'numeric', year: 'numeric' }).replace(', ', ' ');
                 const timeStr = date.toLocaleTimeString('en-US', { hour: '2-digit', minute: '2-digit' });
                 const formatted_record = {
                     date: `${dateStr} - ${timeStr}`,
