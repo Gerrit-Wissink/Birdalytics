@@ -228,7 +228,7 @@ export default function AddCameraModal({ setShowModal, selectedCamera = null }) 
 
           <div className="modal-buttons">
             <button type="button" className="cancel-btn" onClick={handleCancelModal}>Cancel</button>
-            <button type="submit" className="add-btn">Add</button>
+            <button type="submit" className="add-btn">Submit</button>
           </div>
         </form>
       </div>
