@@ -78,7 +78,17 @@ export default function Reports() {
         const headers = ["Date - Time", "Box Name", "Species", "Confidence", "Image URL", "Modified Date"];
         const rows = prepareDataForCSVAndExcel(data);
 
-        const csvContent = [headers, ...rows].map((r) => r.join(",")).join("\n");
+        // Convert objects to arrays in the order of headers
+        const rowArrays = rows.map((row) => [
+            row.date,
+            row.box_name,
+            row.species,
+            row.confidence,
+            row.image_url,
+            row.modified_date
+        ]);
+
+        const csvContent = [headers, ...rowArrays].map((r) => r.join(",")).join("\n");
         const blob = new Blob([csvContent], { type: "text/csv" });
         const url = URL.createObjectURL(blob);
         const a = document.createElement("a");
