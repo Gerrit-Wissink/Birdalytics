@@ -60,7 +60,7 @@ export default function BirdboxImageTable({ box, onSelectRow, speciesOptions }) 
     confidenceFilter, setConfidenceFilter,
     modifiedFilter, setModifiedFilter,
     birdOptions, filteredRows, activeFilterCount, handleClearFilters,
-  } = useFilters(rows, { modifiedKey: 'modified_date' });
+  } = useFilters(rows, { modifiedKey: 'modified_bird' });
 
   // Reset to first row when birdbox ID changes
   useEffect(() => {

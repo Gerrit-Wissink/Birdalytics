@@ -14,6 +14,7 @@ import BuildPDF from '../reports/buildPDF';
 import PDFPreview from '../reports/previewPDF';
 import EmptyState from '../components/emptyState';
 import "./reports.css";
+import * as XLSX from "xlsx";
 
 export default function Reports() {
 
@@ -52,6 +53,56 @@ export default function Reports() {
 
     const handleChange = (event, newValue) => {
         setValue(newValue);
+    };
+
+    const prepareDataForCSVAndExcel = (birdboxes) => {
+        const data = [];
+        for (const box of birdboxes) {
+            for (const record of box.records) {
+                const formatted_record = {
+                    date: new Date(record.timestamp).toLocaleString(),
+                    box_name: box.birdbox_name,
+                    species: record.modified_bird ?? record.primary_guess ?? 'Unknown',
+                    confidence: record.modified_bird ? 'Manual' : record.primary_guess_confidence ? `${(record.primary_guess_confidence * 100).toFixed(0)}%` : 'N/A',
+                    image_url: record.image_url ? `https://birdalytics.webdev.gccis.rit.edu/api/${record.image_url}` : 'N/A',
+                    modified_date: record.modified_bird ? record.modified_date : 'N/A',
+                };
+                data.push(formatted_record);
+            }
+        }
+        return data;
+    };
+
+    function exportCSV(data) {
+        // CSV Export
+        const headers = ["Date - Time", "Box Name", "Species", "Confidence", "Image URL", "Modified Date"];
+        const rows = prepareDataForCSVAndExcel(data);
+
+        const csvContent = [headers, ...rows].map((r) => r.join(",")).join("\n");
+        const blob = new Blob([csvContent], { type: "text/csv" });
+        const url = URL.createObjectURL(blob);
+        const a = document.createElement("a");
+        a.href = url;
+        a.download = "birdalytics-report.csv";
+        a.click();
+        URL.revokeObjectURL(url);
+    }
+
+    // Excel Export
+    function exportExcel(data) {
+        const preparedData = prepareDataForCSVAndExcel(data);
+
+        const worksheet = XLSX.utils.json_to_sheet(preparedData);
+        const workbook = XLSX.utils.book_new();
+        XLSX.utils.book_append_sheet(workbook, worksheet, "Bird Records");
+        XLSX.writeFile(workbook, "birdalytics-report.xlsx");
+    }
+
+    const handleDownloadCSV = async () => {
+        exportCSV(selectedBirdboxes);
+    };
+    const handleDownloadExcel = async () => {
+        exportExcel(selectedBirdboxes);
     };
 
     // Ref for the hidden pie chart used by html2canvas
@@ -155,17 +206,13 @@ export default function Reports() {
                         )}
                     </TabPanel>
                     <TabPanel value="CSV">
-                        <div className="empty-state stat-empty-state">
-                            <h2>No CSV preview available</h2>
-                            <p>CSV export is supported through the Download Report button.</p>
-                        </div>
-                    </TabPanel>
-                    <TabPanel value="EXCEL">
-                        <div className="empty-state stat-empty-state">
-                            <h2>No Excel preview available</h2>
-                            <p>Excel export is supported through the Download Report button.</p>
-                        </div>
-                    </TabPanel>
+                <h2>Export to CSV</h2>
+                    <button onClick={handleDownloadCSV}>Download CSV File</button>
+                </TabPanel>
+                <TabPanel value="EXCEL">
+                    <h2>Export to Excel</h2>
+                    <button onClick={handleDownloadExcel}>Download Excel File</button>
+                </TabPanel>
                 </TabContext>
             </section>
 

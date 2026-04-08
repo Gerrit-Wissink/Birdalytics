@@ -18,7 +18,7 @@ export const MODIFIED_OPTIONS = [
 // modifiedKey  — the field name used to check modified status.
 //                camera-table uses 'modified_date', valGrid uses 'modified_bird'
 
-export default function useFilters(rows, { modifiedKey = 'modified_date' } = {}) {
+export default function useFilters(rows, { modifiedKey = 'modified_bird' } = {}) {
 
   const [birdFilter, setBirdFilter]           = useState('all');
   const [dateRange, setDateRange]             = useState(null);
@@ -56,13 +56,17 @@ export default function useFilters(rows, { modifiedKey = 'modified_date' } = {})
       }
 
       // Confidence
-      const conf = row.modified_bird ? 1 // Treat modified rows as 100% confidence
-        : row.primary_guess_confidence != null
-        ? parseFloat(row.primary_guess_confidence)
-        : null;
+      // If _confidence is pre-computed, use it; otherwise calculate from raw fields
+      let conf = row._confidence;
+      if (conf === undefined || conf === null) {
+        conf = row.modified_bird ? 1
+          : row.primary_guess_confidence != null
+          ? parseFloat(row.primary_guess_confidence)
+          : null;
+      }
       if (confidenceFilter === 'high'   && (conf === null || conf < 0.8))                   return false;
       if (confidenceFilter === 'medium' && (conf === null || conf < 0.5 || conf >= 0.8))    return false;
-      if (confidenceFilter === 'low'    && (conf === null || conf >= 0.5))                  return false;
+      if (confidenceFilter === 'low'    && (conf >= 0.5))                                   return false;
 
       // Modified — uses whichever field the parent specifies
       const isModified = !!row[modifiedKey];
