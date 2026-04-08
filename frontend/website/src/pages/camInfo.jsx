@@ -99,7 +99,7 @@ export default function CamInfo() {
                     const selected = new URLSearchParams(queryString).get('selected');
                     if (selected) {
                         console.log('Selecting camera from URL param:', selected);
-                        setSelectedID(selected);
+                        setSelectedID(parseInt(selected, 10)); // Convert to number for consistent type
                     } else if (data.length > 0) {
                         // Only auto-select first camera if no query param
                         console.log('No URL param, selecting first camera by default:', data[0].birdbox_id);
