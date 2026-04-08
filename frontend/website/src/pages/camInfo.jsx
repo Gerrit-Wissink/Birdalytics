@@ -219,7 +219,7 @@ export default function CamInfo() {
         <>
             <h1 style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', marginRight: '7.5%' }}>
                 {selectedCamera?.birdbox_name ?? 'Select a Camera'}
-                <FiEdit style={{ fontSize: '1.75rem', marginLeft: '0.5rem' }} />
+                <FiEdit style={{ fontSize: '1.75rem', marginLeft: '0.5rem' }} onClick={() => setShowEditCameraModal(true)} />
             </h1>
 
             <div className={styles.sideBySide}>
@@ -259,7 +259,7 @@ export default function CamInfo() {
         <>
             <h1 style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', marginRight: '7.5%' }}>
                 {selectedCamera?.birdbox_name ?? 'Select a Camera'}
-                <FiEdit style={{ fontSize: '1.5rem', marginLeft: '0.5rem' }}/>
+                <FiEdit style={{ fontSize: '1.5rem', marginLeft: '0.5rem' }} onClick={() => setShowEditCameraModal(true)} />
             </h1>
 
             <div id={styles.identifyBox} {...handlers}>
