@@ -11,7 +11,8 @@ export default function CSVPreview({ rows }) {
             whiteSpace: 'pre-wrap',
             overflowX: 'auto',
             maxHeight: '600px',
-            overflow: 'auto'
+            overflow: 'auto',
+            textAlign: 'left'
         }}>
             {[headers, ...rows.map(r => [r.date, r.box_name, r.species, r.confidence, r.image_url, r.modified_date])].map((line, idx) => (
                 <div key={idx} style={{ padding: '4px 0', fontSize: '12px' }}>
