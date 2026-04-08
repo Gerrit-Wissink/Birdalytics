@@ -35,8 +35,8 @@ export default function BirdBoxSelect({ boxes, selectedBoxNames, setSelectedBoxN
     };
 
     return (
-        <div style={{maxWidth: 'fit-content'}}>
-            <FormControl sx={{ m: 1, width: 500 }}>
+        <div style={{maxWidth: '100%'}}>
+            <FormControl sx={{ m: 1, width: 500, maxWidth: '100%' }}>
                 <InputLabel id="birdbox-select-label">Camera</InputLabel>
                 <Select
                     defaultChecked={allSelected}

@@ -72,10 +72,6 @@ app.use('/api/jobs', jobRoutes);
 //Serve static files
 app.use(express.static(path.join(__dirname, 'static')));
 
-app.get('/{*splat}', (req, res, next) => {
-    res.sendFile(path.join(__dirname, 'static', 'index.html'))
-})
-
 // React catch-all for non-API GET routes
 app.get('/{*splat}', (req, res, next) => {
     if (req.path.startsWith('/api')) {

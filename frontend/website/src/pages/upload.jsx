@@ -184,8 +184,8 @@ export default function Upload() {
                 <UploadModal
                     isLoading={isLoading}
                     selectedBox={selectedBox}
-                    files_exist={files.length > 0}
-                    url_exists={!!urlValue.trim()}
+                    fileText={fileText}
+                    urlValue={urlValue}
                     setShowConfirmModal={setShowConfirmModal}
                     handleConfirmUpload={handleConfirmUpload}
                 />

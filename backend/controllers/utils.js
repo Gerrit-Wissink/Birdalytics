@@ -55,4 +55,16 @@ const calculateBoxStats = (box) => {
     };
 };
 
-module.exports = { calculateBoxStats };
+const formatManualBird = (manualBird) => {
+    if (manualBird === null) {
+        return 'None';
+    }
+    // I want to trim whitespace, capitalize the first letter, and lowercase the rest
+    const trimmed = manualBird.trim();
+    if (trimmed.length === 0) {
+        return 'None';
+    }
+    return trimmed.charAt(0).toUpperCase() + trimmed.slice(1).toLowerCase();
+};
+
+module.exports = { calculateBoxStats, formatManualBird };

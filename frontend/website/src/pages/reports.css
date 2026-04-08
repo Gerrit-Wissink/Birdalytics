@@ -1,0 +1,31 @@
+.stat-empty-state {
+  text-align: center;
+  padding: 2rem;
+  border: 1px dashed #d6d6d6;
+  border-radius: 8px;
+  background-color: #fafafa;
+  max-width: 600px;
+  margin: 0 auto;
+  min-height: 200px;
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+}
+
+.stat-empty-state h2 {
+  margin-bottom: 0.5rem;
+}
+
+.stat-empty-state p {
+  color: #666;
+}
+
+.container {
+  padding: 32px 24px;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  text-align: center;
+  min-height: 100vh;
+  overflow-y: auto;
+}

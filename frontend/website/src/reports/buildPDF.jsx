@@ -84,7 +84,7 @@ function drawSightingBreakdown(doc, birdboxes, x, y, w) {
     birdboxes.forEach(box => {
         total_kestrels += box.total_kestrel_identified_photos ?? 0;
         total_non_kestrels += box.total_non_kestrel_identified_photos ?? 0;
-        total_non_birds += (box.total_photos_with_creatures ?? 0) - (box.total_kestrel_identified_photos ?? 0) - (box.total_non_kestrel_identified_photos ?? 0);
+        total_non_birds += box.total_non_bird_photos ?? 0;
     });
 
     //DELETE THIS LATER IT'S JUST SO IT LOOKS PRETTY
