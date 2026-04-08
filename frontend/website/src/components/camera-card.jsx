@@ -1,11 +1,13 @@
-import React from 'react'
-
+import React from 'react';
 import '../pages/cameras.css';
 
-export default function CameraCard ({ camera, image }) {
+export default function CameraCard({ camera, image }) {
+    const hasRecords = (camera.records ?? []).length > 0;
+    const hasCapturedImage = !!camera.last_captured_image;
+    const hasAnyActivity = hasRecords || hasCapturedImage;
+
     return (
-        <div 
-            key={camera.birdbox_id} 
+        <div
             className="camera-box"
             onClick={() => window.location.href = `/#/camInfo?selected=${camera.birdbox_id}`}
             style={camera.placeholder === 'plus' ? { cursor: 'pointer' } : {}}
@@ -18,11 +20,16 @@ export default function CameraCard ({ camera, image }) {
                     </button>
                 )}
             </div>
+
             <div className="camera-image-area">
                 {image ? (
                     <img src={image} alt={camera.birdbox_name} className="camera-image" />
+                ) : hasAnyActivity ? (
+                    <div className="camera-loading-state">Loading image...</div>
                 ) : (
-                    <div>Loading...</div>
+                    <div className="camera-empty-state">
+                        <p>No images yet</p>
+                    </div>
                 )}
             </div>
         </div>

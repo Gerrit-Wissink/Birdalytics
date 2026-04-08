@@ -3,7 +3,7 @@ import html2canvas from 'html2canvas';
 import { useEffect, useState, useRef } from 'react';
 import apiClient from '../utils/apiClient';
 import BirdBoxSelect from '../components/cameraSelect';
-import {BoxesPieChart} from '../components/donut-chart';
+import { BoxesPieChart } from '../components/donut-chart';
 import { LineGraphPicture } from '../components/line-graph';
 import Tabs from '@mui/material/Tabs';
 import Tab from '@mui/material/Tab';
@@ -12,9 +12,11 @@ import TabContext from '@mui/lab/TabContext';
 import TabPanel from '@mui/lab/TabPanel';
 import BuildPDF from '../reports/buildPDF';
 import PDFPreview from '../reports/previewPDF';
+import EmptyState from '../components/emptyState';
+import "./reports.css";
 import * as XLSX from "xlsx";
 
-export default function Reports(){
+export default function Reports() {
 
     useEffect(() => {
         const token = localStorage.getItem('token');
@@ -106,7 +108,7 @@ export default function Reports(){
     // Ref for the hidden pie chart used by html2canvas
     const chartRef = useRef(null);
     const lineGraphRef = useRef(null);
- 
+
     const handleDownload = async () => {
         const canvas = await html2canvas(chartRef.current, { backgroundColor: null });
         const chartImage = canvas.toDataURL('image/png');
@@ -115,99 +117,134 @@ export default function Reports(){
         await BuildPDF(selectedBirdboxes, chartImage, lineGraphImage);
     };
 
-    return(
-        <>
-        <section id="container">
-            <h1>Reports Page</h1>
-            <div style={{ display: 'flex', flexDirection: 'row', alignItems: 'center', justifyContent: 'space-between', marginBottom: '1em' }}>
-                <BirdBoxSelect
-                    boxes={boxesData}
-                    selectedBoxNames={selectedBoxNames}
-                    setSelectedBoxNames={setSelectedBoxNames}
+    const hasAnyBoxes = boxesData.length > 0;
+    const hasAnyRecords = boxesData.some((box) => (box.records ?? []).length > 0);
+    const hasReportData = hasAnyBoxes || hasAnyRecords;
+    const hasSelectedBoxes = selectedBirdboxes.length > 0;
+
+    if (!hasReportData) {
+        return (
+            <section className="container">
+                <h1>Reports Page</h1>
+
+                <EmptyState
+                    title="No report data yet"
+                    description="Upload images or add birdboxes before generating reports."
+                    actionText="Upload Data"
+                    onAction={() => (window.location.href = "/#/upload")}
                 />
-                <button
-                    disabled={selectedBirdboxes.length === 0}
-                    style={{
-                        backgroundColor: selectedBirdboxes.length === 0 ? '#a0a0a0' : '#537F2C',
-                        borderRadius: '8px',
-                        color: 'white',
-                        border: 'none',
-                        padding: '8px 16px',
-                        fontSize: '1em',
-                        fontWeight: 400,
-                        cursor: selectedBirdboxes.length === 0 ? 'not-allowed' : 'pointer',
-                    }}
-                    onClick={handleDownload}
-                >
-                    Download Report
-                </button>
-            </div>
+            </section>
+        );
+    }
 
-        <TabContext value={value}>
-            <Box sx={{ width: '100%', marginTop: '1em', borderBottom: 1, borderColor: 'divider' }}>
-                <Tabs
-                    value={value}
-                    onChange={handleChange}
-                    indicatorColor="primary"
-                    textColor="primary"
-                    sx={{
-                        '& .MuiTabs-indicator': {
-                            backgroundColor: '#004C98',
-                            height: '3px',
-                            zIndex: 1000,
-                        },
-                        '& .MuiTab-root.Mui-selected': {
-                            color: '#004C98',
-                        },
-                    }}
-                    aria-label="secondary tabs example"
-                    variant="fullWidth"
-                >
-                    <Tab value="PDF" label="PDF" />
-                    <Tab value="CSV" label="CSV" />
-                    <Tab value="EXCEL" label="EXCEL" />
-                </Tabs>
-            </Box>
-            <TabPanel value="PDF">
-                <p style={{fontStyle: 'italic', marginTop: '0px'}}> Please note that preview is not exact.</p>
-                <PDFPreview boxesData={selectedBirdboxes} />
-            </TabPanel>
-            <TabPanel value="CSV">
+    return (
+        <>
+            <section className="container">
+                <h1>Reports Page</h1>
+                <div style={{ display: 'flex', flexDirection: 'row', alignItems: 'center', justifyContent: 'space-between', marginBottom: '1em' }}>
+                    <BirdBoxSelect
+                        boxes={boxesData}
+                        selectedBoxNames={selectedBoxNames}
+                        setSelectedBoxNames={setSelectedBoxNames}
+                    />
+                    <button
+                        disabled={!hasSelectedBoxes}
+                        style={{
+                            backgroundColor: !hasSelectedBoxes ? '#a0a0a0' : '#537F2C',
+                            borderRadius: '8px',
+                            color: 'white',
+                            border: 'none',
+                            padding: '8px 16px',
+                            fontSize: '1em',
+                            fontWeight: 400,
+                            cursor: !hasSelectedBoxes ? 'not-allowed' : 'pointer',
+                        }}
+                        onClick={handleDownload}
+                    >
+                        Download Report
+                    </button>
+                </div>
+
+                <TabContext value={value}>
+                    <Box sx={{ width: '100%', marginTop: '1em', borderBottom: 1, borderColor: 'divider' }}>
+                        <Tabs
+                            value={value}
+                            onChange={handleChange}
+                            indicatorColor="primary"
+                            textColor="primary"
+                            sx={{
+                                '& .MuiTabs-indicator': {
+                                    backgroundColor: '#004C98',
+                                    height: '3px',
+                                    zIndex: 1000,
+                                },
+                                '& .MuiTab-root.Mui-selected': {
+                                    color: '#004C98',
+                                },
+                            }}
+                            aria-label="secondary tabs example"
+                            variant="fullWidth"
+                        >
+                            <Tab value="PDF" label="PDF" />
+                            <Tab value="CSV" label="CSV" />
+                            <Tab value="EXCEL" label="EXCEL" />
+                        </Tabs>
+                    </Box>
+                    <TabPanel value="PDF">
+                        {hasSelectedBoxes ? (
+                            <>
+                                <p style={{ fontStyle: 'italic', marginTop: '0px' }}>
+                                    Please note that preview is not exact.
+                                </p>
+                                <PDFPreview boxesData={selectedBirdboxes} />
+                            </>
+                        ) : (
+                            <div className="empty-state stat-empty-state">
+                                <h2>No cameras selected</h2>
+                                <p>Select one or more cameras to preview and download a report.</p>
+                            </div>
+                        )}
+                    </TabPanel>
+                    <TabPanel value="CSV">
                 <h2>Export to CSV</h2>
-                <button onClick={handleDownloadCSV}>Download CSV File</button>
-            </TabPanel>
-            <TabPanel value="EXCEL">
-                <h2>Export to Excel</h2>
-                <button onClick={handleDownloadExcel}>Download Excel File</button>
-            </TabPanel>
-        </TabContext>
-        </section>
+                    <button onClick={handleDownloadCSV}>Download CSV File</button>
+                </TabPanel>
+                <TabPanel value="EXCEL">
+                    <h2>Export to Excel</h2>
+                    <button onClick={handleDownloadExcel}>Download Excel File</button>
+                </TabPanel>
+                </TabContext>
+            </section>
 
-        {/* Hidden pie chart — rendered off-screen so html2canvas can capture it */}
-        <div
-            ref={chartRef}
-            style={{
-                position: 'absolute',
-                left: '-9999px',
-                top: '-9999px',
-                backgroundColor: '#ffffff',
-            }}
-        >
-            <BoxesPieChart birdboxes={selectedBirdboxes} photo = {true} />
-        </div>
+            {/* Hidden pie chart — rendered off-screen so html2canvas can capture it */}
+            {hasSelectedBoxes && (
+                <div
+                    ref={chartRef}
+                    style={{
+                        position: 'absolute',
+                        left: '-9999px',
+                        top: '-9999px',
+                        backgroundColor: '#ffffff',
+                    }}
+                >
+                    <BoxesPieChart birdboxes={selectedBirdboxes} photo={true} />
+                </div>
+            )}
 
-        <div
-            ref={lineGraphRef}
-            style={{
-                position: 'absolute',
-                left: '-9999px',
-                top: '-9999px',
-                backgroundColor: '#ffffff',
-                width: '900px',
-            }}
-        >
-            <LineGraphPicture birdboxes={selectedBirdboxes} />
-        </div>
+            {hasSelectedBoxes && (
+                <div
+                    ref={lineGraphRef}
+                    style={{
+                        position: 'absolute',
+                        left: '-9999px',
+                        top: '-9999px',
+                        backgroundColor: '#ffffff',
+                        width: '900px',
+                    }}
+                >
+                    <LineGraphPicture birdboxes={selectedBirdboxes} />
+                </div>
+            )}
 
         </>
     )

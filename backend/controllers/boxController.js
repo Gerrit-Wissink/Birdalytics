@@ -76,9 +76,9 @@ class BoxController {
                 ]     
             */
             if (!boxes || boxes.length === 0) {
-                return res.status(404).json({
-                    success: false,
-                    error: 'No boxes found'
+                return res.json({
+                    success: true,
+                    data: []
                 });
             }
 
