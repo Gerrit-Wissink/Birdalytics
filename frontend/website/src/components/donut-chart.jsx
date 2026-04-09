@@ -80,7 +80,7 @@ export default function BirdPieChart({ birdboxes = [] }) {
   );
 }
 
-export function BoxesPieChart({ birdboxes, photo = false }) {
+export function BoxesPieChart({ birdboxes = [], photo = false }) {
   //THESE CAN ALSO BE CONSTS WHEN WE DELETE THE BELOW
   var kestrels = birdboxes.reduce((sum, box) => sum + (box.total_kestrel_identified_photos ?? 0), 0);
   var otherBirds = birdboxes.reduce((sum, box) => sum + (box.total_non_kestrel_identified_photos ?? 0), 0);

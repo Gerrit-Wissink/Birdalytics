@@ -296,7 +296,7 @@ export default function PDFPreview({ boxesData, lineGraphRef, includeOverview = 
                     Sighting Breakdown
                 </p>
                 <div ref={lineGraphRef} style={{ marginBottom: '16px' }}>
-                    <LineGraphPicture birdboxes={birdboxes} />
+                    <LineGraphPicture boxesData={birdboxes} />
                 </div>
                 <hr style={{ border: 'none', borderTop: '2px solid var(--stroke)', margin: 'auto', width: '90%'}} />
                 <div style={{ display: 'flex', alignItems: 'center', gap: '24px', justifyContent: 'center' }}>
