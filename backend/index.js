@@ -11,6 +11,7 @@ const recordRoutes = require('./routes/recordRoutes');
 const boxRoutes = require('./routes/boxRoutes');
 const imageRoutes = require('./routes/imageRoutes');
 const speciesRoutes = require('./routes/speciesRoutes');
+const jobRoutes = require('./routes/jobRoutes');
 
 // Load environment variables
 dotenv.config();
@@ -60,8 +61,6 @@ app.get('/api', (req, res) => {
 
 // API Routes
 app.use('/api/users', userRoutes);
-app.use(authMiddleware);
-
 app.use('/api/guess', birdRoutes);
 app.use('/api/record', recordRoutes);
 app.use('/api/boxes', boxRoutes);
