@@ -133,7 +133,12 @@ export default function AddCameraModal({ setShowModal, fetchBoxes, selectedCamer
     <div className="modal-overlay" onClick={handleCancelModal}>
       <div className="modal" onClick={(e) => e.stopPropagation()}>
         <div className="modal-header">
-          <h2>Add Camera</h2>
+          <h2>
+            {selectedCamera ? 
+              'Edit Camera' :
+              'Add Camera'
+            }
+          </h2>
           <button className="modal-close" onClick={handleCancelModal}>✕</button>
         </div>
 

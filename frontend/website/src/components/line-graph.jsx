@@ -47,40 +47,6 @@ const createEmptyChartData = () => {
   }));
 }
 
-const fake_data = [
-  { date: '10/1', value: 2 },
-  { date: '10/2', value: 1 },
-  { date: '10/3', value: 3 },
-  { date: '10/4', value: 8 },
-  { date: '10/5', value: 7 },
-  { date: '10/6', value: 9 },
-  { date: '10/7', value: 5 },
-  { date: '10/8', value: 5 },
-  { date: '10/9', value: 4 },
-  { date: '10/10', value: 6 },
-  { date: '10/11', value: 3 },
-  { date: '10/12', value: 9 },
-  { date: '10/13', value: 7 },
-  { date: '10/14', value: 8 },
-  { date: '10/15', value: 2 },
-  { date: '10/16', value: 4 },
-  { date: '10/17', value: 6 },
-  { date: '10/18', value: 5 },
-  { date: '10/19', value: 7 },
-  { date: '10/20', value: 9 },
-  { date: '10/21', value: 6 },
-  { date: '10/22', value: 8},
-//   { date: '10/23', value: 3 },
-//   { date: '10/24', value: 2 },
-//   { date: '10/25', value: 4 },
-//   { date: '10/26', value: 6 },
-//   { date: '10/27', value: 5 },
-//   { date: '10/28', value: 7 },
-//   { date: '10/29', value: 1 },
-//   { date: '10/30', value: 3 },
-//   { date: '10/31', value: 5 },
-]
-
 const areaColor = 'var(--gradient-green)'
 
 export default function LineGraph({ boxesData = [] }) {
@@ -116,7 +82,8 @@ export default function LineGraph({ boxesData = [] }) {
       console.log("Kestresls sum result:", totalKestrels);
       if (totalKestrels === 0) {
         // If there are no kestrels detected, use the dummy data to make the graph look nice
-        setChartData(fake_data);
+        // setChartData(fake_data);
+        setChartData(createEmptyChartData());
       } else {
         setChartData(serverData);
       }
@@ -211,7 +178,8 @@ export function LineGraphPicture({ boxesData = [] }) {
       console.log("Kestresls sum result:", totalKestrels);
       if (totalKestrels === 0) {
         // If there are no kestrels detected, use the dummy data to make the graph look nice
-        setChartData(fake_data);
+        // setChartData(fake_data);
+        setChartData(createEmptyChartData());
       } else {
         setChartData(serverData);
       }
