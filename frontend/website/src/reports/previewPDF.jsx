@@ -33,9 +33,6 @@ function getMostActive(birdboxes) {
 }
 
 function getLeastActive(birdboxes) {
-    const override = birdboxes[2] ?? null;
-    if (override) return override;
-    
     return birdboxes.reduce((least, box) => {
         return (box.usage_rate ?? Infinity) < (least?.usage_rate ?? Infinity) ? box : least;
     }, null);
@@ -61,9 +58,157 @@ function StatCard({ label, name, fillColor, strokeColor }) {
     );
 }
 
+function BoxDetailPage({ boxes }) {
+    return (
+        <PageShell>
+            <div style={{ display: 'flex', flexDirection: 'column', gap: '32px' }}>
+                {boxes.map(box => (
+                    <BoxDetailCard key={box.birdbox_id} box={box} />
+                ))}
+            </div>
+        </PageShell>
+    );
+}
+
+function BoxDetailCard({ box }) {
+    const records = box.records ?? [];
+    const timestamps = records.map(r => r.timestamp).filter(Boolean).sort();
+    const earliest = timestamps[0];
+    const latest = timestamps[timestamps.length - 1];
+
+    function toLongDate(ts) {
+        if (!ts) return '—';
+        return new Date(ts).toLocaleDateString('en-US', { year: 'numeric', month: 'long', day: 'numeric' });
+    }
+
+    function formatDateTimeLong(ts) {
+        if (!ts) return '—';
+        const d = new Date(ts);
+        const date = d.toLocaleDateString('en-US', { month: 'short', day: 'numeric', year: 'numeric' });
+        const time = d.toLocaleTimeString('en-US', { hour: '2-digit', minute: '2-digit' });
+        return `${date} – ${time}`;
+    }
+
+    function formatConfidence(val) {
+        if (val == null) return '—';
+        const num = parseFloat(val);
+        return isNaN(num) ? val : `${Math.round(num * 100)}%`;
+    }
+
+    const sorted = [...records].sort((a, b) => new Date(b.timestamp) - new Date(a.timestamp));
+    const last = sorted[0];
+
+    const totalTriggers = records.length;
+    const totalKestrels = box.total_kestrel_identified_photos ?? 0;
+    const usageRate     = box.usage_rate      != null ? `${Math.round(box.usage_rate * 100)}%`      : '—';
+    const kestrelFreq   = box.kestrel_frequency != null ? `${Math.round(box.kestrel_frequency * 100)}%` : '—';
+
+    const kestrels    = box.total_kestrel_identified_photos ?? 0;
+    const nonKestrels = box.total_non_kestrel_identified_photos ?? 0;
+    const nonBirds    = box.total_non_bird_photos ?? 0;
+    const total       = kestrels + nonKestrels + nonBirds;
+
+    const stats = [
+        { label: 'Total Camera Triggers', value: String(totalTriggers), green: false },
+        { label: 'Total Kestrels',         value: String(totalKestrels), green: true  },
+        { label: 'Usage Rate',             value: usageRate,             green: false },
+        { label: 'Kestrel Frequency',      value: kestrelFreq,           green: true  },
+    ];
+
+    const breakdownCols = [
+        { count: kestrels,    label: 'Kestrels Identified',         stroke: '#57710E', fill: '#57710E1A' },
+        { count: nonKestrels, label: 'Non-Kestrel Birds Identified', stroke: '#C76E01', fill: '#C76E011A' },
+        { count: nonBirds,    label: 'Non-Birds Identified',         stroke: '#9B7DB5', fill: '#9B7DB51A' },
+    ];
+
+    return (
+        <div>
+            {/* Header */}
+            <h2 style={{ fontSize: '15px', fontWeight: 'bold', marginBottom: '2px', fontFamily: 'Georgia, serif' }}>
+                {box.birdbox_name} (ID #{box.birdbox_id})
+                <span style={{ fontWeight: 400, color: '#555' }}> | {box.location ?? '—'}</span>
+            </h2>
+            <p style={{ fontSize: '11px', color: '#666', marginBottom: '10px', fontFamily: 'Lato, sans-serif' }}>
+                Data period: {toLongDate(earliest)} – {toLongDate(latest)}
+            </p>
+
+            {/* Last record — single blue header row */}
+            <p style={{ fontSize: '14px', fontFamily: 'Lato, sans-serif', marginBottom: '6px', marginTop: '8px', color: '#333', fontWeight: '500' }}>
+                Last Record
+            </p>
+            <Table size="small" sx={{ marginBottom: '14px' }}>
+                <TableHead>
+                    <TableRow sx={{ backgroundColor: 'var(--blue)' }}>
+                        <TableCell sx={{ fontWeight: 'bold', fontSize: '.75rem', padding: '5px 8px', color: 'var(--background)' }}>
+                            {formatDateTimeLong(last?.timestamp)}
+                        </TableCell>
+                        <TableCell sx={{ fontWeight: 'bold', fontSize: '.75rem', padding: '5px 8px', color: 'var(--background)' }}>
+                           <span style={{fontWeight: '400'}}>Identified Result: </span>{last?.primary_guess ?? '—'}
+                        </TableCell>
+                        <TableCell sx={{ fontWeight: 'bold', fontSize: '.75rem', padding: '5px 8px', color: 'var(--background)' }}>
+                            <span style={{fontWeight: '400'}}>Confidence: </span>{formatConfidence(last?.primary_guess_confidence)}
+                        </TableCell>
+                    </TableRow>
+                </TableHead>
+            </Table>
+
+            {/* Camera breakdown — 2x2 grid */}
+            <p style={{ fontSize: '14px', fontFamily: 'Lato, sans-serif', marginBottom: '6px', marginTop: '12px', color: '#333', fontWeight: '500' }}>
+                Camera Breakdown
+            </p>
+            <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: '6px', marginBottom: '14px' }}>
+                {stats.map(({ label, value, green }) => (
+                    <div key={label} style={{
+                        display: 'flex',
+                        justifyContent: 'space-between',
+                        alignItems: 'center',
+                        padding: '6px 12px',
+                        borderRadius: '4px',
+                        backgroundColor: green ? '#57710E26' : 'var(--stroke, #e6e6e6)',
+                        border: `1px solid ${green ? '#57710E' : 'var(--text, #787878)'}`,
+                        fontFamily: 'Lato, sans-serif',
+                    }}>
+                        <span style={{ fontSize: '11px', color: '#333', fontWeight: '400' }}>{label}</span>
+                        <span style={{ fontSize: '13px', fontWeight: 'bold', color: green ? '#57710E' : '#333', fontFamily: 'Georgia, serif' }}>
+                            {value}
+                        </span>
+                    </div>
+                ))}
+            </div>
+
+            {/* Sighting breakdown — 3 columns in one row */}
+            <p style={{ fontSize: '14px', fontFamily: 'Lato, sans-serif', marginBottom: '6px', marginTop: '12px', color: '#333', fontWeight: '500'}}>
+                Sighting Breakdown
+            </p>
+            <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr 1fr', gap: '8px' }}>
+                {breakdownCols.map(({ count, label, stroke, fill }) => (
+                    <div key={label} style={{
+                        display: 'flex',
+                        flexDirection: 'column',
+                        alignItems: 'center',
+                        justifyContent: 'center',
+                        border: `1.5px solid ${stroke}`,
+                        borderRadius: '8px',
+                        backgroundColor: fill,
+                        padding: '10px 8px',
+                        fontFamily: 'Lato, sans-serif',
+                        textAlign: 'center',
+                    }}>
+                        <span style={{ fontWeight: 'bold', color: stroke, fontSize: '1rem' }}>
+                            {count} / {total}
+                        </span>
+                        <span style={{ fontSize: '.75rem', color: '#1a1a1a', marginTop: '3px' }}>{label}</span>
+                    </div>
+                ))}
+            </div>
+        </div>
+    );
+}
+
 // ---
 
-export default function PDFPreview({ boxesData, lineGraphRef }) {
+export default function PDFPreview({ boxesData, lineGraphRef, includeOverview = true }) {
+    console.log('BOXES DATA:', boxesData);
     const birdboxes = boxesData ?? [];
 
     if (!birdboxes || birdboxes.length === 0) {
@@ -80,6 +225,8 @@ export default function PDFPreview({ boxesData, lineGraphRef }) {
     const columns = ['Box Name', 'Last Record', 'Usage Rate', 'Kestrel Frequency', 'Last Kestrel'];
 
     return (
+        <>
+        {includeOverview && (
         <PageShell>
             <h2 style={{ fontSize: '16px', fontWeight: 'bold', marginBottom: '8px' }}>
                 Birdbox Report
@@ -158,6 +305,12 @@ export default function PDFPreview({ boxesData, lineGraphRef }) {
                 </div>
             </div>
         </PageShell>
+        )}
+
+         {Array.from({ length: Math.ceil(birdboxes.length / 2) }, (_, i) => (
+            <BoxDetailPage key={i} boxes={birdboxes.slice(i * 2, i * 2 + 2)} />
+        ))}
+        </>
     );
 }
 

@@ -10,7 +10,9 @@ import EmptyState from "../components/emptyState.jsx";
 
 export default function Overview() {
     const user = localStorage.getItem("user");
-    const username = user ? JSON.parse(user).username : "user";
+    const rawUsername = user ? JSON.parse(user).username : "user";
+    //capitalizing the username
+    const username = rawUsername.charAt(0).toUpperCase() + rawUsername.slice(1);
     const [isLoading, setIsLoading] = useState(true);
     const [boxesData, setBoxesData] = useState([]);
     const [overviewData, setOverviewData] = useState(null);
@@ -56,7 +58,7 @@ export default function Overview() {
 
     if (isLoading) {
         return (
-            <section className="container">
+            <section id="container">
                 <h1>Welcome back, {username}</h1>
                 <div className="loadingState">Loading overview...</div>
             </section>
@@ -65,7 +67,7 @@ export default function Overview() {
 
     if (!isLoading && !hasOverviewData) {
         return (
-            <section className="container">
+            <section id="container">
                 <h1>Welcome back, {username}</h1>
 
                 <EmptyState
@@ -79,7 +81,7 @@ export default function Overview() {
     }
 
     return (
-        <section className="container">
+        <section id="container">
             <h1>Welcome back, {username}</h1>
 
             <div id="overview-grid">

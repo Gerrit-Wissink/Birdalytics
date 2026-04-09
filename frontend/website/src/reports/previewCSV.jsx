@@ -3,7 +3,7 @@ export default function CSVPreview({ rows }) {
     const headers = ["Date - Time", "Box Name", "Species", "Confidence", "Image URL", "Modified Date"];
 
     const colorLine = (line) => {
-        const COLORS = ['red', '#d97706', '#b8860b', 'green', 'blue', 'purple'];
+        const COLORS = ['#A41034', '#AE6329', '#016833', '#006086', '#3B2882', '#57116A'];
         const components = line.split(',');
         const newLine = components.map((comp, idx) => {
             const color = COLORS[idx % COLORS.length];
@@ -16,8 +16,9 @@ export default function CSVPreview({ rows }) {
         <div style={{ 
             fontFamily: 'monospace', 
             padding: '24px', 
-            backgroundColor: '#f5f5f5',
-            borderRadius: '4px',
+            backgroundColor: '#fafafa',
+            border: '1px solid var(--stroke)',
+            borderRadius: '8px',
             whiteSpace: 'pre-wrap',
             overflowX: 'auto',
             maxHeight: '600px',
