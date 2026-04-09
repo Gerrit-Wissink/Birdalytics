@@ -46,7 +46,7 @@ def turn_on_wifi(channel):
 	if not hotspot_running:
 		subprocess.run(['sudo', 'bash', start_script])
 		timestamp = time.strftime('%Y-%m-%d_%H-%M-%S')
-		filename = '/home/Birdalytics/Pictures/Doorbell_' + timestamp
+		filename = '/home/birdalytics/Pictures/Doorbell_' + timestamp
 		subprocess.run(['sudo', 'touch', filename])
 		hotspot_running = True
 	else:
