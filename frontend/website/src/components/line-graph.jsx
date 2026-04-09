@@ -93,6 +93,10 @@ export default function LineGraph({ boxesData = [] }) {
 
   }, [boxesData]);
 
+  useEffect(() => {
+    console.log("Total kestrels updated:", totalKestrels);
+  }, [totalKestrels]);
+
   return (
     <div className='stat-box-graph'>
       <p className='graph-header'>Kestrel Detections/Month</p>

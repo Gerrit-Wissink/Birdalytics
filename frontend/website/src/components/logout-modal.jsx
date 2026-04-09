@@ -25,8 +25,12 @@ export default function LogoutModal({ setShowModal }) {
                     </button>
                     <button
                         type="button"
+                        className="import-btn"
                         onClick={handleLogout}
-                        style={{backgroundColor: 'var(--red)', color: 'white', border: 'none', padding: '8px 16px', borderRadius: '4px'}}
+                        style={{
+                                backgroundColor: 'var(--red-500)', 
+                                color: 'white',
+                            }}
                     >
                         Logout
                     </button>
