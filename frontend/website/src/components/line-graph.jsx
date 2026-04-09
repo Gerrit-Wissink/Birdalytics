@@ -92,58 +92,66 @@ export default function LineGraph({ boxesData = [] }) {
 
   }, [boxesData]);
 
+  const LINE_CHART = (
+    <LineChart
+      xAxis={[
+        {
+          data: chartData.map(item => item.date),
+          scaleType: 'point',
+          tickLabelInterval: (value, index) => index % 7 === 0, // Show label every 7 days
+          height: 28,
+        },
+      ]}
+      yAxis={[{ label: 'Number of Kestrels', width: 40 }]}
+      series={[
+        {
+          data: chartData.map(item => item.value),
+          label: 'Number of Kestrels',
+          area: true,
+          showMark: false,
+          color: areaColor,
+        },
+      ]}
+      height={300}
+      sx={{
+        [`& .${lineElementClasses.root}`]: { //applies custom stroke to the line
+          strokeWidth: 2,
+          strokeLinecap: 'round',
+        },
+        [`& .${areaElementClasses.root}`]: { //applies gradient to area under the line
+          fill: 'url(#areaGradient)',
+          filter: 'none',
+        },
+        '& .MuiChartsAxis-bottom .MuiChartsAxis-tickContainer text': {
+          fontFamily: 'Lato',
+        },
+        '& .MuiChartsAxis-left .MuiChartsAxis-tickContainer text': {
+          fontFamily: 'Lato',
+        },
+      }}
+      hideLegend={true}
+      style={{marginLeft: "-8px"}}
+    >
+      <defs>
+        <linearGradient id="areaGradient" x1="0" x2="0" y1="0" y2="1">
+          <stop offset="0%" stopColor={areaColor} stopOpacity={1} />
+          <stop offset="95%" stopColor={areaColor} stopOpacity={0} />
+        </linearGradient>
+      </defs>
+    </LineChart>
+  )
+
   return (
     <div className='stat-box-graph'>
       <p className='graph-header'>Kestrel Detections/Month</p>
-      <LineChart
-        xAxis={[
-          {
-            data: chartData.map(item => item.date),
-            scaleType: 'point',
-            tickLabelInterval: (value, index) => index % 7 === 0, // Show label every 7 days
-            height: 28,
-          },
-        ]}
-        yAxis={[{ label: 'Number of Kestrels', width: 40 }]}
-        series={[
-          {
-            data: chartData.map(item => item.value),
-            label: 'Number of Kestrels',
-            area: true,
-            showMark: false,
-            color: areaColor,
-          },
-        ]}
-        height={300}
-        sx={{
-          [`& .${lineElementClasses.root}`]: { //applies custom stroke to the line
-            strokeWidth: 2,
-            strokeLinecap: 'round',
-          },
-          [`& .${areaElementClasses.root}`]: { //applies gradient to area under the line
-            fill: 'url(#areaGradient)',
-            filter: 'none',
-          },
-          '& .MuiChartsAxis-bottom .MuiChartsAxis-tickContainer text': {
-            fontFamily: 'Lato',
-          },
-          '& .MuiChartsAxis-left .MuiChartsAxis-tickContainer text': {
-            fontFamily: 'Lato',
-          },
-          '& .MuiChartsAxis-bottom line': {
-            display: showLine ? 'block' : 'none',
-          },
-        }}
-        hideLegend={true}
-        style={{marginLeft: "-8px"}}
-      >
-        <defs>
-          <linearGradient id="areaGradient" x1="0" x2="0" y1="0" y2="1">
-            <stop offset="0%" stopColor={areaColor} stopOpacity={1} />
-            <stop offset="95%" stopColor={areaColor} stopOpacity={0} />
-          </linearGradient>
-        </defs>
-      </LineChart>
+      {showLine ?
+        LINE_CHART
+        :
+        <div className="empty-state-graph">
+          <p>No kestrel detections this month</p>
+          <p>{new Date().toLocaleDateString()}</p>
+        </div>
+      }
     </div>
   )
 }
@@ -230,9 +238,6 @@ export function LineGraphPicture({ boxesData = [] }) {
           },
           '& .MuiChartsAxis-left .MuiChartsAxis-tickContainer text': {
             fontFamily: 'Lato',
-          },
-          '& .MuiChartsAxis-bottom line': {
-            display: showLine ? 'block' : 'none',
           },
         }}
         hideLegend={true}
