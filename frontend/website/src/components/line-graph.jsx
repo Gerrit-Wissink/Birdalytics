@@ -90,7 +90,7 @@ export default function LineGraph({ boxesData = [] }) {
       }
 
 
-  }, [boxesData]);
+  }, [boxesData.length]);
 
   const LINE_CHART = (
     <LineChart
@@ -197,7 +197,7 @@ export function LineGraphPicture({ boxesData = [] }) {
       }
 
 
-  }, [boxesData]);
+  }, [boxesData.length]);
 
 
   return (
