@@ -318,7 +318,7 @@ export default function Reports() {
                         backgroundColor: '#ffffff',
                     }}
                 >
-                    <BoxesPieChart boxesData={selectedBirdboxes} photo={true} />
+                    <BoxesPieChart birdboxes={selectedBirdboxes} photo={true} />
                 </div>
             )}
 

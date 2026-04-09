@@ -300,7 +300,7 @@ export default function PDFPreview({ boxesData, lineGraphRef, includeOverview = 
                 </div>
                 <hr style={{ border: 'none', borderTop: '2px solid var(--stroke)', margin: 'auto', width: '90%'}} />
                 <div style={{ display: 'flex', alignItems: 'center', gap: '24px', justifyContent: 'center' }}>
-                    <BoxesPieChart boxesData={birdboxes} />
+                    <BoxesPieChart birdboxes={birdboxes} />
                     <SightingBreakdown records={birdboxes} />
                 </div>
             </div>
