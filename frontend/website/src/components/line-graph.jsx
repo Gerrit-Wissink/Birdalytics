@@ -52,7 +52,7 @@ const areaColor = 'var(--gradient-green)'
 export default function LineGraph({ boxesData = [] }) {
 
   const [chartData, setChartData] = useState(createEmptyChartData());
-  const [totalKestrels, setTotalKestrels] = useState(0);
+  const [showLine, setShowLine] = useState(false);
 
   const formatData = (boxesData = []) => {
     // Create fresh chart data for the current month
@@ -79,23 +79,18 @@ export default function LineGraph({ boxesData = [] }) {
       setChartData(createEmptyChartData());
       const serverData = formatData(boxesData);
       console.log("Adding total kestrels...");
-      const _totalKestrels = serverData.reduce((sum, item) => sum + (item.value ?? 0), 0);
-      console.log("Kestresls sum result:", _totalKestrels);
-      setTotalKestrels(_totalKestrels);
-      if (_totalKestrels === 0) {
-        // If there are no kestrels detected, use the dummy data to make the graph look nice
-        // setChartData(fake_data);
+      const totalKestrels = serverData.reduce((sum, item) => sum + (item.value ?? 0), 0);
+      console.log("Kestresls sum result:", totalKestrels);
+      if (totalKestrels === 0) {
         setChartData(createEmptyChartData());
       } else {
+        console.log("Setting chart data with server data:", serverData);
         setChartData(serverData);
+        setShowLine(true);
       }
 
 
   }, [boxesData]);
-
-  useEffect(() => {
-    console.log("Total kestrels updated:", totalKestrels);
-  }, [totalKestrels]);
 
   return (
     <div className='stat-box-graph'>
@@ -107,7 +102,7 @@ export default function LineGraph({ boxesData = [] }) {
             scaleType: 'point',
             tickLabelInterval: (value, index) => index % 7 === 0, // Show label every 7 days
             height: 28,
-            disableLine: totalKestrels === 0, // Hide x-axis line if there are no detections to avoid visual clutter with dummy data
+            disableLine: !showLine, // Hide x-axis line if there are no detections to avoid visual clutter with dummy data
           },
         ]}
         yAxis={[{ label: 'Number of Kestrels', width: 40 }]}
@@ -155,7 +150,7 @@ export default function LineGraph({ boxesData = [] }) {
 export function LineGraphPicture({ boxesData = [] }) {
 
   const [chartData, setChartData] = useState(createEmptyChartData());
-  const [totalKestrels, setTotalKestrels] = useState(0);
+  const [showLine, setShowLine] = useState(false);
 
   const formatData = (boxesData = []) => {
     // Create fresh chart data for the current month
@@ -182,15 +177,13 @@ export function LineGraphPicture({ boxesData = [] }) {
       setChartData(createEmptyChartData());
       const serverData = formatData(boxesData);
       console.log("Adding total kestrels...");
-      const _totalKestrels = serverData.reduce((sum, item) => sum + (item.value ?? 0), 0);
-      console.log("Kestresls sum result:", _totalKestrels);
-      setTotalKestrels(_totalKestrels);
-      if (_totalKestrels === 0) {
-        // If there are no kestrels detected, use the dummy data to make the graph look nice
-        // setChartData(fake_data);
+      const totalKestrels = serverData.reduce((sum, item) => sum + (item.value ?? 0), 0);
+      console.log("Kestresls sum result:", totalKestrels);
+      if (totalKestrels === 0) {
         setChartData(createEmptyChartData());
       } else {
         setChartData(serverData);
+        setShowLine(true);
       }
 
 
@@ -206,7 +199,7 @@ export function LineGraphPicture({ boxesData = [] }) {
             scaleType: 'point',
             tickLabelInterval: (value, index) => index % 7 === 0, // Show label every 7 days
             height: 28,
-            disableLine: totalKestrels === 0, // Hide x-axis line if there are no detections to avoid visual clutter with dummy data
+            disableLine: !showLine, // Hide x-axis line if there are no detections to avoid visual clutter with dummy data
           },
         ]}
         yAxis={[{ label: 'Number of Kestrels', width: 50 }]}
