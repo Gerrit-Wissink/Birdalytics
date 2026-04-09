@@ -102,7 +102,6 @@ export default function LineGraph({ boxesData = [] }) {
             scaleType: 'point',
             tickLabelInterval: (value, index) => index % 7 === 0, // Show label every 7 days
             height: 28,
-            disableLine: !showLine, // Hide x-axis line if there are no detections to avoid visual clutter with dummy data
           },
         ]}
         yAxis={[{ label: 'Number of Kestrels', width: 40 }]}
@@ -130,6 +129,9 @@ export default function LineGraph({ boxesData = [] }) {
           },
           '& .MuiChartsAxis-left .MuiChartsAxis-tickContainer text': {
             fontFamily: 'Lato',
+          },
+          '& .MuiChartsAxis-bottom line': {
+            display: showLine ? 'block' : 'none',
           },
         }}
         hideLegend={true}
@@ -199,7 +201,6 @@ export function LineGraphPicture({ boxesData = [] }) {
             scaleType: 'point',
             tickLabelInterval: (value, index) => index % 7 === 0, // Show label every 7 days
             height: 28,
-            disableLine: !showLine, // Hide x-axis line if there are no detections to avoid visual clutter with dummy data
           },
         ]}
         yAxis={[{ label: 'Number of Kestrels', width: 50 }]}
@@ -229,6 +230,9 @@ export function LineGraphPicture({ boxesData = [] }) {
           },
           '& .MuiChartsAxis-left .MuiChartsAxis-tickContainer text': {
             fontFamily: 'Lato',
+          },
+          '& .MuiChartsAxis-bottom line': {
+            display: showLine ? 'block' : 'none',
           },
         }}
         hideLegend={true}
