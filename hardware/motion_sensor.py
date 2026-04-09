@@ -1,8 +1,8 @@
-from gpiozero import DigitalInputDevice as GPIO
+from gpiozero import MotionSensor
 from picamera2 import Picamera2 as Camera
-from time import sleep
-import datetime
+import time
 import subprocess
+import threading
 
 box_id = 'X' # Replace X with location name/ID.
 motion_pin = 27 # The pin on the Raspberry Pi that is connected to the data pin on the motion sensor.
@@ -18,16 +18,22 @@ bird_cam.start()
 print("Camera started successfully.")
 
 # Initializing the motion sensor to send data to the pin specified by motion_pin
-motion_sensor = GPIO(motion_pin)
-time_inactive = 0
+motion_sensor = MotionSensor(motion_pin)
+
+# motion_timer() defines the time to wait before capturing a photo if no motion is detected.
+# Once the timer defined by cam_timer elapses, 
+def motion_timer():
+    global cam_timer
+    cam_timer = threading.Timer(interval_time, capture_photo(2))
+    cam_timer.start()
+motion_timer()
 
 # capture_photo() will take a photo using the attached camera and save it to the Raspberry Pi's storage.
 # Files are saved in the Home's Pictures directory, under the format BoxX_yyyy-mm-dd_HH-MM-SS, with the date/time being the time of capture.
 # The console will output a statement based on what triggered the capture:
 # if motion was detected (condition = 1), or if the amount of time defined by interval_time has passed (condition = 2).
 def capture_photo(condition):
-        capture_time = datetime.datetime.now()
-        timestamp = capture_time.strftime("%Y-%m-%d_%H-%M-%S")
+        timestamp = time.strftime("%Y-%m-%d_%H-%M-%S")
         filename = "Box" + box_id + "_" + timestamp
         path = "/home/birdalytics/Pictures/" + filename + ".jpg"
         if condition == 1:
@@ -45,26 +51,16 @@ def capture_photo(condition):
         print("Capturing photo...")
         bird_cam.capture_file(path)
         print("Photo saved to " + path)
-        sleep(motion_snooze_time)
+        time.sleep(motion_snooze_time)
+        motion_timer()
 
-# This loop will do the following:
-# First, it will check every second if motion has been detected. 
-# If it is, take a photo immediately, then wait for the interval time.
-# If motion is not detected for the amount of time defined by interval_time, then take a photo.
-# Otherwise, increment the timer. The timer is reset whenever a photo is taken.
-# These steps will be repeated until one of the capturing conditons are met.
+motion_sensor.wait_for_motion()
+capture_photo(1)
+
 # The try/except statements are present for the sake of cleanup.
 # If the program is manually interrupted, then the processes will not terminate correctly, hence the need for the try/except.
 try:
     while True:
-        sleep(1)
-        if motion_sensor.is_active:
-            capture_photo(1)
-            time_inactive = 0
-        elif time_inactive >= interval_time:   
-            capture_photo(2)
-            time_inactive = 0
-        else:
-            time_inactive += 1
+        time.sleep(1)
 except KeyboardInterrupt:
     print("Process manually interrupted. Exiting...")
