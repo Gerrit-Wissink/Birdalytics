@@ -355,7 +355,7 @@ export default function ValGrid(){
     return(
         <>
         <section id='container'>
-            <h1>Validation Grid Page</h1>
+            <h1>Validation Grid</h1>
             <div className={styles.wrapper}>
                 <style>{PRIMEREACT_OVERRIDES}</style>
                 <DataView

@@ -150,8 +150,8 @@ export default function Reports() {
 
     if (!hasReportData) {
         return (
-            <section className="container">
-                <h1>Reports Page</h1>
+            <section id="container" style={{ width: '100vw' }}>
+                <h1>Reports</h1>
 
                 <EmptyState
                     title="No report data yet"
@@ -172,9 +172,9 @@ export default function Reports() {
 
     return (
         <>
-            <section className="container">
-                <h1>Reports Page</h1>
-                <div style={{ display: 'flex', flexDirection: 'row', alignItems: 'center', justifyContent: 'space-between', marginBottom: '1em' }}>
+            <section id="container">
+                <h1>Reports</h1>
+                <div style={{ display: 'flex', flexDirection: 'row', alignItems: 'center', justifyContent: 'space-between', marginBottom: '1em', width: '100%' }}>
                     <BirdBoxSelect
                         boxes={boxesData}
                         selectedBoxNames={selectedBoxNames}
