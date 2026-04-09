@@ -207,7 +207,7 @@ function BoxDetailCard({ box }) {
 
 // ---
 
-export default function PDFPreview({ boxesData, lineGraphRef }) {
+export default function PDFPreview({ boxesData, lineGraphRef, includeOverview = true }) {
     console.log('BOXES DATA:', boxesData);
     const birdboxes = boxesData ?? [];
 
@@ -226,6 +226,7 @@ export default function PDFPreview({ boxesData, lineGraphRef }) {
 
     return (
         <>
+        {includeOverview && (
         <PageShell>
             <h2 style={{ fontSize: '16px', fontWeight: 'bold', marginBottom: '8px' }}>
                 Birdbox Report
@@ -304,6 +305,7 @@ export default function PDFPreview({ boxesData, lineGraphRef }) {
                 </div>
             </div>
         </PageShell>
+        )}
 
          {Array.from({ length: Math.ceil(birdboxes.length / 2) }, (_, i) => (
             <BoxDetailPage key={i} boxes={birdboxes.slice(i * 2, i * 2 + 2)} />

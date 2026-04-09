@@ -1,4 +1,6 @@
 import * as React from 'react';
+import { SelectButton } from 'primereact/selectbutton';
+import { Dropdown } from 'primereact/dropdown';
 import html2canvas from 'html2canvas';
 import { useEffect, useState, useRef } from 'react';
 import apiClient from '../utils/apiClient';
@@ -52,6 +54,8 @@ export default function Reports() {
     );
 
     const [selectedTab, setSelectedTab] = React.useState('PDF');
+    const [includeOverview, setIncludeOverview] = React.useState('Include');
+    const overviewOptions = ['Include', 'Exclude'];
 
     const handleChange = (event, newValue) => {
         setSelectedTab(newValue);
@@ -130,7 +134,7 @@ export default function Reports() {
         const chartImage = canvas.toDataURL('image/png');
         const lineCanvas = await html2canvas(lineGraphRef.current, { backgroundColor: '#ffffff' });
         const lineGraphImage = lineCanvas.toDataURL('image/png');
-        await BuildPDF(selectedBirdboxes, chartImage, lineGraphImage);
+        await BuildPDF(selectedBirdboxes, chartImage, lineGraphImage, includeOverview === 'Include');
     };
 
     const handleDownload = () => {
@@ -174,32 +178,70 @@ export default function Reports() {
         <>
             <section id="container">
                 <h1>Reports</h1>
-                <div style={{ display: 'flex', flexDirection: 'row', alignItems: 'center', justifyContent: 'space-between', marginBottom: '1em', width: '100%' }}>
-                    <BirdBoxSelect
-                        boxes={boxesData}
-                        selectedBoxNames={selectedBoxNames}
-                        setSelectedBoxNames={setSelectedBoxNames}
-                    />
-                    <button
-                        disabled={!hasSelectedBoxes}
-                        style={{
-                            backgroundColor: !hasSelectedBoxes ? '#a0a0a0' : '#537F2C',
-                            borderRadius: '8px',
-                            color: 'white',
-                            border: 'none',
-                            padding: '8px 16px',
-                            fontSize: '1em',
-                            fontWeight: 400,
-                            cursor: !hasSelectedBoxes ? 'not-allowed' : 'pointer',
-                        }}
-                        onClick={handleDownload}
-                    >
-                        Download Report
-                    </button>
+                <div id="report-filters">
+                    <div id="report-row">
+                        <div className="camera-select-wrapper">
+                            <BirdBoxSelect
+                                boxes={boxesData}
+                                selectedBoxNames={selectedBoxNames}
+                                setSelectedBoxNames={setSelectedBoxNames}
+                            />
+                        </div>
+                        {selectedTab === 'PDF' && (
+                            <div style={{ display: 'flex', flexDirection: 'column', justifyContent: 'space-between', height: '50px' }}>
+                                <span style={{ fontSize: '0.8em', fontWeight: 500, color: '#444' }}>Overview in PDF</span>
+                                <SelectButton
+                                    value={includeOverview}
+                                    onChange={(e) => setIncludeOverview(e.value)}
+                                    options={overviewOptions}
+                                    pt={{
+                                        button: ({ context }) => ({
+                                            style: {
+                                                padding: '4px 12px',
+                                                fontSize: '0.8em',
+                                                backgroundColor: context.selected ? '#537F2C' : 'transparent',
+                                                color: context.selected ? '#ffffff' : '#444',
+                                                border: '1px solid #537F2C',
+                                            }
+                                        })
+                                    }}
+                                />
+                            </div>
+                        )}
+                        <button
+                            disabled={!hasSelectedBoxes}
+                            style={{
+                                backgroundColor: !hasSelectedBoxes ? '#a0a0a0' : '#537F2C',
+                                borderRadius: '8px',
+                                color: 'white',
+                                border: 'none',
+                                padding: '8px 16px',
+                                fontSize: '1em',
+                                fontWeight: 400,
+                                cursor: !hasSelectedBoxes ? 'not-allowed' : 'pointer',
+                                marginLeft: 'auto',
+                            }}
+                            onClick={handleDownload}
+                        >
+                            Download Report
+                        </button>
+                    </div>
                 </div>
 
+                {/* Mobile: dropdown format selector */}
+                <div className="report-format-dropdown">
+                    <Dropdown
+                        value={selectedTab}
+                        options={['PDF', 'CSV', 'EXCEL']}
+                        onChange={(e) => setSelectedTab(e.value)}
+                        placeholder="Select format"
+                        style={{ width: '100%' }}
+                    />
+                </div>
+
+                {/* Desktop: tab selector + previews */}
                 <TabContext value={selectedTab}>
-                    <Box sx={{ width: '100%', marginTop: '1em', borderBottom: 1, borderColor: 'divider' }}>
+                    <Box className="report-tabs-box" sx={{ width: '100%', marginTop: '1em', borderBottom: 1, borderColor: 'divider' }}>
                         <Tabs
                             value={selectedTab}
                             onChange={(event, newValue) => setSelectedTab(newValue)}
@@ -229,7 +271,7 @@ export default function Reports() {
                                 <p style={{ fontStyle: 'italic', marginTop: '0px' }}>
                                     Please note that preview is not exact.
                                 </p>
-                                <PDFPreview boxesData={selectedBirdboxes} />
+                                <PDFPreview boxesData={selectedBirdboxes} includeOverview={includeOverview === 'Include'} />
                             </>
                         ) : (
                             EMPTY_TAB_CONTENT

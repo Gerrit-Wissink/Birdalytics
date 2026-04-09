@@ -330,7 +330,7 @@ function drawBoxPages(doc, birdboxes) {
 
 //BUILD PDF
 
-export default async function BuildPDF(birdboxes, chartImage, lineGraphImage) {
+export default async function BuildPDF(birdboxes, chartImage, lineGraphImage, includeOverview = true) {
 
     const doc = new jsPDF();
     const pageWidth = doc.internal.pageSize.getWidth();
@@ -341,6 +341,7 @@ export default async function BuildPDF(birdboxes, chartImage, lineGraphImage) {
     const fileName = `Birdalytics_Report_${now.getFullYear()}-${String(now.getMonth() + 1).padStart(2, '0')}-${String(now.getDate()).padStart(2, '0')}`;
     const longDate = now.toLocaleDateString('en-US', { year: 'numeric', month: 'long', day: 'numeric' });
 
+    if (includeOverview) {
     // Rectangle header
     doc.setFillColor(0, 76, 152);
     doc.rect(0, 0, pageWidth, 20, 'F');
@@ -458,6 +459,8 @@ export default async function BuildPDF(birdboxes, chartImage, lineGraphImage) {
             drawSightingBreakdown(doc, birdboxes, boxX, breakdownY, boxW);
         }
     }
+    } // end includeOverview
+
     // Individual box pages — 2 per page
     drawBoxPages(doc, birdboxes);
 
