@@ -1,0 +1,77 @@
+.stat-empty-state {
+  text-align: center;
+  padding: 2rem;
+  border: 1px dashed #d6d6d6;
+  border-radius: 8px;
+  background-color: #fafafa;
+  max-width: 600px;
+  margin: 0 auto;
+  min-height: 200px;
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+}
+
+.stat-empty-state h2 {
+  margin-bottom: 0.5rem;
+}
+
+.stat-empty-state p {
+  color: #666;
+}
+
+.container {
+  padding: 32px 24px;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  text-align: center;
+  min-height: 100vh;
+  overflow-y: auto;
+}
+
+#report-filters {
+    margin-bottom: 1em;
+    width: 100%;
+}
+
+#report-row {
+    display: flex;
+    flex-direction: row;
+    align-items: center;
+    justify-content: space-between;
+    gap: 1.5em;
+    flex-wrap: wrap;
+}
+
+.report-format-dropdown {
+    display: none;
+    margin-top: 1em;
+}
+
+@media screen and (max-width: 1050px) {
+    .camera-select-wrapper {
+        width: 100%;
+    }
+
+    .report-format-dropdown {
+        display: block;
+    }
+
+    .report-tabs-box,
+    .MuiTabPanel-root {
+        display: none !important;
+    }
+}
+
+@media screen and (max-width: 900px){
+  .MuiTabPanel-root{
+    padding: 0px !important;
+  }
+}
+
+@media screen and (max-width: 768px) and (orientation: portrait){
+  .MuiTabPanel-root{
+    display: none;
+  }
+}

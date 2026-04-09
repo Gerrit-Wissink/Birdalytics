@@ -101,3 +101,53 @@
     margin-bottom: 5vh;
   }
 }
+
+.overview-empty-state {
+  margin-top: 1.5rem;
+  padding: 2rem;
+  border: 1px dashed #d1d5db;
+  border-radius: 12px;
+  background-color: #f8f9fc;
+  max-width: 800px;
+
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  min-height: 160px;
+}
+
+.stat-empty-state {
+  min-height: 180px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.container {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  padding: 32px 24px;
+  text-align: center;
+  min-height: 100vh;
+  overflow-y: auto;
+}
+
+.container h1 {
+  margin-bottom: 24px;
+}
+
+.overview-empty-state h2 {
+  font-size: 1.4rem;
+  margin-bottom: 0.5rem;
+}
+
+.overview-empty-state p {
+  color: #6b7280;
+}
+
+.loadingState {
+  margin-top: 24px;
+  color: #6c757d;
+  font-size: 1rem;
+}

@@ -13,15 +13,15 @@ router.get('/', BoxController.getAllBoxes);
 // @access  Public
 router.get('/record', BoxController.getAllBoxesInfo);
 
-// @route   GET /api/boxes/:id
-// @desc    Get box by ID
-// @access  Public
-router.get('/:id', BoxController.getBox);
-
 // @route   GET /api/boxes/record/:id
 // @desc    Get box by ID with all related info
 // @access  Public
 router.get('/record/:id', BoxController.getBoxInfo);
+
+// @route   GET /api/boxes/:id
+// @desc    Get box by ID
+// @access  Public
+router.get('/:id', BoxController.getBox);
 
 // @route   POST /api/boxes
 // @desc    Create new box
