@@ -24,6 +24,7 @@ print("Camera started successfully.")
 
 # Initializing the motion sensor to send data to the pin specified by motion_pin
 motion_sensor = MotionSensor(motion_pin)
+lock = threading.Lock()
 
 # motion_timer() defines the time to wait before capturing a photo if no motion is detected.
 # Once the timer defined by cam_timer elapses, 
@@ -68,29 +69,35 @@ def enforce_storage_limit(folder_path):
 # The console will output a statement based on what triggered the capture:
 # if motion was detected (condition = 1), or if the amount of time defined by interval_time has passed (condition = 2).
 def capture_photo(condition):
+    with lock:
         timestamp = time.strftime("%Y-%m-%d_%H-%M-%S")
         filename = "Box" + box_id + "_" + timestamp
-        path = photo_dir + filename + ".jpg"
+        path = os.path.join(photo_dir, filename + ".jpg")
+
         if condition == 1:
             with open(log_file, "a") as f:
                 f.write(f"{timestamp} - Photo taken (motion detection)\n")
             print("Motion detected.")
             subprocess.run(['logger', '-t', 'motion_sensor', f'Photo taken at {timestamp} (motion detection)'])
+
         elif condition == 2:
             with open(log_file, "a") as f:
                 f.write(f"{timestamp} - Photo taken (time elapsed)\n")
             print("Time elapsed.")
             subprocess.run(['logger', '-t', 'motion_sensor', f'Photo taken at {timestamp} (time elapsed)'])
+
         else:
-            raise ValueError("Fatal error! Unknown condition " + condition)
-        
+            raise ValueError("Fatal error! Unknown condition " + str(condition))
+
         print("Capturing photo...")
         bird_cam.capture_file(path)
         print("Photo captured and saved to " + path)
+
         enforce_storage_limit(photo_dir)
-        
-        time.sleep(motion_snooze_time)
-        motion_timer()
+
+    # IMPORTANT: outside lock
+    time.sleep(motion_snooze_time)
+    motion_timer()
 
 motion_sensor.wait_for_motion()
 capture_photo(1)
