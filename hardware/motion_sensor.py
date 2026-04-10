@@ -24,7 +24,7 @@ motion_sensor = MotionSensor(motion_pin)
 # Once the timer defined by cam_timer elapses, 
 def motion_timer():
     global cam_timer
-    cam_timer = threading.Timer(interval_time, capture_photo(2))
+    cam_timer = threading.Timer(interval_time, capture_photo, args=(2,))
     cam_timer.start()
 motion_timer()
 
