@@ -2,7 +2,7 @@ import * as React from 'react';
 import { SelectButton } from 'primereact/selectbutton';
 import { Dropdown } from 'primereact/dropdown';
 import html2canvas from 'html2canvas';
-import { useEffect, useState, useRef } from 'react';
+import { useEffect, useState, useRef, useMemo } from 'react';
 import apiClient from '../utils/apiClient';
 import BirdBoxSelect from '../components/cameraSelect';
 import { BoxesPieChart } from '../components/donut-chart';
@@ -22,13 +22,13 @@ import * as XLSX from "xlsx";
 
 export default function Reports() {
 
-    useEffect(() => {
-        const token = localStorage.getItem('token');
-        const tokenExpiry = localStorage.getItem('tokenExpiry');
-        if (!token || (tokenExpiry && new Date(tokenExpiry) < new Date())) {
-            window.location.href = '/#/login';
-        }
-    }, []);
+    // useEffect(() => {
+    //     const token = localStorage.getItem('token');
+    //     const tokenExpiry = localStorage.getItem('tokenExpiry');
+    //     if (!token || (tokenExpiry && new Date(tokenExpiry) < new Date())) {
+    //         window.location.href = '/#/login';
+    //     }
+    // }, []);
 
     const [boxesData, setBoxesData] = useState([]);
     const [selectedBoxNames, setSelectedBoxNames] = useState([]);
@@ -49,8 +49,11 @@ export default function Reports() {
         fetchBoxesData();
     }, []);
 
-    const selectedBirdboxes = boxesData.filter(b =>
-        selectedBoxNames.includes(b.birdbox_name)
+    const selectedBirdboxes = useMemo(() => 
+        boxesData.filter(b =>
+            selectedBoxNames.includes(b.birdbox_name)
+        ),
+        [boxesData, selectedBoxNames]
     );
 
     const [selectedTab, setSelectedTab] = React.useState('PDF');
@@ -330,7 +333,7 @@ export default function Reports() {
                         width: '900px',
                     }}
                 >
-                    <LineGraphPicture birdboxes={selectedBirdboxes} />
+                    <LineGraphPicture boxesData={selectedBirdboxes} />
                 </div>
             )}
 
