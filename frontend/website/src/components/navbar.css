@@ -8,7 +8,7 @@ nav{
     display: flex;
     align-items: center;
     justify-content: space-between;
-    padding: 0px 2.5em;
+    padding: 0px 1.5em;
     height: 8vh;
     position: sticky;
     top: 0;
@@ -17,7 +17,8 @@ nav{
 
 .primary-nav{
     display: flex;
-    gap: 2em;
+    gap: 1.5em;
+    flex-wrap: wrap;
 }
 
 .primary-nav a{
@@ -28,7 +29,7 @@ nav{
 .nav-links{
     display: flex;
     align-items: center;
-    gap: 4em;
+    gap: 2.5em;
 }
 
 nav a{
@@ -44,7 +45,7 @@ nav a:hover:not(.active) {
 }
 
 nav span{
-    padding: 3px 8px;
+    padding: 3px 5px;
     max-width: 150px;
 }
 
@@ -221,3 +222,25 @@ nav span{
         width: 45%;
     }
 }
+
+@media screen and (max-height: 750px){
+    #burgerMenu{
+        height: 50%;
+    }
+
+    .bar{
+        height:3px;
+        width: 30px;
+    }
+
+    #sideMenu{
+        padding-top: 15vh;
+        gap: 15vh
+    }
+
+    #sideText{
+        gap: 5vh;
+    }
+}
+
+

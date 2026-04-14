@@ -186,7 +186,138 @@
 
 
 @media screen and (max-width: 890px){
-
-  /* TABLE NEEDS TO BE MOBILE FRIENDLY OR SWIPEABLE */
   
+  .tableWrapper {
+    padding: 16px;
+  }
+
+  .searchRow {
+    flex-direction: column;
+    gap: 8px;
+  }
+
+  .searchInput {
+    width: 100%;
+  }
+
+  .filtersButton {
+    width: 100%;
+  }
+
+  /* Make PrimeReact DataTable responsive */
+  :global(.p-datatable) {
+    font-size: 0.85rem;
+  }
+
+  :global(.p-datatable .p-datatable-thead > tr > th) {
+    padding: 8px 6px;
+    font-size: 0.8rem;
+  }
+
+  :global(.p-datatable .p-datatable-tbody > tr > td) {
+    padding: 8px 6px;
+  }
+
+  .dateCell {
+    font-size: 0.85rem;
+  }
+
+  .kestrelBadge {
+    padding: 3px 8px;
+    font-size: 0.8rem;
+  }
+
+  .birdPlain {
+    font-size: 0.85rem;
+  }
+
+  .confidenceHighlight {
+    padding: 3px 8px;
+    font-size: 0.8rem;
+    min-width: auto;
+  }
+
+  .confidencePlain {
+    font-size: 0.85rem;
+    min-width: auto;
+  }
+
+  .viewImageCell {
+    padding-left: 8px;
+  }
+
+  :global(.p-datatable .p-paginator) {
+    font-size: 0.85rem;
+  }
+
+  .modifiedDash {
+    padding-left: 8px;
+    font-size: 1rem;
+  }
+
+  .modifiedDate {
+    padding-left: 8px;
+    font-size: 0.85rem;
+  }
+}
+
+@media screen and (max-width: 480px) {
+
+  .tableWrapper {
+    padding: 12px;
+    border-radius: 8px;
+  }
+
+  .searchRow {
+    flex-direction: column;
+  }
+
+  .searchInput {
+    width: 100%;
+    font-size: 0.9rem;
+  }
+
+  .filtersButton {
+    width: 100%;
+    font-size: 0.85rem;
+  }
+
+  :global(.p-datatable) {
+    font-size: 0.75rem;
+  }
+
+  :global(.p-datatable .p-datatable-thead > tr > th) {
+    padding: 6px 4px;
+    font-size: 0.7rem;
+  }
+
+  :global(.p-datatable .p-datatable-tbody > tr > td) {
+    padding: 6px 4px;
+  }
+
+  .dateCell {
+    font-size: 0.75rem;
+  }
+
+  .kestrelBadge {
+    padding: 2px 6px;
+    font-size: 0.7rem;
+  }
+
+  .birdPlain {
+    font-size: 0.75rem;
+  }
+
+  .confidenceHighlight {
+    padding: 2px 6px;
+    font-size: 0.7rem;
+  }
+
+  .confidencePlain {
+    font-size: 0.75rem;
+  }
+
+  :global(.p-datatable .p-paginator) {
+    font-size: 0.7rem;
+  }
 }
