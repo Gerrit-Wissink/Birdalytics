@@ -232,6 +232,15 @@ nav span{
         height:3px;
         width: 30px;
     }
+
+    #sideMenu{
+        padding-top: 15vh;
+        gap: 15vh
+    }
+
+    #sideText{
+        gap: 5vh;
+    }
 }
 
 
