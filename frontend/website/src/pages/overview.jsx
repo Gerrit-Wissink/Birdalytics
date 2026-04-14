@@ -21,6 +21,7 @@ export default function Overview() {
         document.title = "Home - Birdalytics";
     }, []);
 
+    /* commenting out
     useEffect(() => {
         const token = localStorage.getItem("token");
         const tokenExpiry = localStorage.getItem("tokenExpiry");
@@ -28,6 +29,7 @@ export default function Overview() {
             window.location.href = "/#/login";
         }
     }, []);
+    */
 
     useEffect(() => {
         const fetchBoxesData = async () => {

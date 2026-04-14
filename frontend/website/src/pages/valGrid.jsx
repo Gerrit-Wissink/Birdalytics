@@ -17,6 +17,7 @@ import 'primereact/resources/primereact.min.css';
 export default function ValGrid(){
 
     const [zoomedImage, setZoomedImage] = useState(null);
+    const [imageMap, setImageMap] = useState({});
 
     const handleZoom = (src) => {
         setZoomedImage(src);
@@ -45,6 +46,7 @@ export default function ValGrid(){
     const [speciesCorrections, setSpeciesCorrections] = useState({});
     const [speciesOptions, setSpeciesOptions] = useState([]);
 
+    /* commenting out
     useEffect(() => {
         const token = localStorage.getItem('token');
         const tokenExpiry = localStorage.getItem('tokenExpiry');
@@ -52,6 +54,7 @@ export default function ValGrid(){
             window.location.href = '/#/login';
         }
     }, []);
+    */
 
 
     useEffect(() => {
@@ -100,6 +103,51 @@ export default function ValGrid(){
             )
             .filter((rec) => selectedBoxNames.includes(rec.birdbox_name));
     }, [boxesData, selectedBoxNames]);
+
+    useEffect(() => {
+        let isMounted = true;
+        const objectUrls = [];
+
+        const fetchImages = async () => {
+            if (allRecords.length === 0) {
+                if (isMounted) {
+                    setImageMap({});
+                }
+                return;
+            }
+
+            try {
+                const nextImageMap = {};
+
+                for (const record of allRecords) {
+                    if (!record.image_url) {
+                        continue;
+                    }
+
+                    const response = await apiClient.get(record.image_url, {
+                        responseType: 'blob'
+                    });
+
+                    const objectUrl = URL.createObjectURL(response.data);
+                    objectUrls.push(objectUrl);
+                    nextImageMap[record.record_id] = objectUrl;
+                }
+
+                if (isMounted) {
+                    setImageMap(nextImageMap);
+                }
+            } catch (error) {
+                console.error('Error fetching validation grid images:', error);
+            }
+        };
+
+        fetchImages();
+
+        return () => {
+            isMounted = false;
+            objectUrls.forEach((url) => URL.revokeObjectURL(url));
+        };
+    }, [allRecords]);
 
     const handleSaveChanges = async () => {
         try {
@@ -282,11 +330,7 @@ export default function ValGrid(){
         const conf = record._confidence; // Use pre-computed _confidence field
         const confBg = getConfidenceBg(conf);
         const confPct = formatConfidencePct(conf);
-        const imageUrl = record.image_url
-        ? record.image_url.startsWith('http')
-            ? record.image_url
-            : `https://birdalytics.webdev.gccis.rit.edu/api/${record.image_url}`
-        : null;
+        const imageUrl = imageMap[record.record_id] ?? null;
 
         // Use corrected species if the user has picked one, otherwise fall back to the model's guess
         const displaySpecies = speciesCorrections[recordId] ?? record.modified_bird ?? record.primary_guess;

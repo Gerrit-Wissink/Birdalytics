@@ -22,13 +22,15 @@ import * as XLSX from "xlsx";
 
 export default function Reports() {
 
-    // useEffect(() => {
-    //     const token = localStorage.getItem('token');
-    //     const tokenExpiry = localStorage.getItem('tokenExpiry');
-    //     if (!token || (tokenExpiry && new Date(tokenExpiry) < new Date())) {
-    //         window.location.href = '/#/login';
-    //     }
-    // }, []);
+    /* commenting out
+    useEffect(() => {
+        const token = localStorage.getItem('token');
+        const tokenExpiry = localStorage.getItem('tokenExpiry');
+        if (!token || (tokenExpiry && new Date(tokenExpiry) < new Date())) {
+            window.location.href = '/#/login';
+        }
+    }, []);
+    */
 
     const [boxesData, setBoxesData] = useState([]);
     const [selectedBoxNames, setSelectedBoxNames] = useState([]);

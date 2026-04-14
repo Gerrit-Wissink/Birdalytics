@@ -125,6 +125,7 @@ export default function CamInfo() {
         setSelectedRowId(row?.record_id ?? null);
     }, []);
 
+    /* commenting out
     useEffect(() => {
         const token = localStorage.getItem('token');
         const tokenExpiry = localStorage.getItem('tokenExpiry');
@@ -132,6 +133,7 @@ export default function CamInfo() {
             window.location.href = '/#/login';
         }
     }, []);
+    */
 
     useEffect(() => {
         // Function declared above

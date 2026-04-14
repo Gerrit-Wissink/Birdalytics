@@ -4,6 +4,7 @@ import { useState, useEffect } from 'react';
 import apiClient from '../utils/apiClient';
 import CameraCard from '../components/camera-card';
 import AddCameraModal from '../components/add-camera-modal';
+import EmptyState from '../components/emptyState';
 import './cameras.css'
 
 export default function Cameras() {
@@ -14,6 +15,7 @@ export default function Cameras() {
 
     const [imageMap, setImageMap] = useState({});
 
+    /* commenting out
     useEffect(() => {
         const token = localStorage.getItem('token');
         const tokenExpiry = localStorage.getItem('tokenExpiry');
@@ -21,6 +23,7 @@ export default function Cameras() {
             window.location.href = '/#/login';
         }
     }, []);
+    */
 
     useEffect(() => {
         const fetchBoxesData = async () => {
