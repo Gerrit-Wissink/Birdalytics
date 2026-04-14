@@ -131,10 +131,10 @@ export default function AddCameraModal({ setShowModal, fetchBoxes, selectedCamer
 
   return (
     <div className="modal-overlay" onClick={handleCancelModal}>
-      <div className="modal" onClick={(e) => e.stopPropagation()}>
+      <div className="modal"  style={{marginTop: '5%', maxWidth: '450px', width: '90%'}} onClick={(e) => e.stopPropagation()}>
         <div className="modal-header">
           <h2>
-            {selectedCamera ? 
+            {selectedCamera ?
               'Edit Camera' :
               'Add Camera'
             }
@@ -142,6 +142,7 @@ export default function AddCameraModal({ setShowModal, fetchBoxes, selectedCamer
           <button className="modal-close" onClick={handleCancelModal}>✕</button>
         </div>
 
+        <div style={{ overflowY: 'auto', flex: 1, minHeight: 0 }}>
         <form onSubmit={
           selectedCamera ? 
           handleUpdateCamera :
@@ -175,13 +176,14 @@ export default function AddCameraModal({ setShowModal, fetchBoxes, selectedCamer
 
           <div className="form-group">
             <label>Camera Coordinates <span className="required">*</span></label>
-            <div style={{ display: 'flex', gap: '8px', alignItems: 'center' }}>
+            <div style={{ display: 'flex', gap: '8px', alignItems: 'center', width: '100%' }}>
               <input
                 type="text"
                 name="latitude"
                 placeholder="Latitude"
                 value={formData.latitude}
                 onChange={handleInputChange}
+                style={{ flex: 1, minWidth: 0 }}
               />
               <input
                 type="text"
@@ -189,6 +191,7 @@ export default function AddCameraModal({ setShowModal, fetchBoxes, selectedCamer
                 placeholder="Longitude"
                 value={formData.longitude}
                 onChange={handleInputChange}
+                style={{ flex: 1, minWidth: 0 }}
               />
             </div>
             <button
@@ -238,6 +241,7 @@ export default function AddCameraModal({ setShowModal, fetchBoxes, selectedCamer
             <button type="submit" className="add-btn">Submit</button>
           </div>
         </form>
+        </div>
       </div>
     </div>
   );

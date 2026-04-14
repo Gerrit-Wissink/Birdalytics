@@ -148,8 +148,8 @@ export default function LineGraph({ boxesData = [] }) {
       {showLine ?
         LINE_CHART
         :
-        <div className="empty-state-graph" style={{ textAlign: 'center', padding: '20px' }}>
-          <p>No kestrel detections this month</p>
+        <div className="empty-state-graph" style={{ textAlign: 'center', padding: '1em' }}>
+          <p style={{marginTop: '0px'}}>No kestrel detections this month</p>
           <strong><p>{new Date().toLocaleDateString()}</p></strong>
         </div>
       }
