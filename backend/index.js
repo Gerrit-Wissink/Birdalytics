@@ -3,6 +3,7 @@ const cors = require('cors');
 const dotenv = require('dotenv');
 const sequelize = require('./config/database');
 const path = require('path');
+const fs = require('fs');
 
 // Import routes
 const userRoutes = require('./routes/userRoutes');
@@ -69,15 +70,25 @@ app.use('/api/species', speciesRoutes);
 app.use('/api/jobs', jobRoutes);
 
 //Serve static files
-app.use(express.static(path.join(__dirname, 'static')));
+const staticDir = path.join(__dirname, 'static');
+const indexPath = path.join(staticDir, 'index.html');
+const hasFrontendBuild = fs.existsSync(indexPath);
 
-// React catch-all for non-API GET routes
-app.get('/{*splat}', (req, res, next) => {
-    if (req.path.startsWith('/api')) {
-        return next();
-    }
-    res.sendFile(path.join(__dirname, 'static', 'index.html'));
-});
+// Serve static files only when the frontend build exists
+if (hasFrontendBuild) {
+    app.use(express.static(staticDir));
+
+    // React catch-all for non-API GET routes
+    app.get('/{*splat}', (req, res, next) => {
+        if (req.path.startsWith('/api')) {
+            return next();
+        }
+
+        res.sendFile(indexPath);
+    });
+} else {
+    console.warn(`Frontend build not found at ${indexPath}. Skipping static file hosting.`);
+}
 
 // 404 Handler
 app.use((req, res) => {
