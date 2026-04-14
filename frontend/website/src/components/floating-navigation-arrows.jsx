@@ -3,7 +3,7 @@ import ChevronLeftRoundedIcon from '@mui/icons-material/ChevronLeftRounded';
 
 export default function FloatingNavigationArrows({ onPrevious, onNext }) {
     const buttonStyle = {
-        position: 'fixed',
+        position: 'absolute',
         backgroundColor: 'rgba(0, 0, 0, 0.7)',
         border: 'none',
         borderRadius: '50%',

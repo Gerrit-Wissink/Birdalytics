@@ -267,32 +267,34 @@ export default function CamInfo() {
                 <FiEdit style={{ fontSize: '1.5rem', marginLeft: '0.5rem', cursor: 'pointer' }} onClick={() => setShowEditCameraModal(true)} />
             </h1>
 
-            <div id={styles.identifyBox} {...handlers}>
-                <SpeciesIdentification
-                    selectedRow={selectedRow}
-                    imageMap={imageMap}
-                    birdboxName={selectedCamera?.birdbox_name}
-                    onSpeciesOverride={(species) => {
-                        if (!selectedRowBase) return;
+            <div style={{ position: 'relative' }}>
+                {selectedCamera?.records?.length > 1 &&
+                    <FloatingNavigationArrows
+                        onPrevious={() => navigateRecord('prev')}
+                        onNext={() => navigateRecord('next')}
+                    />
+                }
 
-                        setSpeciesOverrideByRecordId(prev => ({
-                            ...prev,
-                            [selectedRowBase.record_id]: {
-                                primary_guess: species,
-                                primary_guess_confidence: null,
-                            },
-                        }));
-                    }}
-                    speciesOptions={speciesOptions}
-                />
+                <div id={styles.identifyBox} {...handlers}>
+                    <SpeciesIdentification
+                        selectedRow={selectedRow}
+                        imageMap={imageMap}
+                        birdboxName={selectedCamera?.birdbox_name}
+                        onSpeciesOverride={(species) => {
+                            if (!selectedRowBase) return;
+
+                            setSpeciesOverrideByRecordId(prev => ({
+                                ...prev,
+                                [selectedRowBase.record_id]: {
+                                    primary_guess: species,
+                                    primary_guess_confidence: null,
+                                },
+                            }));
+                        }}
+                        speciesOptions={speciesOptions}
+                    />
+                </div>
             </div>
-
-            {selectedCamera?.records?.length > 1 &&
-                <FloatingNavigationArrows
-                    onPrevious={() => navigateRecord('prev')}
-                    onNext={() => navigateRecord('next')}
-                />
-            }
 
             <h2>Box Stats</h2>
             <CameraSummary selectedCamera={selectedCamera} />
