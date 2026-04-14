@@ -9,6 +9,7 @@ import SpeciesIdentification from '../components/species-identification';
 import EmptyState from '../components/emptyState';
 import CameraSummary from '../components/camera-summary';
 import CameraSidebar from '../components/camera-sidebar';
+import FloatingNavigationArrows from '../components/floating-navigation-arrows';
 import { useSwipeable } from 'react-swipeable';
 
 import styles from './camInfo.module.css'
@@ -246,6 +247,10 @@ export default function CamInfo() {
                         }}
                         speciesOptions={speciesOptions}
                     />
+                    <FloatingNavigationArrows
+                        onPrevious={() => navigateRecord('prev')}
+                        onNext={() => navigateRecord('next')}
+                    />
                 </div>
             </div>
             <div style={{ margin: '1em 0px' }}>
@@ -265,9 +270,6 @@ export default function CamInfo() {
                 <FiEdit style={{ fontSize: '1.5rem', marginLeft: '0.5rem', cursor: 'pointer' }} onClick={() => setShowEditCameraModal(true)} />
             </h1>
 
-            <h2>Box Stats</h2>
-            <CameraSummary selectedCamera={selectedCamera} />
-
             <div id={styles.identifyBox} {...handlers}>
                 <SpeciesIdentification
                     selectedRow={selectedRow}
@@ -286,16 +288,24 @@ export default function CamInfo() {
                     }}
                     speciesOptions={speciesOptions}
                 />
+                <FloatingNavigationArrows
+                    onPrevious={() => navigateRecord('prev')}
+                    onNext={() => navigateRecord('next')}
+                />
             </div>
 
-            <h2 style={{ marginTop: '1.5em', marginBottom: '1em' }}>Identified Results</h2>
+            <h2>Box Stats</h2>
+            <CameraSummary selectedCamera={selectedCamera} />
+
+
+            {/* <h2 style={{ marginTop: '1.5em', marginBottom: '1em' }}>Identified Results</h2>
             <div style={{ margin: '1em 0px' }}>
                 <BirdboxImageTable
                     box={selectedCamera}
                     onSelectRow={handleSelectRow}
                     imageMap={imageMap}
                 />
-            </div>
+            </div> */}
         </>
     );
 
