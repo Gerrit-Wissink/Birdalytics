@@ -28,6 +28,9 @@ export default function Navbar() {
 
     const nav_links = (
         <>
+            <NavLink to="/" className={({ isActive }) => (isActive ? 'active' : '')}>
+                <span>Home</span>
+            </NavLink>
             <NavLink to="/cameras" className={({ isActive }) => (isActive ? 'active' : '')}>
                 <span>Cameras</span>
             </NavLink>

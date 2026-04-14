@@ -308,9 +308,12 @@ function drawBoxCard(doc, box, startY) {
     return y + colH; // return bottom edge for spacing
 }
 
-function drawBoxPages(doc, birdboxes) {
+function drawBoxPages(doc, birdboxes, includeOverview = true) {
     for (let i = 0; i < birdboxes.length; i += 2) {
-        doc.addPage();
+        // Only add page if this is the first box pair AND overview was included, or if it's not the first pair
+        if (i > 0 || includeOverview) {
+            doc.addPage();
+        }
         const pageHeight = doc.internal.pageSize.getHeight();
         const slotH = (pageHeight - 28) / 2; // two equal slots, 14px top + 14px mid padding
 
@@ -462,7 +465,7 @@ export default async function BuildPDF(birdboxes, chartImage, lineGraphImage, in
     } // end includeOverview
 
     // Individual box pages — 2 per page
-    drawBoxPages(doc, birdboxes);
+    drawBoxPages(doc, birdboxes, includeOverview);
 
     doc.save(`${fileName}.pdf`);
 }

@@ -49,6 +49,14 @@
     margin-top: 1em;
 }
 
+.report-tabs-box {
+    display: block !important;
+}
+
+.report-mobile-content {
+    display: none;
+}
+
 @media screen and (max-width: 1050px) {
     .camera-select-wrapper {
         width: 100%;
@@ -62,6 +70,10 @@
     .MuiTabPanel-root {
         display: none !important;
     }
+
+    .report-mobile-content {
+        display: block;
+    }
 }
 
 @media screen and (max-width: 900px){
@@ -74,4 +86,30 @@
   .MuiTabPanel-root{
     display: none;
   }
+  
+  .report-mobile-content {
+    display: block;
+  }
+}
+
+/* Mobile content styling */
+.report-mobile-content {
+    width: 100%;
+    margin-top: 1em;
+}
+
+.report-mobile-preview {
+    padding: 1em;
+    border: 1px solid #e0e0e0;
+    border-radius: 4px;
+    background-color: #fafafa;
+    overflow-x: auto;
+}
+
+.report-mobile-preview p {
+    font-style: italic;
+    margin-top: 0;
+    margin-bottom: 1em;
+    color: #666;
+    font-size: 0.9em;
 }

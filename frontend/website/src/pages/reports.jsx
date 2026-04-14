@@ -244,6 +244,25 @@ export default function Reports() {
                     />
                 </div>
 
+                {/* Mobile: format-specific preview content */}
+                <div className="report-mobile-content">
+                    {hasSelectedBoxes ? (
+                        <>
+                            <div className="report-mobile-preview">
+                                <p>
+                                    Please note that this preview is not exact.
+                                    {selectedTab === 'PDF' && ' While the PDF is unaffected, mobile previews will render differently.'}
+                                </p>
+                                {selectedTab === 'PDF' && <PDFPreview boxesData={selectedBirdboxes} includeOverview={includeOverview === 'Include'} />}
+                                {selectedTab === 'CSV' && <CSVPreview rows={prepareDataForCSVAndExcel(selectedBirdboxes)} />}
+                                {selectedTab === 'EXCEL' && <ExcelPreview rows={prepareDataForCSVAndExcel(selectedBirdboxes)} />}
+                            </div>
+                        </>
+                    ) : (
+                        EMPTY_TAB_CONTENT
+                    )}
+                </div>
+
                 {/* Desktop: tab selector + previews */}
                 <TabContext value={selectedTab}>
                     <Box className="report-tabs-box" sx={{ width: '100%', marginTop: '1em', borderBottom: 1, borderColor: 'divider' }}>
@@ -274,7 +293,7 @@ export default function Reports() {
                         {hasSelectedBoxes ? (
                             <>
                                 <p style={{ fontStyle: 'italic', marginTop: '0px' }}>
-                                    Please note that preview is not exact.
+                                    Please note that this preview is not exact.
                                 </p>
                                 <PDFPreview boxesData={selectedBirdboxes} includeOverview={includeOverview === 'Include'} />
                             </>
@@ -286,7 +305,7 @@ export default function Reports() {
                         {hasSelectedBoxes ? (
                             <>
                                 <p style={{ fontStyle: 'italic', marginTop: '0px' }}>
-                                    Please note that preview is not exact.
+                                    Please note that this preview is not exact.
                                 </p>
                                 <CSVPreview rows={prepareDataForCSVAndExcel(selectedBirdboxes)} />
                             </>
@@ -298,7 +317,7 @@ export default function Reports() {
                         {hasSelectedBoxes ? (
                             <>
                                 <p style={{ fontStyle: 'italic', marginTop: '0px' }}>
-                                    Please note that preview is not exact.
+                                    Please note that this preview is not exact.
                                 </p>
                                 <ExcelPreview rows={prepareDataForCSVAndExcel(selectedBirdboxes)} />
                             </>
