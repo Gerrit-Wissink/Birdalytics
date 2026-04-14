@@ -249,6 +249,7 @@ export default function CamInfo() {
                     />
                 </div>
             </div>
+
             <div style={{ margin: '1em 0px' }}>
                 <BirdboxImageTable
                     box={selectedCamera}
@@ -284,26 +285,44 @@ export default function CamInfo() {
                     }}
                     speciesOptions={speciesOptions}
                 />
-                {selectedCamera?.records?.length > 1 &&
-                    <FloatingNavigationArrows
-                        onPrevious={() => navigateRecord('prev')}
-                        onNext={() => navigateRecord('next')}
-                    />
-                }
             </div>
+
+            {selectedCamera?.records?.length > 1 &&
+                <FloatingNavigationArrows
+                    onPrevious={() => navigateRecord('prev')}
+                    onNext={() => navigateRecord('next')}
+                />
+            }
 
             <h2>Box Stats</h2>
             <CameraSummary selectedCamera={selectedCamera} />
+        </>
+    );
 
-
-            {/* <h2 style={{ marginTop: '1.5em', marginBottom: '1em' }}>Identified Results</h2>
-            <div style={{ margin: '1em 0px' }}>
-                <BirdboxImageTable
-                    box={selectedCamera}
-                    onSelectRow={handleSelectRow}
-                    imageMap={imageMap}
-                />
-            </div> */}
+    const NO_RECORDS_VIEW = (
+        <>
+            <h1 style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', marginRight: '7.5%' }}>
+                {selectedCamera?.birdbox_name ?? 'Select a Camera'}
+                <FiEdit style={{ fontSize: '1.5rem', marginLeft: '0.5rem', cursor: 'pointer' }} onClick={() => setShowEditCameraModal(true)} />
+            </h1>
+            <div style={{ textAlign: 'center', padding: '2em' }}>
+                <h2>No records found</h2>
+                <p>Upload images to see results</p>
+                <button
+                    style={{
+                        backgroundColor: '#537F2C',
+                        color: 'white',
+                        border: 'none',
+                        padding: '8px 16px',
+                        borderRadius: '8px',
+                        cursor: 'pointer',
+                        fontSize: '1em',
+                    }}
+                    onClick={() => (window.location.href = "/#/upload")}
+                >
+                    Upload Images
+                </button>
+            </div>
         </>
     );
 
@@ -361,7 +380,12 @@ export default function CamInfo() {
                 />
 
                 <div id={styles.cameraContent}>
-                    {windowWidth >= MOBILE_BREAKPOINT ? DESKTOP_VIEW : MOBILE_VIEW}
+                    {
+                        selectedCamera?.records?.length > 0 ?
+                        windowWidth >= MOBILE_BREAKPOINT ? 
+                        DESKTOP_VIEW : MOBILE_VIEW
+                        : NO_RECORDS_VIEW
+                    }
                 </div>
             </section>
             {showAddCameraModal && (
