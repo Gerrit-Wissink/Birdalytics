@@ -9,14 +9,10 @@ body,html,main {
   flex-direction: column;
   justify-content: flex-start;
   align-items: center;
-  height: auto;
+  min-height: 100vh;
   background: var(--blue);
-  padding-top: 8vh;
-  padding-left: 2rem;
-  padding-right: 2rem;
-  padding-bottom: 8vh;
+  padding: 4vh 2rem;
   font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
-  overflow: hidden;
 }
 
 #login-logo {
