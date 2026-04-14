@@ -23,18 +23,26 @@ export default function SpeciesIdentification({ selectedRow, imageMap, birdboxNa
     const [selectedOptionIndex, setSelectedOptionIndex] = useState(0);
     // Tracks a manual species selection from the dropdown (null = nothing chosen yet)
     const [manualSpecies, setManualSpecies] = useState(null);
+    // Track save feedback state
+    const [saveState, setSaveState] = useState(null); // null, 'saving', 'success', 'error'
+    // Track locally saved value to override prop
+    const [localModifiedBird, setLocalModifiedBird] = useState(null);
 
     // Reset selections whenever a new row is chosen from the table
     useEffect(() => {
         setSelectedOptionIndex(0);
         setManualSpecies(null);
+        setLocalModifiedBird(null);
     }, [selectedRow?.record_id]);
 
     if (!selectedRow) {
         return <p style={{ color: 'var(--text-muted, #888)', marginTop: '1em' }}>Select a row to view details.</p>;
     }
 
-    const primaryConf = selectedRow.modified_bird ? 100 
+    // Use locally saved modified bird if available, otherwise use prop
+    const effectiveModifiedBird = localModifiedBird || selectedRow.modified_bird;
+
+    const primaryConf = effectiveModifiedBird ? 100 
         : selectedRow.primary_guess_confidence != null
         ? Math.round(selectedRow.primary_guess_confidence * 100)
         : null;
@@ -47,8 +55,8 @@ export default function SpeciesIdentification({ selectedRow, imageMap, birdboxNa
     // Build option rows: primary first, then up to 2 other guesses
     // other_guesses are plain strings with no associated confidence score
     const options = [
-            selectedRow.modified_bird 
-            ? { species: selectedRow.modified_bird, confidence: 100 }
+            effectiveModifiedBird 
+            ? { species: effectiveModifiedBird, confidence: 100 }
             : selectedRow.primary_guess
             ? { species: selectedRow.primary_guess, confidence: primaryConf }
             : null,
@@ -66,6 +74,7 @@ export default function SpeciesIdentification({ selectedRow, imageMap, birdboxNa
     const handleManualSelect = (species) => {
         setManualSpecies(species);
         setSelectedOptionIndex(null);
+        setSaveState(null); // Reset save state when user changes selection
         // TODO: UPDATE RESULT IN BACKEND AND SET MODIFIED STATUS TO DATE
         onSpeciesOverride?.(species);
     };
@@ -77,19 +86,24 @@ export default function SpeciesIdentification({ selectedRow, imageMap, birdboxNa
                 return;
             }
 
+            setSaveState('saving');
             const record_id = selectedRow.record_id;
             const response = await apiClient.put(`/record/manual/${record_id}`, { manual_bird: manualSpecies });
 
             if (response.status === 200) {
                 console.log('Successfully saved manual species override:', response.data);
-                // Optionally show a success message to the user
+                // Update local state immediately so options render with saved value
+                setLocalModifiedBird(manualSpecies);
+                setSaveState('success');
             } else {
                 console.error('Failed to save manual species override:', response.status);
-                // Optionally show an error message to the user
+                setSaveState('error');
+                setTimeout(() => setSaveState(null), 2000);
             }
         }catch (error) {
             console.error('Error saving changes:', error);
-            // Optionally show an error message to the user
+            setSaveState('error');
+            setTimeout(() => setSaveState(null), 2000);
         }
     }
 
@@ -160,12 +174,18 @@ export default function SpeciesIdentification({ selectedRow, imageMap, birdboxNa
                     />
                     {manualSpecies &&
                         <div>
-                            <button onClick={handleSaveChanges} className={styles.saveButton} style={{ marginRight: '1em', padding: '.75em 1em', fontSize: '0.875rem', fontWeight: 500}}>
-                                Save Changes
+                            <button 
+                                onClick={handleSaveChanges} 
+                                className={`${styles.saveButton} ${saveState === 'saving' ? styles.buttonSaving : ''} ${saveState === 'success' ? styles.buttonSuccess : ''} ${saveState === 'error' ? styles.buttonError : ''}`}
+                                disabled={saveState === 'saving' || saveState === 'success'}
+                            >
+                                {saveState === 'saving' ? 'Saving...' : saveState === 'success' ? '✓ Saved' : saveState === 'error' ? '✗ Error' : 'Save Changes'}
                             </button>
-                            <button onClick={() => { setManualSpecies(null); }} className={styles.resetButton} style={{ padding: '.75em 1em', fontSize: '0.875rem', fontWeight: 500}}>
-                                Reset
-                            </button>
+                            {saveState !== 'success' && (
+                                <button onClick={() => { setManualSpecies(null); setSaveState(null); }} className={styles.resetButton}>
+                                    Reset
+                                </button>
+                            )}
                         </div>
                     }
                 </div>
