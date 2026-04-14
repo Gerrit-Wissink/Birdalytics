@@ -1,7 +1,6 @@
 body,html,main {
     margin: 0;
     padding: 0;
-    overflow: auto;
 }
 
 #login-container {
@@ -13,6 +12,7 @@ body,html,main {
   background: var(--blue);
   padding: 4vh 2rem;
   font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+  overflow-y: auto;
 }
 
 #login-logo {
