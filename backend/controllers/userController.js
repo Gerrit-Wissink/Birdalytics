@@ -192,7 +192,11 @@ class UserController {
                 });
             }
             
-            // Create JWT token
+            if (!process.env.JWT_SECRET) {
+                throw new Error('JWT_SECRET is not configured');
+            }
+
+            /* commenting out
             const token = jwt.sign(
                 { 
                     user_id: user.user_id, 
@@ -201,10 +205,23 @@ class UserController {
                 process.env.JWT_SECRET || 'your secret key change this',
                 { expiresIn: '24h' }
             );
-            
-            // Calculate expiration date
-            const expiresAt = new Date();
-            expiresAt.setHours(expiresAt.getHours() + 24);
+            */
+
+            // Create JWT token
+            const token = jwt.sign(
+                {
+                    user_id: user.user_id,
+                    username: user.username
+                },
+                process.env.JWT_SECRET,
+                { expiresIn: process.env.JWT_EXPIRE || '24h' }
+            );
+
+            // Calculate expiration date from the signed token payload
+            const decodedToken = jwt.decode(token);
+            const expiresAt = decodedToken?.exp
+                ? new Date(decodedToken.exp * 1000)
+                : new Date(Date.now() + 24 * 60 * 60 * 1000);
             
             // Return token and expiration date (exclude password from response)
             res.json({
