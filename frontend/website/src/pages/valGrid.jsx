@@ -44,6 +44,7 @@ export default function ValGrid(){
     // Tracks user-selected species corrections keyed by record id
     const [speciesCorrections, setSpeciesCorrections] = useState({});
     const [speciesOptions, setSpeciesOptions] = useState([]);
+    const [bannerSaved, setBannerSaved] = useState(false);
 
     useEffect(() => {
         const token = localStorage.getItem('token');
@@ -54,23 +55,23 @@ export default function ValGrid(){
     }, []);
 
 
-    useEffect(() => {
-        const fetchBoxesData = async () => {
-            try {
-                const response = await apiClient.get('/boxes/record');
-                console.log('Fetch boxes data response:', response);
-                if (response.status === 200) {
-                    const data = response.data.data;
-                    console.log('Boxes data:', data);
-                    setBoxesData(data);
-                } else {
-                    console.error('Failed to fetch boxes data:', response.status);
-                }
-            } catch (error) {
-                console.error('Error fetching boxes data:', error);
+    const fetchBoxesData = async () => {
+        try {
+            const response = await apiClient.get('/boxes/record');
+            console.log('Fetch boxes data response:', response);
+            if (response.status === 200) {
+                const data = response.data.data;
+                console.log('Boxes data:', data);
+                setBoxesData(data);
+            } else {
+                console.error('Failed to fetch boxes data:', response.status);
             }
-        };
+        } catch (error) {
+            console.error('Error fetching boxes data:', error);
+        }
+    };
 
+    useEffect(() => {
         fetchBoxesData();
     }, []);
 
@@ -110,10 +111,18 @@ export default function ValGrid(){
                 if (result.status !== 200) {
                     console.error(`Failed to update record ${record_id}:`, result);
                 }
+                else{
+                    console.log(`Successfully updated record ${record_id}`);
+                }
             }
+            await fetchBoxesData();
+            setBannerSaved(true);
+            setTimeout(() => {
+                setSpeciesCorrections({});
+                setBannerSaved(false);
+            }, 1500);
         }catch (error) {
             console.error('Error saving changes:', error);
-            // Optionally show an error message to the user
         }
     }
 
@@ -368,9 +377,13 @@ export default function ValGrid(){
                     emptyMessage="No images match your filters."
                     style={{marginBottom: '5%'}}
                 />
-            {Object.keys(speciesCorrections).length > 0 &&
-                <div id={styles.saveBanner}onClick={handleSaveChanges}>
-                    Click to save all changes
+            {(Object.keys(speciesCorrections).length > 0 || bannerSaved) &&
+                <div
+                    id={styles.saveBanner}
+                    className={bannerSaved ? styles.saveBannerSaved : ''}
+                    onClick={handleSaveChanges}
+                >
+                    {bannerSaved ? 'Changes saved!' : 'Click to save all changes'}
                 </div>
             }
             </div>
