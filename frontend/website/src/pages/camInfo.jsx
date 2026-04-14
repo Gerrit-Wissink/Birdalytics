@@ -263,6 +263,9 @@ export default function CamInfo() {
                 <FiEdit style={{ fontSize: '1.5rem', marginLeft: '0.5rem', cursor: 'pointer' }} onClick={() => setShowEditCameraModal(true)} />
             </h1>
 
+            <h2>Box Stats</h2>
+            <CameraSummary selectedCamera={selectedCamera} />
+
             <div id={styles.identifyBox} {...handlers}>
                 <SpeciesIdentification
                     selectedRow={selectedRow}
@@ -283,8 +286,14 @@ export default function CamInfo() {
                 />
             </div>
 
-            <h2>Box Stats</h2>
-            <CameraSummary selectedCamera={selectedCamera} />
+            <h2 style={{ marginTop: '1.5em', marginBottom: '1em' }}>Identified Results</h2>
+            <div style={{ margin: '1em 0px' }}>
+                <BirdboxImageTable
+                    box={selectedCamera}
+                    onSelectRow={handleSelectRow}
+                    imageMap={imageMap}
+                />
+            </div>
         </>
     );
 
