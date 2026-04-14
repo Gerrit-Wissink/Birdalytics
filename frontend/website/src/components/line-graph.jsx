@@ -63,8 +63,9 @@ export default function LineGraph({ boxesData = [] }) {
             if (checkDateInCurrentMonth(new Date(record.timestamp))) {
                 const day = new Date(record.timestamp).getDate();
                 if(day < 1 || day > updatedChartData.length) continue; //safety check to make sure day is within bounds of current month
-                if (checkContainsKestrel(record.modified_bird ?? record.primary_guess)) {
-                    updatedChartData[day - 1].value += 1
+                const dataPoint = updatedChartData[day - 1];
+                if (dataPoint && checkContainsKestrel(record.modified_bird ?? record.primary_guess)) {
+                    dataPoint.value += 1;
                 }
             }
         }
@@ -79,7 +80,7 @@ export default function LineGraph({ boxesData = [] }) {
       setChartData(createEmptyChartData());
       const serverData = formatData(boxesData);
       console.log("Adding total kestrels...");
-      const totalKestrels = serverData.reduce((sum, item) => sum + (item.value ?? 0), 0);
+      const totalKestrels = serverData.reduce((sum, item) => sum + (item?.value ?? 0), 0);
       console.log("Kestresls sum result:", totalKestrels);
       if (totalKestrels === 0) {
         setChartData(createEmptyChartData());
@@ -171,8 +172,9 @@ export function LineGraphPicture({ boxesData = [] }) {
             if (checkDateInCurrentMonth(new Date(record.timestamp))) {
                 const day = new Date(record.timestamp).getDate();
                 if(day < 1 || day > updatedChartData.length) continue; //safety check to make sure day is within bounds of current month
-                if (checkContainsKestrel(record.modified_bird ?? record.primary_guess)) {
-                    updatedChartData[day - 1].value += 1
+                const dataPoint = updatedChartData[day - 1];
+                if (dataPoint && checkContainsKestrel(record.modified_bird ?? record.primary_guess)) {
+                    dataPoint.value += 1;
                 }
             }
         }
@@ -187,7 +189,7 @@ export function LineGraphPicture({ boxesData = [] }) {
       setChartData(createEmptyChartData());
       const serverData = formatData(boxesData);
       console.log("Adding total kestrels...");
-      const totalKestrels = serverData.reduce((sum, item) => sum + (item.value ?? 0), 0);
+      const totalKestrels = serverData.reduce((sum, item) => sum + (item?.value ?? 0), 0);
       console.log("Kestresls sum result:", totalKestrels);
       if (totalKestrels === 0) {
         setChartData(createEmptyChartData());
