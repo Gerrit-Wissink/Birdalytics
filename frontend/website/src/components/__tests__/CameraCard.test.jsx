@@ -1,12 +1,9 @@
 import { render, screen, fireEvent } from '@testing-library/react';
-import CameraCard from '../CameraCard';
+import CameraCard from '../camera-card';
 
 describe('CameraCard', () => {
     test('navigates to selected camera on click', () => {
-        const originalLocation = window.location;
-
-        delete window.location;
-        window.location = { href: '' };
+        window.location.hash = '';
 
         render(
             <CameraCard
@@ -17,8 +14,6 @@ describe('CameraCard', () => {
 
         fireEvent.click(screen.getByText(/test cam/i));
 
-        expect(window.location.href).toBe('/#/camInfo?selected=42');
-
-        window.location = originalLocation;
+        expect(window.location.hash).toBe('#/camInfo?selected=42');
     });
 });
