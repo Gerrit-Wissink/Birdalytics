@@ -247,10 +247,6 @@ export default function CamInfo() {
                         }}
                         speciesOptions={speciesOptions}
                     />
-                    <FloatingNavigationArrows
-                        onPrevious={() => navigateRecord('prev')}
-                        onNext={() => navigateRecord('next')}
-                    />
                 </div>
             </div>
             <div style={{ margin: '1em 0px' }}>
@@ -288,10 +284,12 @@ export default function CamInfo() {
                     }}
                     speciesOptions={speciesOptions}
                 />
-                <FloatingNavigationArrows
-                    onPrevious={() => navigateRecord('prev')}
-                    onNext={() => navigateRecord('next')}
-                />
+                {selectedCamera?.records?.length > 1 &&
+                    <FloatingNavigationArrows
+                        onPrevious={() => navigateRecord('prev')}
+                        onNext={() => navigateRecord('next')}
+                    />
+                }
             </div>
 
             <h2>Box Stats</h2>
