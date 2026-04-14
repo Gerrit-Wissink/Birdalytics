@@ -222,3 +222,16 @@ nav span{
         width: 45%;
     }
 }
+
+@media screen and (max-height: 750px){
+    #burgerMenu{
+        height: 50%;
+    }
+
+    .bar{
+        height:3px;
+        width: 30px;
+    }
+}
+
+
