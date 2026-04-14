@@ -2,7 +2,7 @@ import * as React from 'react';
 import { SelectButton } from 'primereact/selectbutton';
 import { Dropdown } from 'primereact/dropdown';
 import html2canvas from 'html2canvas';
-import { useEffect, useState, useRef, useMemo } from 'react';
+import { useEffect, useState, useRef } from 'react';
 import apiClient from '../utils/apiClient';
 import BirdBoxSelect from '../components/cameraSelect';
 import { BoxesPieChart } from '../components/donut-chart';
@@ -22,7 +22,6 @@ import * as XLSX from "xlsx";
 
 export default function Reports() {
 
-    /* commenting out
     useEffect(() => {
         const token = localStorage.getItem('token');
         const tokenExpiry = localStorage.getItem('tokenExpiry');
@@ -30,7 +29,6 @@ export default function Reports() {
             window.location.href = '/#/login';
         }
     }, []);
-    */
 
     const [boxesData, setBoxesData] = useState([]);
     const [selectedBoxNames, setSelectedBoxNames] = useState([]);
@@ -51,11 +49,8 @@ export default function Reports() {
         fetchBoxesData();
     }, []);
 
-    const selectedBirdboxes = useMemo(() => 
-        boxesData.filter(b =>
-            selectedBoxNames.includes(b.birdbox_name)
-        ),
-        [boxesData, selectedBoxNames]
+    const selectedBirdboxes = boxesData.filter(b =>
+        selectedBoxNames.includes(b.birdbox_name)
     );
 
     const [selectedTab, setSelectedTab] = React.useState('PDF');
@@ -244,25 +239,6 @@ export default function Reports() {
                     />
                 </div>
 
-                {/* Mobile: format-specific preview content */}
-                <div className="report-mobile-content">
-                    {hasSelectedBoxes ? (
-                        <>
-                            <div className="report-mobile-preview">
-                                <p>
-                                    Please note that this preview is not exact.
-                                    {selectedTab === 'PDF' && ' While the PDF is unaffected, mobile previews will render differently.'}
-                                </p>
-                                {selectedTab === 'PDF' && <PDFPreview boxesData={selectedBirdboxes} includeOverview={includeOverview === 'Include'} />}
-                                {selectedTab === 'CSV' && <CSVPreview rows={prepareDataForCSVAndExcel(selectedBirdboxes)} />}
-                                {selectedTab === 'EXCEL' && <ExcelPreview rows={prepareDataForCSVAndExcel(selectedBirdboxes)} />}
-                            </div>
-                        </>
-                    ) : (
-                        EMPTY_TAB_CONTENT
-                    )}
-                </div>
-
                 {/* Desktop: tab selector + previews */}
                 <TabContext value={selectedTab}>
                     <Box className="report-tabs-box" sx={{ width: '100%', marginTop: '1em', borderBottom: 1, borderColor: 'divider' }}>
@@ -293,7 +269,7 @@ export default function Reports() {
                         {hasSelectedBoxes ? (
                             <>
                                 <p style={{ fontStyle: 'italic', marginTop: '0px' }}>
-                                    Please note that this preview is not exact.
+                                    Please note that preview is not exact.
                                 </p>
                                 <PDFPreview boxesData={selectedBirdboxes} includeOverview={includeOverview === 'Include'} />
                             </>
@@ -305,7 +281,7 @@ export default function Reports() {
                         {hasSelectedBoxes ? (
                             <>
                                 <p style={{ fontStyle: 'italic', marginTop: '0px' }}>
-                                    Please note that this preview is not exact.
+                                    Please note that preview is not exact.
                                 </p>
                                 <CSVPreview rows={prepareDataForCSVAndExcel(selectedBirdboxes)} />
                             </>
@@ -317,7 +293,7 @@ export default function Reports() {
                         {hasSelectedBoxes ? (
                             <>
                                 <p style={{ fontStyle: 'italic', marginTop: '0px' }}>
-                                    Please note that this preview is not exact.
+                                    Please note that preview is not exact.
                                 </p>
                                 <ExcelPreview rows={prepareDataForCSVAndExcel(selectedBirdboxes)} />
                             </>
@@ -354,7 +330,7 @@ export default function Reports() {
                         width: '900px',
                     }}
                 >
-                    <LineGraphPicture boxesData={selectedBirdboxes} />
+                    <LineGraphPicture birdboxes={selectedBirdboxes} />
                 </div>
             )}
 

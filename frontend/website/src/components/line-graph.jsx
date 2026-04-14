@@ -7,90 +7,70 @@ import {
   lineElementClasses,
 } from '@mui/x-charts/LineChart'
 
-const checkDateInCurrentMonth = (date) => {
-    const now = new Date();
-    return date.getMonth() === now.getMonth() && date.getFullYear() === now.getFullYear();
-}
-
 const checkContainsKestrel = (birdname) => {
     if (!birdname) return false;
-    const lowerName = birdname.toLowerCase();
-    return lowerName.includes('kestrel');
+    return birdname.toLowerCase().includes('kestrel');
 }
 
-const month_day_counts = [
-  31,
-  28,
-  31,
-  30,
-  31,
-  30,
-  31,
-  31,
-  30,
-  31,
-  30,
-  31
-];
+const buildDateRange = (earliest, latest) => {
+  const result = [];
+  const current = new Date(earliest);
+  current.setHours(0, 0, 0, 0);
+  const end = new Date(latest);
+  end.setHours(0, 0, 0, 0);
+  while (current <= end) {
+    result.push({ date: `${current.getMonth() + 1}/${current.getDate()}`, value: 0 });
+    current.setDate(current.getDate() + 1);
+  }
+  return result;
+}
 
-const createEmptyChartData = () => {
-  const now = new Date();
-  const month = now.getMonth();
-  const year = now.getFullYear();
-  const isFebruary = month === 1;
-  const isLeapYear = (year % 4 === 0 && year % 100 !== 0) || (year % 400 === 0);
-  const daysInMonth = month_day_counts[month] + (isFebruary && isLeapYear ? 1 : 0);
+const formatData = (boxesData = []) => {
+  let earliest = null;
+  let latest = null;
+  for (const box of boxesData) {
+    for (const record of box.records ?? []) {
+      const d = new Date(record.timestamp);
+      if (!earliest || d < earliest) earliest = d;
+      if (!latest   || d > latest)   latest   = d;
+    }
+  }
+  if (!earliest) return [];
 
-  return new Array(daysInMonth).fill(0).map((_, index) => ({
-    date: `${month + 1}/${index + 1}`,
-    value: 0,
-  }));
+  const chartData = buildDateRange(earliest, latest);
+
+  // Build a date-string → index map for O(1) lookup
+  const indexByDay = {};
+  chartData.forEach((item, i) => { indexByDay[item.date] = i; });
+
+  for (const box of boxesData) {
+    for (const record of box.records ?? []) {
+      if (checkContainsKestrel(record.modified_bird ?? record.primary_guess)) {
+        const d = new Date(record.timestamp);
+        const key = `${d.getMonth() + 1}/${d.getDate()}`;
+        if (indexByDay[key] !== undefined) chartData[indexByDay[key]].value += 1;
+      }
+    }
+  }
+  return chartData;
 }
 
 const areaColor = 'var(--gradient-green)'
 
 export default function LineGraph({ boxesData = [] }) {
 
-  const [chartData, setChartData] = useState(createEmptyChartData());
+  const [chartData, setChartData] = useState([]);
   const [showLine, setShowLine] = useState(false);
 
-  const formatData = (boxesData = []) => {
-    // Create fresh chart data for the current month
-    const updatedChartData = createEmptyChartData();
-    
-    for (const box of boxesData) {
-        for (const record of box.records ?? []) {
-            if (checkDateInCurrentMonth(new Date(record.timestamp))) {
-                const day = new Date(record.timestamp).getDate();
-                if(day < 1 || day > updatedChartData.length) continue; //safety check to make sure day is within bounds of current month
-                const dataPoint = updatedChartData[day - 1];
-                if (dataPoint && checkContainsKestrel(record.modified_bird ?? record.primary_guess)) {
-                    dataPoint.value += 1;
-                }
-            }
-        }
-    }
-    return updatedChartData;
-  }
-  
-  
   useEffect(() => {
-      // This is where you would fetch the data and update the chartData state
-      // For now, we'll just use some dummy data
-      setChartData(createEmptyChartData());
       const serverData = formatData(boxesData);
-      console.log("Adding total kestrels...");
-      const totalKestrels = serverData.reduce((sum, item) => sum + (item?.value ?? 0), 0);
-      console.log("Kestresls sum result:", totalKestrels);
-      if (totalKestrels === 0) {
-        setChartData(createEmptyChartData());
+      if (serverData.length === 0) {
+        setChartData([]);
+        setShowLine(false);
       } else {
-        console.log("Setting chart data with server data:", serverData);
         setChartData(serverData);
         setShowLine(true);
       }
-
-
   }, [boxesData.length]);
 
   const LINE_CHART = (
@@ -144,13 +124,12 @@ export default function LineGraph({ boxesData = [] }) {
 
   return (
     <div className='stat-box-graph'>
-      <p className='graph-header'>Kestrel Detections/Month</p>
+      <p className='graph-header'>Kestrel Detections</p>
       {showLine ?
         LINE_CHART
         :
         <div className="empty-state-graph" style={{ textAlign: 'center', padding: '1em' }}>
-          <p style={{marginTop: '0px'}}>No kestrel detections this month</p>
-          <strong><p>{new Date().toLocaleDateString()}</p></strong>
+          <p style={{marginTop: '0px'}}>No kestrel detections found</p>
         </div>
       }
     </div>
@@ -160,45 +139,11 @@ export default function LineGraph({ boxesData = [] }) {
 
 export function LineGraphPicture({ boxesData = [] }) {
 
-  const [chartData, setChartData] = useState(createEmptyChartData());
-  const [showLine, setShowLine] = useState(false);
+  const [chartData, setChartData] = useState([]);
 
-  const formatData = (boxesData = []) => {
-    // Create fresh chart data for the current month
-    const updatedChartData = createEmptyChartData();
-    
-    for (const box of boxesData) {
-        for (const record of box.records ?? []) {
-            if (checkDateInCurrentMonth(new Date(record.timestamp))) {
-                const day = new Date(record.timestamp).getDate();
-                if(day < 1 || day > updatedChartData.length) continue; //safety check to make sure day is within bounds of current month
-                const dataPoint = updatedChartData[day - 1];
-                if (dataPoint && checkContainsKestrel(record.modified_bird ?? record.primary_guess)) {
-                    dataPoint.value += 1;
-                }
-            }
-        }
-    }
-    return updatedChartData;
-  }
-  
-  
   useEffect(() => {
-      // This is where you would fetch the data and update the chartData state
-      // For now, we'll just use some dummy data
-      setChartData(createEmptyChartData());
       const serverData = formatData(boxesData);
-      console.log("Adding total kestrels...");
-      const totalKestrels = serverData.reduce((sum, item) => sum + (item?.value ?? 0), 0);
-      console.log("Kestresls sum result:", totalKestrels);
-      if (totalKestrels === 0) {
-        setChartData(createEmptyChartData());
-      } else {
-        setChartData(serverData);
-        setShowLine(true);
-      }
-
-
+      setChartData(serverData);
   }, [boxesData.length]);
 
 

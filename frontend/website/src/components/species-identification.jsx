@@ -36,7 +36,7 @@ export default function SpeciesIdentification({ selectedRow, imageMap, birdboxNa
     }, [selectedRow?.record_id]);
 
     if (!selectedRow) {
-        return <p style={{ color: 'var(--text-muted, #888)', marginTop: '1em' }}>Select a row to view details.</p>;
+        return <p style={{ color: 'var(--text-muted, #888)', marginTop: '1em', marginLeft: '2.5em' }}>Select a row to view details.</p>;
     }
 
     // Use locally saved modified bird if available, otherwise use prop
