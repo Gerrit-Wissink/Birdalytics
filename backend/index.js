@@ -3,6 +3,7 @@ const cors = require('cors');
 const dotenv = require('dotenv');
 const sequelize = require('./config/database');
 const path = require('path');
+const authMiddleware = require('./middleware/auth');
 const fs = require('fs');
 
 // Import routes
@@ -62,12 +63,23 @@ app.get('/api', (req, res) => {
 
 // API Routes
 app.use('/api/users', userRoutes);
+
+/* commenting out
+app.use('/api/users', userRoutes);
 app.use('/api/guess', birdRoutes);
 app.use('/api/record', recordRoutes);
 app.use('/api/boxes', boxRoutes);
 app.use('/api/images', imageRoutes);
 app.use('/api/species', speciesRoutes);
 app.use('/api/jobs', jobRoutes);
+*/
+
+app.use('/api/guess', authMiddleware, birdRoutes);
+app.use('/api/record', authMiddleware, recordRoutes);
+app.use('/api/boxes', authMiddleware, boxRoutes);
+app.use('/api/images', authMiddleware, imageRoutes);
+app.use('/api/species', authMiddleware, speciesRoutes);
+app.use('/api/jobs', authMiddleware, jobRoutes);
 
 //Serve static files
 const staticDir = path.join(__dirname, 'static');
