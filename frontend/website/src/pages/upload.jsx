@@ -17,12 +17,17 @@ export default function Upload() {
 
     useEffect(() => {
         document.title = 'Upload - Birdalytics';
+    }, []);
+
+    /* commenting out
+    useEffect(() => {
         const token = localStorage.getItem('token');
         const tokenExpiry = localStorage.getItem('tokenExpiry');
         if (!token || (tokenExpiry && new Date(tokenExpiry) < new Date())) {
             window.location.href = '/#/login';
         }
     }, []);
+    */
 
     useEffect(() => {
         const fetchBirdboxes = async () => {

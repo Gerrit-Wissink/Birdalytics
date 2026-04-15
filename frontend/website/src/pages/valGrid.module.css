@@ -16,6 +16,18 @@
   align-content: center;
 }
 
+@keyframes bannerSave {
+  0%   { background-color: #a3c41f; opacity: 1; }
+  60%  { background-color: #a3c41f; opacity: 1; }
+  100% { background-color: #a3c41f; opacity: 0; }
+}
+
+.saveBannerSaved {
+  animation: bannerSave 1.5s ease-in-out forwards;
+  pointer-events: none;
+}
+
+
 .wrapper {
   background: transparent;
   font-family: inherit;

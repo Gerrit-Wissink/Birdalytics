@@ -19,6 +19,7 @@ const connectWithRetry = async () => {
             console.log('Database synced successfully');
         }
 
+        // Start server
         app.listen(PORT, '0.0.0.0', () => {
             console.log(`Express started on port ${PORT}`);
             console.log(`Environment: ${process.env.NODE_ENV || 'development'}`);

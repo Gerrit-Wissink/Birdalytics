@@ -163,6 +163,10 @@
   box-shadow: 0 8px 32px rgba(0, 0, 0, 0.2);
   width: 90%;
   max-width: 450px;
+  max-height: 90vh;
+  display: flex;
+  flex-direction: column;
+  overflow: hidden;
   padding: 0;
   animation: modalSlideIn 0.3s ease-out;
 }

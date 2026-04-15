@@ -17,6 +17,7 @@ import 'primereact/resources/primereact.min.css';
 export default function ValGrid(){
 
     const [zoomedImage, setZoomedImage] = useState(null);
+    const [imageMap, setImageMap] = useState({});
 
     const handleZoom = (src) => {
         setZoomedImage(src);
@@ -44,7 +45,9 @@ export default function ValGrid(){
     // Tracks user-selected species corrections keyed by record id
     const [speciesCorrections, setSpeciesCorrections] = useState({});
     const [speciesOptions, setSpeciesOptions] = useState([]);
+    const [bannerSaved, setBannerSaved] = useState(false);
 
+    /* commenting out
     useEffect(() => {
         const token = localStorage.getItem('token');
         const tokenExpiry = localStorage.getItem('tokenExpiry');
@@ -52,25 +55,26 @@ export default function ValGrid(){
             window.location.href = '/#/login';
         }
     }, []);
+    */
 
+
+    const fetchBoxesData = async () => {
+        try {
+            const response = await apiClient.get('/boxes/record');
+            console.log('Fetch boxes data response:', response);
+            if (response.status === 200) {
+                const data = response.data.data;
+                console.log('Boxes data:', data);
+                setBoxesData(data);
+            } else {
+                console.error('Failed to fetch boxes data:', response.status);
+            }
+        } catch (error) {
+            console.error('Error fetching boxes data:', error);
+        }
+    };
 
     useEffect(() => {
-        const fetchBoxesData = async () => {
-            try {
-                const response = await apiClient.get('/boxes/record');
-                console.log('Fetch boxes data response:', response);
-                if (response.status === 200) {
-                    const data = response.data.data;
-                    console.log('Boxes data:', data);
-                    setBoxesData(data);
-                } else {
-                    console.error('Failed to fetch boxes data:', response.status);
-                }
-            } catch (error) {
-                console.error('Error fetching boxes data:', error);
-            }
-        };
-
         fetchBoxesData();
     }, []);
 
@@ -101,6 +105,51 @@ export default function ValGrid(){
             .filter((rec) => selectedBoxNames.includes(rec.birdbox_name));
     }, [boxesData, selectedBoxNames]);
 
+    useEffect(() => {
+        let isMounted = true;
+        const objectUrls = [];
+
+        const fetchImages = async () => {
+            if (allRecords.length === 0) {
+                if (isMounted) {
+                    setImageMap({});
+                }
+                return;
+            }
+
+            try {
+                const nextImageMap = {};
+
+                for (const record of allRecords) {
+                    if (!record.image_url) {
+                        continue;
+                    }
+
+                    const response = await apiClient.get(record.image_url, {
+                        responseType: 'blob'
+                    });
+
+                    const objectUrl = URL.createObjectURL(response.data);
+                    objectUrls.push(objectUrl);
+                    nextImageMap[record.record_id] = objectUrl;
+                }
+
+                if (isMounted) {
+                    setImageMap(nextImageMap);
+                }
+            } catch (error) {
+                console.error('Error fetching validation grid images:', error);
+            }
+        };
+
+        fetchImages();
+
+        return () => {
+            isMounted = false;
+            objectUrls.forEach((url) => URL.revokeObjectURL(url));
+        };
+    }, [allRecords]);
+
     const handleSaveChanges = async () => {
         try {
             let result;
@@ -110,10 +159,18 @@ export default function ValGrid(){
                 if (result.status !== 200) {
                     console.error(`Failed to update record ${record_id}:`, result);
                 }
+                else{
+                    console.log(`Successfully updated record ${record_id}`);
+                }
             }
+            await fetchBoxesData();
+            setBannerSaved(true);
+            setTimeout(() => {
+                setSpeciesCorrections({});
+                setBannerSaved(false);
+            }, 1500);
         }catch (error) {
             console.error('Error saving changes:', error);
-            // Optionally show an error message to the user
         }
     }
 
@@ -282,11 +339,7 @@ export default function ValGrid(){
         const conf = record._confidence; // Use pre-computed _confidence field
         const confBg = getConfidenceBg(conf);
         const confPct = formatConfidencePct(conf);
-        const imageUrl = record.image_url
-        ? record.image_url.startsWith('http')
-            ? record.image_url
-            : `https://birdalytics.webdev.gccis.rit.edu/api/${record.image_url}`
-        : null;
+        const imageUrl = imageMap[record.record_id] ?? null;
 
         // Use corrected species if the user has picked one, otherwise fall back to the model's guess
         const displaySpecies = speciesCorrections[recordId] ?? record.modified_bird ?? record.primary_guess;
@@ -368,9 +421,13 @@ export default function ValGrid(){
                     emptyMessage="No images match your filters."
                     style={{marginBottom: '5%'}}
                 />
-            {Object.keys(speciesCorrections).length > 0 &&
-                <div id={styles.saveBanner}onClick={handleSaveChanges}>
-                    Click to save all changes
+            {(Object.keys(speciesCorrections).length > 0 || bannerSaved) &&
+                <div
+                    id={styles.saveBanner}
+                    className={bannerSaved ? styles.saveBannerSaved : ''}
+                    onClick={handleSaveChanges}
+                >
+                    {bannerSaved ? 'Changes saved!' : 'Click to save all changes'}
                 </div>
             }
             </div>
