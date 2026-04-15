@@ -5,3 +5,6 @@ dist
 .env
 .git
 .gitignore
+__tests__
+*.test.js
+*.test.jsx

@@ -6,3 +6,5 @@ coverage
 .gitignore
 README.md
 npm-debug.log
+tests
+*.test.js
