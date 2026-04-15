@@ -1,7 +1,10 @@
-website/node_modules
-website/dist
-node_modules
-dist
+website/node_modules/
+website/dist/
+node_modules/
+dist/
 .env
 .git
 .gitignore
+__tests__/
+*.test.js
+*.test.jsx
