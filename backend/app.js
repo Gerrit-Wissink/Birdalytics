@@ -1,6 +1,8 @@
 const express = require('express');
 const cors = require('cors');
 const path = require('path');
+const authMiddleware = require('./middleware/auth');
+const fs = require('fs');
 
 // Import routes
 const userRoutes = require('./routes/userRoutes');
@@ -35,23 +37,44 @@ app.get('/api', (req, res) => {
 
 // API Routes
 app.use('/api/users', userRoutes);
+
+/* commenting out
+app.use('/api/users', userRoutes);
 app.use('/api/guess', birdRoutes);
 app.use('/api/record', recordRoutes);
 app.use('/api/boxes', boxRoutes);
 app.use('/api/images', imageRoutes);
 app.use('/api/species', speciesRoutes);
 app.use('/api/jobs', jobRoutes);
+*/
 
-// Serve static files
-app.use(express.static(path.join(__dirname, 'static')));
+app.use('/api/guess', authMiddleware, birdRoutes);
+app.use('/api/record', authMiddleware, recordRoutes);
+app.use('/api/boxes', authMiddleware, boxRoutes);
+app.use('/api/images', authMiddleware, imageRoutes);
+app.use('/api/species', authMiddleware, speciesRoutes);
+app.use('/api/jobs', authMiddleware, jobRoutes);
 
-// React catch-all for non-API GET routes
-app.get('/{*splat}', (req, res, next) => {
-    if (req.path.startsWith('/api')) {
-        return next();
-    }
-    res.sendFile(path.join(__dirname, 'static', 'index.html'));
-});
+//Serve static files
+const staticDir = path.join(__dirname, 'static');
+const indexPath = path.join(staticDir, 'index.html');
+const hasFrontendBuild = fs.existsSync(indexPath);
+
+// Serve static files only when the frontend build exists
+if (hasFrontendBuild) {
+    app.use(express.static(staticDir));
+
+    // React catch-all for non-API GET routes
+    app.get('/{*splat}', (req, res, next) => {
+        if (req.path.startsWith('/api')) {
+            return next();
+        }
+
+        res.sendFile(indexPath);
+    });
+} else {
+    console.warn(`Frontend build not found at ${indexPath}. Skipping static file hosting.`);
+}
 
 // 404 Handler
 app.use((req, res) => {
