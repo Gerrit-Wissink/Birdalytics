@@ -43,7 +43,7 @@ const getConfidenceBg = (score) => {
 
 // ─── Component ───────────────────────────────────────────────────────────────
 
-export default function BirdboxImageTable({ box, onSelectRow, speciesOptions }) {
+export default function BirdboxImageTable({ box, onSelectRow, speciesOptions, imageMap = {} }) {
   const rows = useMemo(() => parseImages(box), [box]);
 
   // Selection — auto-initialize to first row
@@ -152,10 +152,12 @@ export default function BirdboxImageTable({ box, onSelectRow, speciesOptions }) 
       className={styles.viewImageCell}
       onClick={(e) => {
         e.stopPropagation(); // Prevent row selection when clicking the icon
-        const imageUrl = `https://birdalytics.webdev.gccis.rit.edu/api/${row.image_url}`;
-        handleZoom(imageUrl);
+        const imageUrl = imageMap[row.record_id];
+        if (imageUrl) {
+          handleZoom(imageUrl);
+        }
       }}
-      style={{ cursor: 'pointer' }}
+      style={{ cursor: imageMap[row.record_id] ? 'pointer' : 'not-allowed' }}
     >
       <PhotoOutlinedIcon 
       style={{ fontSize: '1.7rem' }}
