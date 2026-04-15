@@ -254,7 +254,7 @@ export default function CamInfo() {
         <>
             <h1 style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', marginRight: '7.5%' }}>
                 {selectedCamera?.birdbox_name ?? 'Select a Camera'}
-                <FiEdit style={{ fontSize: '1.5rem', marginLeft: '0.5rem', cursor: 'pointer' }} onClick={() => setShowEditCameraModal(true)} />
+                <FiEdit style={{ fontSize: '1.5rem', marginLeft: '0.5rem', cursor: 'pointer', minWidth: '24px', minHeight: '24px'}} onClick={() => setShowEditCameraModal(true)} />
             </h1>
 
             <div style={{ position: 'relative' }}>
