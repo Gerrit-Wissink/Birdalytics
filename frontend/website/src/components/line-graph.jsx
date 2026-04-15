@@ -26,17 +26,12 @@ const buildDateRange = (earliest, latest) => {
 }
 
 const formatData = (boxesData = []) => {
-  let earliest = null;
-  let latest = null;
-  for (const box of boxesData) {
-    for (const record of box.records ?? []) {
-      const d = new Date(record.timestamp);
-      if (!earliest || d < earliest) earliest = d;
-      if (!latest   || d > latest)   latest   = d;
-    }
-  }
-  if (!earliest) return [];
-
+  if (boxesData.length === 0) return [];
+  // Create date range with the end being today and the start being 30 days before
+  const today = new Date();
+  const earliest = new Date(today);
+  earliest.setDate(earliest.getDate() - 30);
+  const latest = today;
   const chartData = buildDateRange(earliest, latest);
 
   // Build a date-string → index map for O(1) lookup

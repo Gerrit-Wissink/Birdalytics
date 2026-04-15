@@ -9,6 +9,7 @@ import SpeciesIdentification from '../components/species-identification';
 import EmptyState from '../components/emptyState';
 import CameraSummary from '../components/camera-summary';
 import CameraSidebar from '../components/camera-sidebar';
+import FloatingNavigationArrows from '../components/floating-navigation-arrows';
 import { useSwipeable } from 'react-swipeable';
 
 import styles from './camInfo.module.css'
@@ -125,16 +126,6 @@ export default function CamInfo() {
         setSelectedRowId(row?.record_id ?? null);
     }, []);
 
-    /* commenting out
-    useEffect(() => {
-        const token = localStorage.getItem('token');
-        const tokenExpiry = localStorage.getItem('tokenExpiry');
-        if (!token || (tokenExpiry && new Date(tokenExpiry) < new Date())) {
-            window.location.href = '/#/login';
-        }
-    }, []);
-    */
-
     useEffect(() => {
         // Function declared above
         fetchBoxesData();
@@ -248,6 +239,7 @@ export default function CamInfo() {
                     />
                 </div>
             </div>
+
             <div style={{ margin: '1em 0px' }}>
                 <BirdboxImageTable
                     box={selectedCamera}
@@ -265,35 +257,63 @@ export default function CamInfo() {
                 <FiEdit style={{ fontSize: '1.5rem', marginLeft: '0.5rem', cursor: 'pointer', minWidth: '24px', minHeight: '24px'}} onClick={() => setShowEditCameraModal(true)} />
             </h1>
 
-            <CameraSummary selectedCamera={selectedCamera} />
+            <div style={{ position: 'relative' }}>
+                {selectedCamera?.records?.length > 1 &&
+                    <FloatingNavigationArrows
+                        onPrevious={() => navigateRecord('prev')}
+                        onNext={() => navigateRecord('next')}
+                    />
+                }
 
-            <div id={styles.identifyBox} {...handlers}>
-                <SpeciesIdentification
-                    selectedRow={selectedRow}
-                    imageMap={imageMap}
-                    birdboxName={selectedCamera?.birdbox_name}
-                    onSpeciesOverride={(species) => {
-                        if (!selectedRowBase) return;
+                <div id={styles.identifyBox} {...handlers}>
+                    <SpeciesIdentification
+                        selectedRow={selectedRow}
+                        imageMap={imageMap}
+                        birdboxName={selectedCamera?.birdbox_name}
+                        onSpeciesOverride={(species) => {
+                            if (!selectedRowBase) return;
 
-                        setSpeciesOverrideByRecordId(prev => ({
-                            ...prev,
-                            [selectedRowBase.record_id]: {
-                                primary_guess: species,
-                                primary_guess_confidence: null,
-                            },
-                        }));
-                    }}
-                    speciesOptions={speciesOptions}
-                />
+                            setSpeciesOverrideByRecordId(prev => ({
+                                ...prev,
+                                [selectedRowBase.record_id]: {
+                                    primary_guess: species,
+                                    primary_guess_confidence: null,
+                                },
+                            }));
+                        }}
+                        speciesOptions={speciesOptions}
+                    />
+                </div>
             </div>
 
-            <h2 style={{ marginTop: '1.5em', marginBottom: '1em' }}>Identified Results</h2>
-            <div style={{ margin: '1em 0px' }}>
-                <BirdboxImageTable
-                    box={selectedCamera}
-                    onSelectRow={handleSelectRow}
-                    imageMap={imageMap}
-                />
+            <h2>Box Stats</h2>
+            <CameraSummary selectedCamera={selectedCamera} />
+        </>
+    );
+
+    const NO_RECORDS_VIEW = (
+        <>
+            <h1 style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', marginRight: '7.5%' }}>
+                {selectedCamera?.birdbox_name ?? 'Select a Camera'}
+                <FiEdit style={{ fontSize: '1.5rem', marginLeft: '0.5rem', cursor: 'pointer' }} onClick={() => setShowEditCameraModal(true)} />
+            </h1>
+            <div style={{ textAlign: 'center', padding: '2em' }}>
+                <h2>No records found</h2>
+                <p>Upload images to see results</p>
+                <button
+                    style={{
+                        backgroundColor: '#537F2C',
+                        color: 'white',
+                        border: 'none',
+                        padding: '8px 16px',
+                        borderRadius: '8px',
+                        cursor: 'pointer',
+                        fontSize: '1em',
+                    }}
+                    onClick={() => (window.location.href = "/#/upload")}
+                >
+                    Upload Images
+                </button>
             </div>
         </>
     );
@@ -352,7 +372,12 @@ export default function CamInfo() {
                 />
 
                 <div id={styles.cameraContent}>
-                    {windowWidth >= MOBILE_BREAKPOINT ? DESKTOP_VIEW : MOBILE_VIEW}
+                    {
+                        selectedCamera?.records?.length > 0 ?
+                        windowWidth >= MOBILE_BREAKPOINT ? 
+                        DESKTOP_VIEW : MOBILE_VIEW
+                        : NO_RECORDS_VIEW
+                    }
                 </div>
             </section>
             {showAddCameraModal && (
