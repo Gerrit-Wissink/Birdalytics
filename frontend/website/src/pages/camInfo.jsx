@@ -126,16 +126,6 @@ export default function CamInfo() {
         setSelectedRowId(row?.record_id ?? null);
     }, []);
 
-    /* commenting out
-    useEffect(() => {
-        const token = localStorage.getItem('token');
-        const tokenExpiry = localStorage.getItem('tokenExpiry');
-        if (!token || (tokenExpiry && new Date(tokenExpiry) < new Date())) {
-            window.location.href = '/#/login';
-        }
-    }, []);
-    */
-
     useEffect(() => {
         // Function declared above
         fetchBoxesData();
