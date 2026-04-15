@@ -22,6 +22,7 @@
     flex-direction: column;
     gap: 1em;
     overflow-y: auto;
+    scroll-behavior: smooth;
 }
 
 #cameraSummary{
@@ -32,6 +33,7 @@
     color: var(--text);
     min-height: 300px; 
     min-width: 300px;
+    max-height: 405px;
     /* remove minwidth and make fontsize responsive in future */
 }
 
@@ -47,6 +49,7 @@
     color: var(--text);
     border-radius: 10px;
     border: 1.5px solid #e0e0e0;
+    max-height: 405px;
     overflow: hidden; /* so the image respects the box's border-radius */
     padding: 0;       /* remove padding so image can go edge-to-edge on the left */
 }
@@ -60,7 +63,9 @@
 .identifyImage {
     width: 50%;
     min-width: 200px;
+    max-height: 405px;
     object-fit: cover;
+    overflow: hidden;
     border-radius: 8px 0 0 8px; /* left corners rounded, right flat */
     display: block;
 }
@@ -187,6 +192,7 @@
     margin: 0px 2em;
     overflow-y: scroll;
     padding-right: 1em;
+    margin-bottom: 2em;
 }
 
 .speciesOption:hover {
@@ -215,6 +221,7 @@
         display: flex;
         flex-direction: column;
         justify-content: space-evenly;
+        max-width: 100%;
     }
 }
 
