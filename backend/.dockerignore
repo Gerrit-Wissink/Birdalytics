@@ -1,8 +1,10 @@
-node_modules
-dist
-coverage
+node_modules/
+dist/
+coverage/
 .env
 .git
 .gitignore
 README.md
 npm-debug.log
+tests/
+*.test.js
