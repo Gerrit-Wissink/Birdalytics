@@ -32,6 +32,7 @@ export default function CamInfo() {
     const [showEditCameraModal, setShowEditCameraModal] = useState(false);
 
     const [sidebarOpen, setSidebarOpen] = useState(false);
+    const [zoomedImage, setZoomedImage] = useState(null);
     const [windowWidth, setWindowWidth] = useState(window.innerWidth);
 
     const [speciesOptions, setSpeciesOptions] = useState([]);
@@ -282,6 +283,10 @@ export default function CamInfo() {
                             }));
                         }}
                         speciesOptions={speciesOptions}
+                        onImageClick={(src) => {
+                            setZoomedImage(src);
+                            document.body.style.overflow = 'hidden';
+                        }}
                     />
                 </div>
             </div>
@@ -389,6 +394,11 @@ export default function CamInfo() {
                     fetchBoxes={fetchBoxesData}
                     selectedCamera={selectedCamera}
                 />
+            )}
+            {zoomedImage && (
+                <div className="overlay" onClick={() => { setZoomedImage(null); document.body.style.overflow = 'auto'; }}>
+                    <img src={zoomedImage} alt="Zoomed" className="zoomed-img" />
+                </div>
             )}
         </>
     );
