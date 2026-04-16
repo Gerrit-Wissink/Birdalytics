@@ -245,7 +245,7 @@ export default function ValGrid(){
         confidenceFilter, setConfidenceFilter,
         modifiedFilter, setModifiedFilter,
         birdOptions, filteredRows, activeFilterCount, handleClearFilters,
-    } = useFilters(allRecords, { modifiedKey: 'modified_bird' });
+    } = useFilters(allRecords, { modifiedKey: 'modified_bird', globalFilter: globalFilter });
  
     // SORTING
   const sortedRecords = useMemo(() => {
