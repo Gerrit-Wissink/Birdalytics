@@ -6,7 +6,7 @@ import PhotoCameraOutlinedIcon from '@mui/icons-material/PhotoCameraOutlined';
 import SearchRoundedIcon from '@mui/icons-material/SearchRounded';
 import FilterListRoundedIcon from '@mui/icons-material/FilterListRounded';
 import BirdBoxSelect from '../components/cameraSelect'
-import useFilters from '../components/useFilters'; 
+import useFilters from '../components/useFilters';
 import FilterPanel from '../components/filterPanel';
 import apiClient from '../utils/apiClient';
 
@@ -14,7 +14,7 @@ import styles from './valGrid.module.css';
 import 'primereact/resources/themes/lara-light-blue/theme.css';
 import 'primereact/resources/primereact.min.css';
 
-export default function ValGrid(){
+export default function ValGrid() {
 
     const [zoomedImage, setZoomedImage] = useState(null);
     const [imageMap, setImageMap] = useState({});
@@ -30,14 +30,15 @@ export default function ValGrid(){
     };
 
     const [boxesData, setBoxesData] = useState([]);
+    const [isLoading, setIsLoading] = useState(true);
 
     // Camera select state, default to all selected
     const [selectedBoxNames, setSelectedBoxNames] = useState([]);
-    
+
     // Search + panel visibility
     const [globalFilter, setGlobalFilter] = useState('');
     const [filterOpen, setFilterOpen] = useState(false);
-    
+
     // Sort states
     const [sortField, setSortField] = useState('timestamp');
     const [sortOrder, setSortOrder] = useState(-1); // newest first by default
@@ -59,18 +60,25 @@ export default function ValGrid(){
 
 
     const fetchBoxesData = async () => {
+        setIsLoading(true);
+
         try {
             const response = await apiClient.get('/boxes/record');
             console.log('Fetch boxes data response:', response);
+
             if (response.status === 200) {
                 const data = response.data.data;
                 console.log('Boxes data:', data);
                 setBoxesData(data);
             } else {
                 console.error('Failed to fetch boxes data:', response.status);
+                setBoxesData([]);
             }
         } catch (error) {
             console.error('Error fetching boxes data:', error);
+            setBoxesData([]);
+        } finally {
+            setIsLoading(false);
         }
     };
 
@@ -88,7 +96,7 @@ export default function ValGrid(){
         boxesData.forEach((b) => { map[b.birdbox_id] = b.birdbox_name; });
         return map;
     }, [boxesData]);
-    
+
     const allRecords = useMemo(() => {
         return boxesData
             .flatMap((box) =>
@@ -153,13 +161,13 @@ export default function ValGrid(){
     const handleSaveChanges = async () => {
         try {
             let result;
-            for(const [record_id, newSpecies] of Object.entries(speciesCorrections)) {
+            for (const [record_id, newSpecies] of Object.entries(speciesCorrections)) {
                 if (!newSpecies || newSpecies === '') continue; // Skip if cleared
                 result = await apiClient.put(`/record/manual/${record_id}`, { manual_bird: newSpecies });
                 if (result.status !== 200) {
                     console.error(`Failed to update record ${record_id}:`, result);
                 }
-                else{
+                else {
                     console.log(`Successfully updated record ${record_id}`);
                 }
             }
@@ -169,7 +177,7 @@ export default function ValGrid(){
                 setSpeciesCorrections({});
                 setBannerSaved(false);
             }, 1500);
-        }catch (error) {
+        } catch (error) {
             console.error('Error saving changes:', error);
         }
     }
@@ -198,7 +206,7 @@ export default function ValGrid(){
         { label: 'Date', value: 'timestamp' },
         { label: 'Confidence Score', value: 'primary_guess_confidence' },
     ];
-    
+
     const SORT_ORDER_OPTIONS = [
         { label: 'Ascending', value: 1 },
         { label: 'Descending', value: -1 },
@@ -216,7 +224,7 @@ export default function ValGrid(){
             try {
                 // TODO: Replace with actual API call to fetch species options
                 const response = await apiClient.get('/species');
-                if(response.status === 200) {
+                if (response.status === 200) {
                     const optionsFromAPI = response.data.data.map(species => ({
                         label: capitalize(species.species_name),
                         value: species.species_name
@@ -246,93 +254,93 @@ export default function ValGrid(){
         modifiedFilter, setModifiedFilter,
         birdOptions, filteredRows, activeFilterCount, handleClearFilters,
     } = useFilters(allRecords, { modifiedKey: 'modified_bird' });
- 
+
     // SORTING
-  const sortedRecords = useMemo(() => {
-    return [...filteredRows].sort((a, b) => {
-      let aVal, bVal;
-      if (sortField === 'timestamp') {
-        aVal = a._datetime;
-        bVal = b._datetime;
-      } else {
-        aVal = a.modified_bird ? 1 : a.primary_guess_confidence !== null ? parseFloat(a.primary_guess_confidence) : -1;
-        bVal = b.modified_bird ? 1 : b.primary_guess_confidence !== null ? parseFloat(b.primary_guess_confidence) : -1;
-      }
-      if (aVal < bVal) return -1 * sortOrder;
-      if (aVal > bVal) return 1 * sortOrder;
-      return 0;
-    });
-  }, [filteredRows, sortField, sortOrder]);
+    const sortedRecords = useMemo(() => {
+        return [...filteredRows].sort((a, b) => {
+            let aVal, bVal;
+            if (sortField === 'timestamp') {
+                aVal = a._datetime;
+                bVal = b._datetime;
+            } else {
+                aVal = a.modified_bird ? 1 : a.primary_guess_confidence !== null ? parseFloat(a.primary_guess_confidence) : -1;
+                bVal = b.modified_bird ? 1 : b.primary_guess_confidence !== null ? parseFloat(b.primary_guess_confidence) : -1;
+            }
+            if (aVal < bVal) return -1 * sortOrder;
+            if (aVal > bVal) return 1 * sortOrder;
+            return 0;
+        });
+    }, [filteredRows, sortField, sortOrder]);
 
-  // FILTER SORT AND SEARCH HEADER
-  const header = (
-    <div className={styles.header}>
- 
-      {/* Row 1: Camera selector, search,  filter/sort buttons */}
-      <div className={styles.topRow}>
-        <BirdBoxSelect
-          boxes={boxesData}
-          selectedBoxNames={selectedBoxNames}
-          setSelectedBoxNames={setSelectedBoxNames}
-        />
- 
-        <div className={styles.searchAndActions}>
-          <span className={styles.searchWrapper}>
-            <SearchRoundedIcon className={styles.searchIcon} />
-            <InputText
-              value={globalFilter}
-              onChange={(e) => setGlobalFilter(e.target.value)}
-              placeholder="Search"
-              className={styles.searchInput}
-            />
-          </span>
- 
-          <button
-            className={`${styles.actionButton} ${filterOpen ? styles.actionButtonActive : ''}`}
-            onClick={() => setFilterOpen((p) => !p)}
-          >
-            <FilterListRoundedIcon style={{ fontSize: '1.25rem' }} />
-            Filters
-            {activeFilterCount > 0 && (
-              <span className={styles.badge}>{activeFilterCount}</span>
+    // FILTER SORT AND SEARCH HEADER
+    const header = (
+        <div className={styles.header}>
+
+            {/* Row 1: Camera selector, search,  filter/sort buttons */}
+            <div className={styles.topRow}>
+                <BirdBoxSelect
+                    boxes={boxesData}
+                    selectedBoxNames={selectedBoxNames}
+                    setSelectedBoxNames={setSelectedBoxNames}
+                />
+
+                <div className={styles.searchAndActions}>
+                    <span className={styles.searchWrapper}>
+                        <SearchRoundedIcon className={styles.searchIcon} />
+                        <InputText
+                            value={globalFilter}
+                            onChange={(e) => setGlobalFilter(e.target.value)}
+                            placeholder="Search"
+                            className={styles.searchInput}
+                        />
+                    </span>
+
+                    <button
+                        className={`${styles.actionButton} ${filterOpen ? styles.actionButtonActive : ''}`}
+                        onClick={() => setFilterOpen((p) => !p)}
+                    >
+                        <FilterListRoundedIcon style={{ fontSize: '1.25rem' }} />
+                        Filters
+                        {activeFilterCount > 0 && (
+                            <span className={styles.badge}>{activeFilterCount}</span>
+                        )}
+                    </button>
+
+                    <div className={styles.sortInline}>
+                        <span className={styles.sortLabel}>Sort by:</span>
+                        <Dropdown
+                            value={sortField}
+                            options={SORT_FIELD_OPTIONS}
+                            onChange={(e) => setSortField(e.value)}
+                            className={styles.sortDropdown}
+                        />
+                        <Dropdown
+                            value={sortOrder}
+                            options={SORT_ORDER_OPTIONS}
+                            onChange={(e) => setSortOrder(e.value)}
+                            className={styles.sortDropdown}
+                        />
+                    </div>
+                </div>
+            </div>
+
+            {/* Row 2: Filter panel (when opened) */}
+            {filterOpen && (
+                <FilterPanel
+                    birdFilter={birdFilter} setBirdFilter={setBirdFilter}
+                    dateRange={dateRange} setDateRange={setDateRange}
+                    confidenceFilter={confidenceFilter} setConfidenceFilter={setConfidenceFilter}
+                    modifiedFilter={modifiedFilter} setModifiedFilter={setModifiedFilter}
+                    birdOptions={speciesOptions ?? birdOptions}
+                    activeFilterCount={activeFilterCount}
+                    handleClearFilters={handleClearFilters}
+                />
             )}
-          </button>
 
-          <div className={styles.sortInline}>
-            <span className={styles.sortLabel}>Sort by:</span>
-            <Dropdown
-              value={sortField}
-              options={SORT_FIELD_OPTIONS}
-              onChange={(e) => setSortField(e.value)}
-              className={styles.sortDropdown}
-            />
-            <Dropdown
-              value={sortOrder}
-              options={SORT_ORDER_OPTIONS}
-              onChange={(e) => setSortOrder(e.value)}
-              className={styles.sortDropdown}
-            />
-          </div>
         </div>
-      </div>
- 
-      {/* Row 2: Filter panel (when opened) */}
-      {filterOpen && (
-        <FilterPanel
-            birdFilter={birdFilter}         setBirdFilter={setBirdFilter}
-            dateRange={dateRange}           setDateRange={setDateRange}
-            confidenceFilter={confidenceFilter} setConfidenceFilter={setConfidenceFilter}
-            modifiedFilter={modifiedFilter} setModifiedFilter={setModifiedFilter}
-            birdOptions={speciesOptions ?? birdOptions}
-            activeFilterCount={activeFilterCount}
-            handleClearFilters={handleClearFilters}
-        />
-)}
- 
-    </div>
-  );
-    
-  // DATAVIEW CARD LAYOUT
+    );
+
+    // DATAVIEW CARD LAYOUT
     const cardTemplate = (record) => {
         console.log('IMAGE: ', record.image_url)
         const recordId = record.image_id ?? record.record_id;
@@ -345,99 +353,144 @@ export default function ValGrid(){
         const displaySpecies = speciesCorrections[recordId] ?? record.modified_bird ?? record.primary_guess;
 
         return (
-        <div className={styles.cardCol} key={recordId}>
-            <div className={styles.card}>
+            <div className={styles.cardCol} key={recordId}>
+                <div className={styles.card}>
 
-            {/* Top row: camera name + confidence badge */}
-            <div className={styles.cardTop}>
-                <span className={styles.cameraLabel}>
-                <PhotoCameraOutlinedIcon style={{ fontSize: '1rem', marginRight: '4px', flexShrink: 0 }} />
-                {record.birdbox_name}
-                </span>
-                {confPct && (
-                <span
-                    className={styles.confBadge}
-                    style={{ background: confBg !== 'transparent' ? confBg : '#bae098' }}
-                >
-                    {confPct}
-                </span>
-                )}
-            </div>
+                    {/* Top row: camera name + confidence badge */}
+                    <div className={styles.cardTop}>
+                        <span className={styles.cameraLabel}>
+                            <PhotoCameraOutlinedIcon style={{ fontSize: '1rem', marginRight: '4px', flexShrink: 0 }} />
+                            {record.birdbox_name}
+                        </span>
+                        {confPct && (
+                            <span
+                                className={styles.confBadge}
+                                style={{ background: confBg !== 'transparent' ? confBg : '#bae098' }}
+                            >
+                                {confPct}
+                            </span>
+                        )}
+                    </div>
 
-            {/* Image */}
-            <div className={styles.imageWrapper}>
-                {imageUrl ? (
-                <img
-                    src={imageUrl}
-                    alt={record.modified_bird ?? record.primary_guess ?? 'Unknown  image'}
-                    className={styles.cardImage}
-                    onClick={() => handleZoom(imageUrl)}
-                />
-                ) : (
-                <div className={styles.noImage}>No image</div>
-                )}
-            </div>
+                    {/* Image */}
+                    <div className={styles.imageWrapper}>
+                        {imageUrl ? (
+                            <img
+                                src={imageUrl}
+                                alt={record.modified_bird ?? record.primary_guess ?? 'Unknown  image'}
+                                className={styles.cardImage}
+                                onClick={() => handleZoom(imageUrl)}
+                            />
+                        ) : (
+                            <div className={styles.noImage}>No image</div>
+                        )}
+                    </div>
 
-            {/* Species label — reflects correction if one has been selected */}
-            <div className={styles.cardFooter}>
-                <span className={styles.speciesLabel}>
-                {displaySpecies ? capitalize(displaySpecies) : <span className={styles.noGuess}>Unidentified</span>}
-                </span>
+                    {/* Species label — reflects correction if one has been selected */}
+                    <div className={styles.cardFooter}>
+                        <span className={styles.speciesLabel}>
+                            {displaySpecies ? capitalize(displaySpecies) : <span className={styles.noGuess}>Unidentified</span>}
+                        </span>
 
-                {/* Correction dropdown — editable prop enables free-text search */}
-                <div style={{width: '100%'}}>
-                    <p className={styles.dropdownLabel}>Update Identification Result:</p>
+                        {/* Correction dropdown — editable prop enables free-text search */}
+                        <div style={{ width: '100%' }}>
+                            <p className={styles.dropdownLabel}>Update Identification Result:</p>
+                        </div>
+                        <Dropdown
+                            value={speciesCorrections[recordId] ?? record.modified_bird ?? record.primary_guess ?? null}
+                            options={speciesOptions}
+                            onChange={(e) => handleSpeciesCorrection(recordId, e.value)}
+                            placeholder="Correct species..."
+                            editable
+                            className={styles.correctionDropdown}
+                            showClear={!!speciesCorrections[recordId]}
+                        />
+                    </div>
+
                 </div>
-                <Dropdown
-                    value={speciesCorrections[recordId] ?? record.modified_bird ?? record.primary_guess ?? null}
-                    options={speciesOptions}
-                    onChange={(e) => handleSpeciesCorrection(recordId, e.value)}
-                    placeholder="Correct species..."
-                    editable
-                    className={styles.correctionDropdown}
-                    showClear={!!speciesCorrections[recordId]}
-                />
             </div>
-
-            </div>
-        </div>
         );
     };
- 
-    console.log('SORTED RECORDS: ', sortedRecords)
-    return(
-        <>
-        <section id='container'>
-            <h1>Validation Grid</h1>
-            <div className={styles.wrapper}>
-                <style>{PRIMEREACT_OVERRIDES}</style>
-                <DataView
-                    value={sortedRecords}
-                    layout="grid"
-                    header={header}
-                    itemTemplate={cardTemplate}
-                    rows={12}
-                    rowsPerPageOptions={[12, 24, 48]}
-                    emptyMessage="No images match your filters."
-                    style={{marginBottom: '5%'}}
-                />
-            {(Object.keys(speciesCorrections).length > 0 || bannerSaved) &&
-                <div
-                    id={styles.saveBanner}
-                    className={bannerSaved ? styles.saveBannerSaved : ''}
-                    onClick={handleSaveChanges}
-                >
-                    {bannerSaved ? 'Changes saved!' : 'Click to save all changes'}
-                </div>
-            }
-            </div>
-        </section>
 
-        {zoomedImage && (
-        <div className="overlay" onClick={closeZoom}>
-            <img src={zoomedImage} alt="Zoomed Design" className="zoomed-img" />
-        </div>
-        )}
+    const hasAnyBoxes = boxesData.length > 0;
+    const hasAnyRecords = allRecords.length > 0;
+
+    if (isLoading) {
+        return (
+            <section id='container'>
+                <h1>Validation Grid</h1>
+                <div className={styles.wrapper}>
+                    <div className="empty-state stat-empty-state">
+                        <h2>Loading validation grid...</h2>
+                        <p>Fetching camera records and images.</p>
+                    </div>
+                </div>
+            </section>
+        );
+    }
+
+    if (!hasAnyBoxes) {
+        return (
+            <section id='container'>
+                <h1>Validation Grid</h1>
+                <div className={styles.wrapper}>
+                    <div className="empty-state stat-empty-state">
+                        <h2>No cameras yet</h2>
+                        <p>Add a camera and upload images to start validating results.</p>
+                    </div>
+                </div>
+            </section>
+        );
+    }
+
+    if (!hasAnyRecords) {
+        return (
+            <section id='container'>
+                <h1>Validation Grid</h1>
+                <div className={styles.wrapper}>
+                    <div className="empty-state stat-empty-state">
+                        <h2>No records yet</h2>
+                        <p>Upload images to see validation results here.</p>
+                    </div>
+                </div>
+            </section>
+        );
+    }
+
+    console.log('SORTED RECORDS: ', sortedRecords)
+    return (
+        <>
+            <section id='container'>
+                <h1>Validation Grid</h1>
+                <div className={styles.wrapper}>
+                    <style>{PRIMEREACT_OVERRIDES}</style>
+                    <DataView
+                        value={sortedRecords}
+                        layout="grid"
+                        header={header}
+                        itemTemplate={cardTemplate}
+                        rows={12}
+                        rowsPerPageOptions={[12, 24, 48]}
+                        emptyMessage="No images match your filters."
+                        style={{ marginBottom: '5%' }}
+                    />
+                    {(Object.keys(speciesCorrections).length > 0 || bannerSaved) &&
+                        <div
+                            id={styles.saveBanner}
+                            className={bannerSaved ? styles.saveBannerSaved : ''}
+                            onClick={handleSaveChanges}
+                        >
+                            {bannerSaved ? 'Changes saved!' : 'Click to save all changes'}
+                        </div>
+                    }
+                </div>
+            </section>
+
+            {zoomedImage && (
+                <div className="overlay" onClick={closeZoom}>
+                    <img src={zoomedImage} alt="Zoomed Design" className="zoomed-img" />
+                </div>
+            )}
         </>
     )
 }

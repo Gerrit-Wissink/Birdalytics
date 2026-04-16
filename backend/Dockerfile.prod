@@ -3,7 +3,7 @@ FROM node:20-alpine AS frontend-build
 WORKDIR /frontend
 
 COPY frontend/website/package*.json ./
-RUN npm ci --omit=dev
+RUN npm ci
 
 COPY frontend/website/ ./
 RUN npm run build

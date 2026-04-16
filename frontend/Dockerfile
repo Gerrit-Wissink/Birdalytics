@@ -6,7 +6,7 @@ WORKDIR /app
 COPY website/package*.json ./
 
 # Install dependencies
-RUN npm ci --omit=dev
+RUN npm ci
 
 # Copy the rest of the project
 COPY website/ .
