@@ -49,7 +49,7 @@
     color: var(--text);
     border-radius: 10px;
     border: 1.5px solid #e0e0e0;
-    max-height: 405px;
+    /* max-height: 405px; */
     overflow: hidden; /* so the image respects the box's border-radius */
     padding: 0;       /* remove padding so image can go edge-to-edge on the left */
 }
@@ -404,5 +404,21 @@
     
     #progressSection{
         margin-bottom: .5em;
+    }
+}
+
+@media screen and (max-width: 450px){
+    #cameraContent{
+        margin: 0px .5em;
+        padding: 0px .5em;
+    }
+
+    #camInfoContainer{
+        justify-content: center;
+    }
+
+    #cameraSummary {
+        padding: 1em;
+        max-width: 80%;
     }
 }
