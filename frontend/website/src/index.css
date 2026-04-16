@@ -78,3 +78,9 @@ input, button, label, select, th, tr, td {
     box-shadow: 0 4px 10px rgba(0, 0, 0, 0.5);
     cursor: pointer;
 }
+
+@media screen and (max-width: 768px) {
+    .zoomed-img {
+        max-width: 90% !important;
+    }
+}
