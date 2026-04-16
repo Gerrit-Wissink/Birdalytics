@@ -330,7 +330,7 @@ export default function Reports() {
                         width: '900px',
                     }}
                 >
-                    <LineGraphPicture birdboxes={selectedBirdboxes} />
+                    <LineGraphPicture boxesData={selectedBirdboxes} />
                 </div>
             )}
 
