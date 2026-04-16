@@ -8,7 +8,7 @@ services:
       - ./backend/.env
     environment:
       NODE_ENV: development
-      SYNC_DB: "true"
+      SYNC_DB: "false"
       # commenting out
       # JWT_SECRET: ${JWT_SECRET}
       # JWT_EXPIRE: ${JWT_EXPIRE:-7d}
