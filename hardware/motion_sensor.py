@@ -75,7 +75,7 @@ class SmartCamera:
 
             self.cleanup_storage()
             
-            timestamp = datetime.now().strftime("%Y%m%d_%H%M%S")
+            timestamp = datetime.now().strftime("%Y-%m-%d_%H-%M-%S")
             file_name = f"Box{box_id}_{timestamp}_{reason}.jpg"
             full_path = os.path.join(photo_dir, file_name)
             
