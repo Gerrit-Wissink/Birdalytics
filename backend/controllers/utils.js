@@ -24,7 +24,10 @@ const calculateBoxStats = (box) => {
 
     const recordDays = {};
     box.records.forEach(record => {
+        if (!record.timestamp) return;
+
         const recordDate = new Date(record.timestamp);
+        if (Number.isNaN(recordDate.getTime())) return;
         const dateString = recordDate.toISOString().split('T')[0];
 
         if (!recordDays[dateString]) {

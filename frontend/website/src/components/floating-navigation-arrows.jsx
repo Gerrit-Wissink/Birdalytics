@@ -23,7 +23,7 @@ export default function FloatingNavigationArrows({ onPrevious, onNext }) {
         <>
             <button
                 onClick={onPrevious}
-                style={{ ...buttonStyle, left: '20px' }}
+                style={{ ...buttonStyle, left: '0px' }}
                 onMouseOver={(e) => e.currentTarget.style.backgroundColor = 'rgba(0, 0, 0, 0.9)'}
                 onMouseOut={(e) => e.currentTarget.style.backgroundColor = 'rgba(0, 0, 0, 0.7)'}
                 aria-label="Previous record"
@@ -33,7 +33,7 @@ export default function FloatingNavigationArrows({ onPrevious, onNext }) {
             
             <button
                 onClick={onNext}
-                style={{ ...buttonStyle, right: '20px' }}
+                style={{ ...buttonStyle, right: '0px' }}
                 onMouseOver={(e) => e.currentTarget.style.backgroundColor = 'rgba(0, 0, 0, 0.9)'}
                 onMouseOut={(e) => e.currentTarget.style.backgroundColor = 'rgba(0, 0, 0, 0.7)'}
                 aria-label="Next record"

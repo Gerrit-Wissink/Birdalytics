@@ -14,6 +14,7 @@
   width: 100%;
   height: 50px;
   align-content: center;
+  display: block
 }
 
 @keyframes bannerSave {
@@ -25,6 +26,7 @@
 .saveBannerSaved {
   animation: bannerSave 1.5s ease-in-out forwards;
   pointer-events: none;
+  display: none;
 }
 
 

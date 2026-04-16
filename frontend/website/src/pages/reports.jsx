@@ -31,21 +31,32 @@ export default function Reports() {
     }, []);
 
     const [boxesData, setBoxesData] = useState([]);
+    const [isLoading, setIsLoading] = useState(true);
     const [selectedBoxNames, setSelectedBoxNames] = useState([]);
 
     useEffect(() => {
         const fetchBoxesData = async () => {
+            setIsLoading(true);
+
             try {
                 const response = await apiClient.get('/boxes/record');
                 if (response.status === 200) {
                     const data = response.data.data;
                     setBoxesData(data);
                     setSelectedBoxNames(data.map((b) => b.birdbox_name));
+                } else {
+                    setBoxesData([]);
+                    setSelectedBoxNames([]);
                 }
             } catch (error) {
                 console.error('Error fetching boxes data:', error);
+                setBoxesData([]);
+                setSelectedBoxNames([]);
+            } finally {
+                setIsLoading(false);
             }
         };
+
         fetchBoxesData();
     }, []);
 
@@ -151,6 +162,18 @@ export default function Reports() {
     const hasAnyRecords = boxesData.some((box) => (box.records ?? []).length > 0);
     const hasReportData = hasAnyBoxes || hasAnyRecords;
     const hasSelectedBoxes = selectedBirdboxes.length > 0;
+
+    if (isLoading) {
+        return (
+            <section id="container" style={{ width: '100vw' }}>
+                <h1>Reports</h1>
+                <div className="empty-state stat-empty-state">
+                    <h2>Loading reports...</h2>
+                    <p>Fetching camera and report data.</p>
+                </div>
+            </section>
+        );
+    }
 
     if (!hasReportData) {
         return (
