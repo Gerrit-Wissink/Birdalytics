@@ -80,7 +80,7 @@ export default function useFilters(rows, { modifiedKey = 'modified_bird', global
 
       return true;
     });
-  }, [rows, birdFilter, dateRange, confidenceFilter, modifiedFilter, modifiedKey]);
+  }, [rows, birdFilter, dateRange, confidenceFilter, modifiedFilter, modifiedKey, globalFilter]);
 
   // Count active (non-default) filters
   const activeFilterCount = [
