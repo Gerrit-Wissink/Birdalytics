@@ -18,7 +18,7 @@ const capitalize = (str) => {
     return str.split(' ').map((w) => w.charAt(0).toUpperCase() + w.slice(1)).join(' ');
 };
 
-export default function SpeciesIdentification({ selectedRow, imageMap, birdboxName, onSpeciesOverride, speciesOptions = SPECIES_OPTIONS }) {
+export default function SpeciesIdentification({ selectedRow, imageMap, birdboxName, onSpeciesOverride, speciesOptions = SPECIES_OPTIONS, onImageClick }) {
     // Tracks which option row is currently selected (index: 0 = primary, 1 = other[0], 2 = other[1])
     const [selectedOptionIndex, setSelectedOptionIndex] = useState(0);
     // Tracks a manual species selection from the dropdown (null = nothing chosen yet)
@@ -115,6 +115,8 @@ export default function SpeciesIdentification({ selectedRow, imageMap, birdboxNa
             src={imageMap[selectedRow.record_id]}
             alt={birdboxName}
             className={styles.identifyImage}
+            onClick={onImageClick ? () => onImageClick(imageMap[selectedRow.record_id]) : undefined}
+            style={onImageClick ? { cursor: 'zoom-in' } : undefined}
         />
     ) : (
         <div className={styles.identifyImagePlaceholder}>
