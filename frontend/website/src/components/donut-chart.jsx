@@ -44,11 +44,11 @@ export default function BirdPieChart({ birdboxes = [] }) {
   ]);
 
   useEffect(() => {
-    console.log('[BirdPieChart] effect running - birdboxes length:', birdboxes.length);
+    // console.log('[BirdPieChart] effect running - birdboxes length:', birdboxes.length);
     var kestrels = birdboxes.reduce((sum, box) => sum + (box.total_kestrel_identified_photos ?? 0), 0);
     var otherBirds = birdboxes.reduce((sum, box) => sum + (box.total_non_kestrel_identified_photos ?? 0), 0);
     var nonBirds = birdboxes.reduce((sum, box) => sum + (box.total_non_bird_photos ?? 0), 0);
-    console.log('[BirdPieChart] calling setData');
+    // console.log('[BirdPieChart] calling setData');
 
     setData([
       { value: kestrels, label: 'American Kestrels', title: 'total kestrel' },
@@ -80,7 +80,7 @@ export default function BirdPieChart({ birdboxes = [] }) {
   );
 }
 
-export function BoxesPieChart({ birdboxes, photo = false }) {
+export function BoxesPieChart({ birdboxes = [], photo = false }) {
   //THESE CAN ALSO BE CONSTS WHEN WE DELETE THE BELOW
   var kestrels = birdboxes.reduce((sum, box) => sum + (box.total_kestrel_identified_photos ?? 0), 0);
   var otherBirds = birdboxes.reduce((sum, box) => sum + (box.total_non_kestrel_identified_photos ?? 0), 0);
@@ -150,12 +150,12 @@ export function MiniPieChart({ selected_camera }) {
   ]);
 
   useEffect(() => {
-    console.log('[MiniPieChart] effect running - selected_camera:', selected_camera?.birdbox_id);
+    // console.log('[MiniPieChart] effect running - selected_camera:', selected_camera?.birdbox_id);
     var kestrels = selected_camera?.total_kestrel_identified_photos ?? 0;
     var otherBirds = selected_camera?.total_non_kestrel_identified_photos ?? 0;
     var nonBirds = selected_camera?.total_non_bird_photos ?? 
                    (selected_camera?.total_photos_with_creatures ?? 0) - kestrels - otherBirds;
-    console.log('[MiniPieChart] calling setData - kestrels:', kestrels, 'otherBirds:', otherBirds, 'nonBirds:', nonBirds);
+    // console.log('[MiniPieChart] calling setData - kestrels:', kestrels, 'otherBirds:', otherBirds, 'nonBirds:', nonBirds);
 
     setData([
       { value: kestrels, label: 'American Kestrels', title: 'total kestrel' },

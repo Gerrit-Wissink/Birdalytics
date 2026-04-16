@@ -7,172 +7,126 @@ import {
   lineElementClasses,
 } from '@mui/x-charts/LineChart'
 
-const checkDateInCurrentMonth = (date) => {
-    const now = new Date();
-    return date.getMonth() === now.getMonth() && date.getFullYear() === now.getFullYear();
-}
-
 const checkContainsKestrel = (birdname) => {
     if (!birdname) return false;
-    const lowerName = birdname.toLowerCase();
-    return lowerName.includes('kestrel');
+    return birdname.toLowerCase().includes('kestrel');
 }
 
-const month_day_counts = [
-  31,
-  28,
-  31,
-  30,
-  31,
-  30,
-  31,
-  31,
-  30,
-  31,
-  30,
-  31
-];
-
-const createEmptyChartData = () => {
-  const now = new Date();
-  const month = now.getMonth();
-  const year = now.getFullYear();
-  const isFebruary = month === 1;
-  const isLeapYear = (year % 4 === 0 && year % 100 !== 0) || (year % 400 === 0);
-  const daysInMonth = month_day_counts[month] + (isFebruary && isLeapYear ? 1 : 0);
-
-  return new Array(daysInMonth).fill(0).map((_, index) => ({
-    date: `${month + 1}/${index + 1}`,
-    value: 0,
-  }));
+const buildDateRange = (earliest, latest) => {
+  const result = [];
+  const current = new Date(earliest);
+  current.setHours(0, 0, 0, 0);
+  const end = new Date(latest);
+  end.setHours(0, 0, 0, 0);
+  while (current <= end) {
+    result.push({ date: `${current.getMonth() + 1}/${current.getDate()}`, value: 0 });
+    current.setDate(current.getDate() + 1);
+  }
+  return result;
 }
 
-const fake_data = [
-  { date: '10/1', value: 2 },
-  { date: '10/2', value: 1 },
-  { date: '10/3', value: 3 },
-  { date: '10/4', value: 8 },
-  { date: '10/5', value: 7 },
-  { date: '10/6', value: 9 },
-  { date: '10/7', value: 5 },
-  { date: '10/8', value: 5 },
-  { date: '10/9', value: 4 },
-  { date: '10/10', value: 6 },
-  { date: '10/11', value: 3 },
-  { date: '10/12', value: 9 },
-  { date: '10/13', value: 7 },
-  { date: '10/14', value: 8 },
-  { date: '10/15', value: 2 },
-  { date: '10/16', value: 4 },
-  { date: '10/17', value: 6 },
-  { date: '10/18', value: 5 },
-  { date: '10/19', value: 7 },
-  { date: '10/20', value: 9 },
-  { date: '10/21', value: 6 },
-  { date: '10/22', value: 8},
-//   { date: '10/23', value: 3 },
-//   { date: '10/24', value: 2 },
-//   { date: '10/25', value: 4 },
-//   { date: '10/26', value: 6 },
-//   { date: '10/27', value: 5 },
-//   { date: '10/28', value: 7 },
-//   { date: '10/29', value: 1 },
-//   { date: '10/30', value: 3 },
-//   { date: '10/31', value: 5 },
-]
+const formatData = (boxesData = []) => {
+  if (boxesData.length === 0) return [];
+  // Create date range with the end being today and the start being 30 days before
+  const today = new Date();
+  const earliest = new Date(today);
+  earliest.setDate(earliest.getDate() - 30);
+  const latest = today;
+  const chartData = buildDateRange(earliest, latest);
+
+  // Build a date-string → index map for O(1) lookup
+  const indexByDay = {};
+  chartData.forEach((item, i) => { indexByDay[item.date] = i; });
+
+  for (const box of boxesData) {
+    for (const record of box.records ?? []) {
+      if (checkContainsKestrel(record.modified_bird ?? record.primary_guess)) {
+        const d = new Date(record.timestamp);
+        const key = `${d.getMonth() + 1}/${d.getDate()}`;
+        if (indexByDay[key] !== undefined) chartData[indexByDay[key]].value += 1;
+      }
+    }
+  }
+  return chartData;
+}
 
 const areaColor = 'var(--gradient-green)'
 
 export default function LineGraph({ boxesData = [] }) {
 
-  const [chartData, setChartData] = useState(createEmptyChartData());
+  const [chartData, setChartData] = useState([]);
+  const [showLine, setShowLine] = useState(false);
 
-  const formatData = (boxesData = []) => {
-    // Create fresh chart data for the current month
-    const updatedChartData = createEmptyChartData();
-    
-    for (const box of boxesData) {
-        for (const record of box.records ?? []) {
-            if (checkDateInCurrentMonth(new Date(record.timestamp))) {
-                const day = new Date(record.timestamp).getDate();
-                if(day < 1 || day > updatedChartData.length) continue; //safety check to make sure day is within bounds of current month
-                if (checkContainsKestrel(record.modified_bird ?? record.primary_guess)) {
-                    updatedChartData[day - 1].value += 1
-                }
-            }
-        }
-    }
-    return updatedChartData;
-  }
-  
-  
   useEffect(() => {
-      // This is where you would fetch the data and update the chartData state
-      // For now, we'll just use some dummy data
-      setChartData(createEmptyChartData());
       const serverData = formatData(boxesData);
-      console.log("Adding total kestrels...");
-      const totalKestrels = serverData.reduce((sum, item) => sum + (item.value ?? 0), 0);
-      console.log("Kestresls sum result:", totalKestrels);
-      if (totalKestrels === 0) {
-        // If there are no kestrels detected, use the dummy data to make the graph look nice
-        setChartData(fake_data);
+      if (serverData.length === 0) {
+        setChartData([]);
+        setShowLine(false);
       } else {
         setChartData(serverData);
+        setShowLine(true);
       }
+  }, [boxesData.length]);
 
-
-  }, [boxesData]);
+  const LINE_CHART = (
+    <LineChart
+      xAxis={[
+        {
+          data: chartData.map(item => item.date),
+          scaleType: 'point',
+          tickLabelInterval: (value, index) => index % 7 === 0, // Show label every 7 days
+          height: 28,
+        },
+      ]}
+      yAxis={[{ label: 'Number of Kestrels', width: 40 }]}
+      series={[
+        {
+          data: chartData.map(item => item.value),
+          label: 'Number of Kestrels',
+          area: true,
+          showMark: false,
+          color: areaColor,
+        },
+      ]}
+      height={300}
+      sx={{
+        [`& .${lineElementClasses.root}`]: { //applies custom stroke to the line
+          strokeWidth: 2,
+          strokeLinecap: 'round',
+        },
+        [`& .${areaElementClasses.root}`]: { //applies gradient to area under the line
+          fill: 'url(#areaGradient)',
+          filter: 'none',
+        },
+        '& .MuiChartsAxis-bottom .MuiChartsAxis-tickContainer text': {
+          fontFamily: 'Lato',
+        },
+        '& .MuiChartsAxis-left .MuiChartsAxis-tickContainer text': {
+          fontFamily: 'Lato',
+        },
+      }}
+      hideLegend={true}
+      style={{marginLeft: "-8px"}}
+    >
+      <defs>
+        <linearGradient id="areaGradient" x1="0" x2="0" y1="0" y2="1">
+          <stop offset="0%" stopColor={areaColor} stopOpacity={1} />
+          <stop offset="95%" stopColor={areaColor} stopOpacity={0} />
+        </linearGradient>
+      </defs>
+    </LineChart>
+  )
 
   return (
     <div className='stat-box-graph'>
-      <p className='graph-header'>Kestrel Detections/Month</p>
-      <LineChart
-        xAxis={[
-          {
-            data: chartData.map(item => item.date),
-            scaleType: 'point',
-            tickLabelInterval: (value, index) => index % 7 === 0, // Show label every 7 days
-            height: 28,
-          },
-        ]}
-        yAxis={[{ label: 'Number of Kestrels', width: 40 }]}
-        series={[
-          {
-            data: chartData.map(item => item.value),
-            label: 'Number of Kestrels',
-            area: true,
-            showMark: false,
-            color: areaColor,
-          },
-        ]}
-        height={300}
-        sx={{
-          [`& .${lineElementClasses.root}`]: { //applies custom stroke to the line
-            strokeWidth: 2,
-            strokeLinecap: 'round',
-          },
-          [`& .${areaElementClasses.root}`]: { //applies gradient to area under the line
-            fill: 'url(#areaGradient)',
-            filter: 'none',
-          },
-          '& .MuiChartsAxis-bottom .MuiChartsAxis-tickContainer text': {
-            fontFamily: 'Lato',
-          },
-          '& .MuiChartsAxis-left .MuiChartsAxis-tickContainer text': {
-            fontFamily: 'Lato',
-          },
-        }}
-        hideLegend={true}
-        style={{marginLeft: "-8px"}}
-      >
-        <defs>
-          <linearGradient id="areaGradient" x1="0" x2="0" y1="0" y2="1">
-            <stop offset="0%" stopColor={areaColor} stopOpacity={1} />
-            <stop offset="95%" stopColor={areaColor} stopOpacity={0} />
-          </linearGradient>
-        </defs>
-      </LineChart>
+      <p className='graph-header'>Kestrel Detections</p>
+      {showLine ?
+        LINE_CHART
+        :
+        <div className="empty-state-graph" style={{ textAlign: 'center', padding: '1em' }}>
+          <p style={{marginTop: '0px'}}>No kestrel detections found</p>
+        </div>
+      }
     </div>
   )
 }
@@ -180,44 +134,12 @@ export default function LineGraph({ boxesData = [] }) {
 
 export function LineGraphPicture({ boxesData = [] }) {
 
-  const [chartData, setChartData] = useState(createEmptyChartData());
+  const [chartData, setChartData] = useState([]);
 
-  const formatData = (boxesData = []) => {
-    // Create fresh chart data for the current month
-    const updatedChartData = createEmptyChartData();
-    
-    for (const box of boxesData) {
-        for (const record of box.records ?? []) {
-            if (checkDateInCurrentMonth(new Date(record.timestamp))) {
-                const day = new Date(record.timestamp).getDate();
-                if(day < 1 || day > updatedChartData.length) continue; //safety check to make sure day is within bounds of current month
-                if (checkContainsKestrel(record.modified_bird ?? record.primary_guess)) {
-                    updatedChartData[day - 1].value += 1
-                }
-            }
-        }
-    }
-    return updatedChartData;
-  }
-  
-  
   useEffect(() => {
-      // This is where you would fetch the data and update the chartData state
-      // For now, we'll just use some dummy data
-      setChartData(createEmptyChartData());
       const serverData = formatData(boxesData);
-      console.log("Adding total kestrels...");
-      const totalKestrels = serverData.reduce((sum, item) => sum + (item.value ?? 0), 0);
-      console.log("Kestresls sum result:", totalKestrels);
-      if (totalKestrels === 0) {
-        // If there are no kestrels detected, use the dummy data to make the graph look nice
-        setChartData(fake_data);
-      } else {
-        setChartData(serverData);
-      }
-
-
-  }, [boxesData]);
+      setChartData(serverData);
+  }, [boxesData.length]);
 
 
   return (

@@ -12,12 +12,17 @@ services:
     build: ./backend
     depends_on:
       - db
+    env_file:
+      - ./backend/.env
     environment:
       DB_NAME: birdalytics
       DB_USER: postgres
       DB_PASSWORD: student
       DB_HOST: db
       DB_PORT: 5432
+      # commenting out
+      # JWT_SECRET: ${JWT_SECRET}
+      # JWT_EXPIRE: ${JWT_EXPIRE:-7d}
 
   worker:
     build:

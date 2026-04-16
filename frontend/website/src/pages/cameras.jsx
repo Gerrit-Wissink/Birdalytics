@@ -4,6 +4,7 @@ import { useState, useEffect } from 'react';
 import apiClient from '../utils/apiClient';
 import CameraCard from '../components/camera-card';
 import AddCameraModal from '../components/add-camera-modal';
+import EmptyState from '../components/emptyState';
 import './cameras.css'
 
 export default function Cameras() {
@@ -14,6 +15,7 @@ export default function Cameras() {
 
     const [imageMap, setImageMap] = useState({});
 
+    /* commenting out
     useEffect(() => {
         const token = localStorage.getItem('token');
         const tokenExpiry = localStorage.getItem('tokenExpiry');
@@ -21,6 +23,7 @@ export default function Cameras() {
             window.location.href = '/#/login';
         }
     }, []);
+    */
 
     useEffect(() => {
         const fetchBoxesData = async () => {
@@ -28,7 +31,6 @@ export default function Cameras() {
                 const response = await apiClient.get('/boxes/record');
                 if (response.status === 200) {
                     const data = response.data.data;
-                    console.log('Boxes data:', data);
                     setBoxesData(data);
                 } else {
                     console.error('Failed to fetch boxes data:', response.status);
@@ -46,7 +48,6 @@ export default function Cameras() {
     useEffect(() => {
         if (boxesData.length === 0) return;
 
-        console.log("Fetching images for birdboxes...");
         const newImageMap = {};
         const fetchImagesForBoxes = async () => {
             try {
@@ -65,8 +66,6 @@ export default function Cameras() {
                     // Create object URL from blob
                     const imageUrl = URL.createObjectURL(response.data);
                     newImageMap[box.birdbox_id] = imageUrl;
-
-                    console.log(`Fetched image for box ${box.birdbox_name}`);
                 }
 
                 setImageMap(newImageMap);
@@ -85,15 +84,6 @@ export default function Cameras() {
 
     const cameras = boxesData;
     const hasCameras = cameras.length > 0;
-
-    console.log('boxesData', boxesData);
-    console.log(
-        'activity counts',
-        boxesData.map((box) => ({
-            birdbox_id: box.birdbox_id,
-            records: (box.records ?? []).length,
-        }))
-    );
 
     const handleCancelModal = () => {
         setShowModal(false);

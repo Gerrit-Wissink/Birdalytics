@@ -1,22 +1,12 @@
 import React from 'react'
-import { Link, NavLink, useNavigate, useLocation } from "react-router-dom";
+import { Link, NavLink, useLocation } from "react-router-dom";
 import { useState, useEffect } from "react";
 import './navbar.css';
+import LogoutModal from './logout-modal';
 
 export default function Navbar() {
-    const navigate = useNavigate();
-
-    const handleLogout = () => {
-        // Clear all stored authentication data
-        localStorage.removeItem('token');
-        localStorage.removeItem('tokenExpiry');
-        localStorage.removeItem('user');
-        
-        // Redirect to login page
-        navigate('/login');
-    };
-   
     const [isOpen, setIsOpen] = useState(false);
+    const [showLogoutModal, setShowLogoutModal] = useState(false);
     const location = useLocation(); // Get current route
 
     // Close menu when navigating to a new page
@@ -38,6 +28,9 @@ export default function Navbar() {
 
     const nav_links = (
         <>
+            <NavLink to="/" className={({ isActive }) => (isActive ? 'active' : '')}>
+                <span>Home</span>
+            </NavLink>
             <NavLink to="/cameras" className={({ isActive }) => (isActive ? 'active' : '')}>
                 <span>Cameras</span>
             </NavLink>
@@ -64,7 +57,7 @@ export default function Navbar() {
                     <div className="primary-nav">
                         {nav_links}
                     </div>
-                    <button onClick={handleLogout} id='logOut'>
+                    <button onClick={() => setShowLogoutModal(true)} id='logOut'>
                         Log Out
                     </button>
                 
@@ -74,34 +67,37 @@ export default function Navbar() {
         {/* For Mobile Screens */}
 
         <nav id="mobileMenu"
-        style={{
-            position: 'sticky',
-            top: 0,
-            zIndex: 1000,
-        }}>
-            <Link to="/">
-                <img src="./images/GLTLogo.jpg" id="logo" alt="logo" />
-            </Link>
+            style={{
+                position: 'sticky',
+                top: 0,
+                zIndex: 1000,
+            }}>
+                <Link to="/">
+                    <img src="./images/GLTLogo.jpg" id="logo" alt="logo" />
+                </Link>
 
-            <div id = 'burgerMenu' 
-            className={isOpen ? "active" : ""}
-            onClick={() => setIsOpen(!isOpen)}>
-                <div className="bar" id="bar1"></div>
-                <div className="bar" id="bar2"></div>
-                <div className="bar" id="bar3"></div>
-            </div>
-        </nav>
+                <div id = 'burgerMenu' 
+                className={isOpen ? "active" : ""}
+                onClick={() => setIsOpen(!isOpen)}>
+                    <div className="bar" id="bar1"></div>
+                    <div className="bar" id="bar2"></div>
+                    <div className="bar" id="bar3"></div>
+                </div>
+            </nav>
 
-        <div id = 'sideMenu' className={isOpen ? "open" : "closed"}>
-            <div id = 'sideText'>
-                {nav_links}
+            <div id = 'sideMenu' className={isOpen ? "open" : "closed"}>
+                <div id = 'sideText'>
+                    {nav_links}
+                </div>
+                <div>
+                    <button onClick={() => setShowLogoutModal(true)} id='logOut'>
+                            Log Out
+                    </button>
+                </div>
             </div>
-            <div>
-                <button onClick={handleLogout} id='logOut'>
-                        Log Out
-                </button>
-            </div>
-        </div>       
+            {showLogoutModal &&
+                <LogoutModal setShowModal={setShowLogoutModal} /> 
+            }      
         </>
     );
 }

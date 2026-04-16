@@ -69,7 +69,7 @@ export default function BirdboxTable({ boxesData = [] }) {
               <th className={styles.th}>Last Record</th>
               <th className={styles.thNoWrap}>
                 Usage Rate
-                <InfoTooltip text="Lorem Ipsum Dolor sit Amet" />
+                <InfoTooltip text="Percentage of captures that contained any bird" />
               </th>
               <th className={styles.th}>Kestrel Frequency</th>
               <th className={styles.th}>Last Kestrel</th>

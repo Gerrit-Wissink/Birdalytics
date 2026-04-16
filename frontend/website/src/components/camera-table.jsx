@@ -1,4 +1,4 @@
-import React, { useState, useMemo, useEffect } from 'react';
+import React, { useState, useMemo, useEffect, useRef } from 'react';
 import { DataTable } from 'primereact/datatable';
 import { Column } from 'primereact/column';
 import { InputText } from 'primereact/inputtext';
@@ -43,8 +43,11 @@ const getConfidenceBg = (score) => {
 
 // ─── Component ───────────────────────────────────────────────────────────────
 
-export default function BirdboxImageTable({ box, onSelectRow, speciesOptions }) {
+export default function BirdboxImageTable({ box, onSelectRow, speciesOptions, imageMap = {} }) {
   const rows = useMemo(() => parseImages(box), [box]);
+
+  const imageMapRef = useRef(imageMap);
+  useEffect(() => { imageMapRef.current = imageMap; }, [imageMap]);
 
   // Selection — auto-initialize to first row
   const [selectedRow, setSelectedRow] = useState(() => rows[0] ?? null);
@@ -64,9 +67,9 @@ export default function BirdboxImageTable({ box, onSelectRow, speciesOptions }) 
 
   // Reset to first row when birdbox ID changes
   useEffect(() => {
-    console.log('[BirdboxImageTable] effect running - birdbox_id:', box?.birdbox_id, 'rows length:', rows.length);
+    // console.log('[BirdboxImageTable] effect running - birdbox_id:', box?.birdbox_id, 'rows length:', rows.length);
     const first = rows[0] ?? null;
-    console.log('[BirdboxImageTable] calling setSelectedRow and onSelectRow');
+    // console.log('[BirdboxImageTable] calling setSelectedRow and onSelectRow');
     setSelectedRow(first);
     if (onSelectRow) onSelectRow(first);
   }, [box?.birdbox_id]);
@@ -148,20 +151,23 @@ export default function BirdboxImageTable({ box, onSelectRow, speciesOptions }) 
   };
 
   const viewImageTemplate = (row) => (
-    <span 
-      className={styles.viewImageCell}
-      onClick={(e) => {
-        e.stopPropagation(); // Prevent row selection when clicking the icon
-        const imageUrl = `https://birdalytics.webdev.gccis.rit.edu/api/${row.image_url}`;
-        handleZoom(imageUrl);
-      }}
-      style={{ cursor: 'pointer' }}
-    >
-      <PhotoOutlinedIcon 
-      style={{ fontSize: '1.7rem' }}
-      />
-    </span>
-  );
+  <span
+    className={styles.viewImageCell}
+    onMouseDown={(e) => {
+      e.stopPropagation();
+      e.preventDefault();
+      const imageUrl = imageMapRef.current[row.record_id];  // ← use ref
+      if (imageUrl) handleZoom(imageUrl);
+    }}
+    style={{
+      cursor: 'pointer',
+      position: 'relative',
+      display: 'inline-block',
+    }}
+  >
+    <PhotoOutlinedIcon style={{ fontSize: '1.7rem', pointerEvents: 'none' }} />
+  </span>
+);
 
   const modifiedTemplate = (row) => {
     // RIGHT NOW THIS WILL ALWAYS RETURN FALSE
@@ -296,7 +302,7 @@ export default function BirdboxImageTable({ box, onSelectRow, speciesOptions }) 
         <Column 
           header="View Image" 
           body={viewImageTemplate} 
-          style={{ minWidth: '110px' }} 
+          style={{ minWidth: '110px', zIndex: 2001 }} 
           headerStyle={{ textAlign: 'center' }} 
         />
         <Column 
@@ -381,5 +387,9 @@ const PRIMEREACT_OVERRIDES = `
     border: 1px solid var(--stroke);
     padding: .5em;
     border-radius: 8px;
+}
+.p-datatable td:has(.viewImageCell) {
+    position: relative;
+    z-index: 2000;
 }
 `;
