@@ -25,8 +25,8 @@ log_file = '/home/birdalytics/doorbell.log' # The path for the logging file when
 # Timestamps are in the format of yyyy-mm-dd HH:MM:SS. 
 def log_press():
 	timestamp = time.strftime('%Y-%m-%d %H:%M:%S')
-	with open(log_file, "a") as f:
-		f.write(f"{timestamp} - Doorbell pressed\n")
+	with open(log_file, 'a') as f:
+		f.write(f'{timestamp} - Doorbell pressed\n')
 	subprocess.run(['logger', '-t', 'doorbell', f'Doorbell pressed at {timestamp}'])
 
 # stop_hotspot() will disable the LAN hotspot on the Pi, disabling any network access.
@@ -37,10 +37,10 @@ def stop_hotspot():
 
 # turn_on_wifi() controls the status of the LAN hotspot on the Raspberry Pi.
 # If the hotspot is NOT currently running, then the hotspot will be enabled, along with a timer that runs for the time specified by timer_duration.
-# Additionally, a file labeled "Doorbell" with a timestamp will be made in the Pictures directory to denote a separation between data retrieval sessions.
+# Additionally, a file labeled 'Doorbell' with a timestamp will be made in the Pictures directory to denote a separation between data retrieval sessions.
 # If the hotspot is already currently running, then the timer will be reset.
 def turn_on_wifi(channel):
-	print("Doorbell pressed. Starting hotspot...")
+	print('Doorbell pressed. Starting hotspot...')
 	global hotspot_timer, hotspot_running
 	log_press()
 	if not hotspot_running:
@@ -70,4 +70,4 @@ try:
 	while True:
 		time.sleep(1)
 except KeyboardInterrupt:
-	print("Process manually interrupted. Exiting...")
+	print('Process manually interrupted. Exiting...')
