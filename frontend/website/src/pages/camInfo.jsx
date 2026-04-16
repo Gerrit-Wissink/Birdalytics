@@ -21,6 +21,7 @@ const capitalize = (str) => {
 export default function CamInfo() {
 
     const [boxesData, setBoxesData] = useState([]);
+    const [isLoading, setIsLoading] = useState(true);
 
     // Tracks which birdbox_id is currently selected — null until fetch resolves
     const [selectedID, setSelectedID] = useState(null);
@@ -76,32 +77,41 @@ export default function CamInfo() {
     };
 
     const fetchBoxesData = async () => {
+        setIsLoading(true);
+
         try {
             const response = await apiClient.get('/boxes/record');
             console.log('Fetch boxes data response:', response);
+
             if (response.status === 200) {
                 const data = response.data.data;
                 console.log('Boxes data:', data);
                 setBoxesData(data);
 
-                // Check for query parameter first (from hash-based routing)
-                // In hash routing, query params are in the hash: #/path?param=value
                 const hashParts = window.location.hash.split('?');
                 const queryString = hashParts.length > 1 ? hashParts[1] : '';
                 const selected = new URLSearchParams(queryString).get('selected');
+
                 if (selected) {
                     console.log('Selecting camera from URL param:', selected);
-                    setSelectedID(parseInt(selected, 10)); // Convert to number for consistent type
+                    setSelectedID(parseInt(selected, 10));
                 } else if (data.length > 0) {
-                    // Only auto-select first camera if no query param
                     console.log('No URL param, selecting first camera by default:', data[0].birdbox_id);
                     setSelectedID(data[0].birdbox_id);
+                } else {
+                    setSelectedID(-1);
                 }
             } else {
                 console.error('Failed to fetch boxes data:', response.status);
+                setBoxesData([]);
+                setSelectedID(-1);
             }
         } catch (error) {
             console.error('Error fetching boxes data:', error);
+            setBoxesData([]);
+            setSelectedID(-1);
+        } finally {
+            setIsLoading(false);
         }
     };
 
@@ -301,6 +311,18 @@ export default function CamInfo() {
 
     const hasCameras = boxesData.length > 0;
     const hasSelectedCamera = !!selectedCamera;
+
+    if (isLoading) {
+        return (
+            <section className={styles.camInfoContainer}>
+                <h1>Cameras</h1>
+                <EmptyState
+                    title="Loading cameras..."
+                    description="Fetching camera data."
+                />
+            </section>
+        );
+    }
 
     if (!hasCameras) {
         return (
