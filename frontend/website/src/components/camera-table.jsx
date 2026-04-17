@@ -236,7 +236,7 @@ export default function BirdboxImageTable({ box, onSelectRow, speciesOptions, im
         onSelectionChange={handleRowSelect}
         dataKey="record_id"
         globalFilter={globalFilter}
-        globalFilterFields={['identified_result', 'date', 'time']}
+        globalFilterFields={['_identified_result', '_datetime', '_confidence']}
         sortMode="single"
         removableSort
         paginator

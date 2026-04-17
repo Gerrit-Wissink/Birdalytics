@@ -107,6 +107,7 @@ export default function ValGrid() {
                     _datetime: rec.timestamp
                         ? new Date(rec.timestamp)
                         : new Date(),
+                    _identified_result: rec.modified_bird ?? rec.primary_guess ?? 'None',
                     _confidence: rec.modified_bird ? 1 : rec.primary_guess_confidence ?? 0
                 }))
             )
@@ -253,8 +254,8 @@ export default function ValGrid() {
         confidenceFilter, setConfidenceFilter,
         modifiedFilter, setModifiedFilter,
         birdOptions, filteredRows, activeFilterCount, handleClearFilters,
-    } = useFilters(allRecords, { modifiedKey: 'modified_bird' });
-
+    } = useFilters(allRecords, { modifiedKey: 'modified_bird', globalFilter: globalFilter });
+ 
     // SORTING
     const sortedRecords = useMemo(() => {
         return [...filteredRows].sort((a, b) => {
@@ -350,7 +351,7 @@ export default function ValGrid() {
         const imageUrl = imageMap[record.record_id] ?? null;
 
         // Use corrected species if the user has picked one, otherwise fall back to the model's guess
-        const displaySpecies = speciesCorrections[recordId] ?? record.modified_bird ?? record.primary_guess;
+        const displaySpecies = speciesCorrections[recordId] ?? record._identified_result ?? null;
 
         return (
             <div className={styles.cardCol} key={recordId}>
@@ -377,7 +378,7 @@ export default function ValGrid() {
                         {imageUrl ? (
                             <img
                                 src={imageUrl}
-                                alt={record.modified_bird ?? record.primary_guess ?? 'Unknown  image'}
+                                alt={record._identified_result ?? 'Unknown  image'}
                                 className={styles.cardImage}
                                 onClick={() => handleZoom(imageUrl)}
                             />
