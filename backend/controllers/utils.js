@@ -83,7 +83,11 @@ const formatManualBird = (manualBird) => {
     if (trimmed.length === 0) {
         return 'None';
     }
-    return trimmed.charAt(0).toUpperCase() + trimmed.slice(1).toLowerCase();
+    const words = trimmed.split(/\s+/);
+    const formattedWords = words.map(word => {
+        return word.charAt(0).toUpperCase() + word.slice(1).toLowerCase();
+    });
+    return formattedWords.join(' ');
 };
 
 module.exports = { calculateBoxStats, formatManualBird };
