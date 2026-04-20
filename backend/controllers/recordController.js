@@ -5,6 +5,7 @@ const Birdguess = require('../models/Birdguess');
 const SpeciesDictionary = require('../models/SpeciesDictionary');
 const converter = require('json-2-csv');
 const { formatManualBird } = require('./utils');
+const { Op } = require('sequelize');
 
 class RecordController {
     // Get all Birdrecords
@@ -228,7 +229,9 @@ class RecordController {
 
             const formatted_bird = formatManualBird(manual_bird);
 
-            const species = await SpeciesDictionary.findOne({ where: { species_name: formatted_bird } });
+            const species = await SpeciesDictionary.findOne({ 
+                where: { species_name: { [Op.iLike]: formatted_bird } }
+            });
 
             if (!species) {
                 const newSpecies = await SpeciesDictionary.create({ species_name: formatted_bird });
